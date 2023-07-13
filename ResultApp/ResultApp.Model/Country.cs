@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace ResultApp.Model
 {
-    public class Class1
+    public class Country : Base
     {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
     }
 }

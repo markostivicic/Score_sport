@@ -18,6 +18,7 @@ namespace ResultApp.WebApi
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            Startup.ConfigureAutofac(GlobalConfiguration.Configuration);
         }
     }
 }

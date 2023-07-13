@@ -74,7 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ResultApp.Repository\ResultApp.Repository.csproj">
-      <Project>{7ac08167-be98-485e-9a22-32017e0899cd}</Project>
+      <Project>{7AC08167-BE98-485E-9A22-32017E0899CD}</Project>
       <Name>ResultApp.Repository</Name>
     </ProjectReference>
   </ItemGroup>
