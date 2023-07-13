@@ -7,13 +7,13 @@ namespace ResultApp.WebApi.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class db : IMigrationMetadata
+    public sealed partial class customname : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(db));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(customname));
         
         string IMigrationMetadata.Id
         {
-            get { return "202307131213401_db"; }
+            get { return "202307131232208_customname"; }
         }
         
         string IMigrationMetadata.Source
