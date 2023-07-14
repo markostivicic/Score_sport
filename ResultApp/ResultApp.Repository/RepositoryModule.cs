@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using ResultApp.Repository.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace ResultApp.Repository
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<CountryRepository>().As<ICountryRepository>();
         }
 
     }

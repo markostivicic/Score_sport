@@ -66,16 +66,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CountryService.cs" />
     <Compile Include="ServiceModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ResultApp.Model\ResultApp.Model.csproj">
+      <Project>{AC62E46C-4788-4F02-AECA-A22466BF63BD}</Project>
+      <Name>ResultApp.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResultApp.Repository.Common\ResultApp.Repository.Common.csproj">
+      <Project>{4B72054D-30AF-489F-91CC-2D8A6757F4BE}</Project>
+      <Name>ResultApp.Repository.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ResultApp.Repository\ResultApp.Repository.csproj">
       <Project>{7AC08167-BE98-485E-9A22-32017E0899CD}</Project>
       <Name>ResultApp.Repository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResultApp.Service.Common\ResultApp.Service.Common.csproj">
+      <Project>{6287D227-9A95-4DAB-A39D-8F4F82B99D71}</Project>
+      <Name>ResultApp.Service.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
