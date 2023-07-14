@@ -270,6 +270,10 @@
     <Compile Include="Migrations\202307131232208_customname.designer.cs">
       <DependentUpon>202307131232208_customname.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202307140709451_addroles.cs" />
+    <Compile Include="Migrations\202307140709451_addroles.designer.cs">
+      <DependentUpon>202307140709451_addroles.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -433,6 +437,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202307131232208_customname.resx">
       <DependentUpon>202307131232208_customname.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307140709451_addroles.resx">
+      <DependentUpon>202307140709451_addroles.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

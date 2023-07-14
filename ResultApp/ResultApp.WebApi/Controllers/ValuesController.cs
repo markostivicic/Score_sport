@@ -7,7 +7,7 @@ using System.Web.Http;
 
 namespace ResultApp.WebApi.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin, User")]
     public class ValuesController : ApiController
     {
         // GET api/values

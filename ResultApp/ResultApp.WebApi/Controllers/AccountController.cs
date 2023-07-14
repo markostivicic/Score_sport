@@ -25,16 +25,13 @@ namespace ResultApp.WebApi.Controllers
     {
         private const string LocalLoginProvider = "Local";
         private ApplicationUserManager _userManager;
+        private ApplicationRoleManager _roleManager;
+
+       
 
         public AccountController()
         {
-        }
-
-        public AccountController(ApplicationUserManager userManager,
-            ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
-        {
-            UserManager = userManager;
-            AccessTokenFormat = accessTokenFormat;
+           
         }
 
         public ApplicationUserManager UserManager
@@ -46,6 +43,18 @@ namespace ResultApp.WebApi.Controllers
             private set
             {
                 _userManager = value;
+            }
+        }
+
+        public ApplicationRoleManager RoleManager
+        {
+            get
+            {
+                return _roleManager ?? Request.GetOwinContext().Get<ApplicationRoleManager>();
+            }
+            private set
+            {
+                _roleManager = value;
             }
         }
 
@@ -336,6 +345,20 @@ namespace ResultApp.WebApi.Controllers
             {
                 return GetErrorResult(result);
             }
+
+            if (!RoleManager.RoleExists("Admin"))
+            {
+               await RoleManager.CreateAsync(new ApplicationRole("Admin"));   
+            }
+
+            if (!RoleManager.RoleExists("User"))
+            {
+                var role = new ApplicationRole();
+                role.Name = "User";
+                await RoleManager.CreateAsync(role);
+            }
+
+            await UserManager.AddToRoleAsync(user.Id, "User");
 
             return Ok();
         }
