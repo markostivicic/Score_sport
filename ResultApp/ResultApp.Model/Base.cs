@@ -10,8 +10,19 @@ namespace ResultApp.Model
     {
         public DateTime DateCreated  { get; set; }
         public DateTime DateUpdated { get; set; }
-        public Guid CreatedByUserId { get; set; }
-        public Guid UpdatedByUserId { get; set; }
+        public string CreatedByUserId { get; set; }
+        public string UpdatedByUserId { get; set; }
         public bool IsActive { get; set; }
+
+        public Base() { }
+        public Base(string createdByUserId)
+        {
+            CreatedByUserId = createdByUserId;
+        }
+        public Base(string updatedByUserId, DateTime dateUpdated)
+        {
+            UpdatedByUserId = updatedByUserId;
+            DateUpdated = dateUpdated;
+        }
     }
 }

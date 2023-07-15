@@ -7,13 +7,13 @@ namespace ResultApp.WebApi.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.4.4")]
-    public sealed partial class addroles : IMigrationMetadata
+    public sealed partial class jn : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(addroles));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(jn));
         
         string IMigrationMetadata.Id
         {
-            get { return "202307140709451_addroles"; }
+            get { return "202307150837579_jn"; }
         }
         
         string IMigrationMetadata.Source

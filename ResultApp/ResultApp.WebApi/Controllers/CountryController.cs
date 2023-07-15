@@ -1,4 +1,5 @@
 ﻿using Microsoft.Ajax.Utilities;
+using Microsoft.AspNet.Identity;
 using ResultApp.Model;
 using ResultApp.Service.Common;
 using ResultApp.WebApi.Models.Country;
@@ -12,8 +13,13 @@ using System.Web.Http;
 
 namespace ResultApp.WebApi.Controllers
 {
+    [Authorize(Roles ="User")]
     public class CountryController : ApiController
     {
+        private static IEnumerable<CountryToReturnDto> MapCountryToCountryToReturn(List<Country> countries)
+        {
+            return countries.Select(country => new CountryToReturnDto(country.Id,country.Name));
+        }
         private readonly ICountryService _countryRepository;
         public CountryController(ICountryService countryRepository)
         {
@@ -25,11 +31,11 @@ namespace ResultApp.WebApi.Controllers
             try
             {
                 List<Country> countries = await _countryRepository.GetAllAsync();
-                return Request.CreateResponse(HttpStatusCode.OK, countries);
+                return Request.CreateResponse(HttpStatusCode.OK, MapCountryToCountryToReturn(countries));
             }
             catch (Exception ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "Something went wrong");
             }
 
         }
@@ -42,7 +48,7 @@ namespace ResultApp.WebApi.Controllers
                 Country country = await _countryRepository.GetByIdAsync(id);
                 if (country != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, country);
+                    return Request.CreateResponse(HttpStatusCode.OK, MapCountryToCountryToReturn(new List<Country> { country}).First());
                 }
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Item doesnt exist");
             }
@@ -58,11 +64,11 @@ namespace ResultApp.WebApi.Controllers
         {
             try
             {
-                Country mappedCountry = new Country(Guid.NewGuid(), country.Name);
+                Country mappedCountry = new Country(Guid.NewGuid(), country.Name, User.Identity.GetUserId());
                 Country newCountry = await _countryRepository.CreateAsync(mappedCountry);
                 if (newCountry != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, newCountry);
+                    return Request.CreateResponse(HttpStatusCode.OK, MapCountryToCountryToReturn(new List<Country>{ newCountry }).First());
                 }
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
@@ -84,17 +90,17 @@ namespace ResultApp.WebApi.Controllers
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
                 }
 
-                Country mappedCountry = new Country(id, country.Name);
+                Country mappedCountry = new Country(id, country.Name, User.Identity.GetUserId(), DateTime.Now);
                 Country updatedCountry = await _countryRepository.UpdateAsync(id, mappedCountry);
                 if (updatedCountry != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, mappedCountry);
+                    return Request.CreateResponse(HttpStatusCode.OK, MapCountryToCountryToReturn(new List<Country> { updatedCountry }).First());
                 }
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
             catch (Exception ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "Something went wrong");
             }
         }
 
