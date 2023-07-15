@@ -266,17 +266,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202307131232208_customname.cs" />
-    <Compile Include="Migrations\202307131232208_customname.designer.cs">
-      <DependentUpon>202307131232208_customname.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202307140709451_addroles.cs" />
-    <Compile Include="Migrations\202307140709451_addroles.designer.cs">
-      <DependentUpon>202307140709451_addroles.cs</DependentUpon>
+    <Compile Include="Migrations\202307150903143_jfxdjxdzj.cs" />
+    <Compile Include="Migrations\202307150903143_jfxdjxdzj.designer.cs">
+      <DependentUpon>202307150903143_jfxdjxdzj.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\Country\CountryToCreateAndUpdateDto.cs" />
+    <Compile Include="Models\Country\CountryToReturnDto.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
@@ -429,17 +427,26 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ResultApp.Common\ResultApp.Common.csproj">
+      <Project>{ef19bbdd-d472-4ac2-8dc5-45b2965c2d7d}</Project>
+      <Name>ResultApp.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResultApp.Model\ResultApp.Model.csproj">
+      <Project>{ac62e46c-4788-4f02-aeca-a22466bf63bd}</Project>
+      <Name>ResultApp.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResultApp.Service.Common\ResultApp.Service.Common.csproj">
+      <Project>{6287D227-9A95-4DAB-A39D-8F4F82B99D71}</Project>
+      <Name>ResultApp.Service.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ResultApp.Service\ResultApp.Service.csproj">
       <Project>{693780AD-E8F9-4F97-B65D-259B09EC3522}</Project>
       <Name>ResultApp.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202307131232208_customname.resx">
-      <DependentUpon>202307131232208_customname.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202307140709451_addroles.resx">
-      <DependentUpon>202307140709451_addroles.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202307150903143_jfxdjxdzj.resx">
+      <DependentUpon>202307150903143_jfxdjxdzj.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
