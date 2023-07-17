@@ -93,13 +93,14 @@ namespace ResultApp.Repository
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
 
             NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "INSERT INTO \"Club\" (\"Id\", \"Name\", \"Logo\", \"LeagueId\", \"LocationId\") VALUES (@Id, @Name, @Logo, @LeagueId, @LocationId)";
+            command.CommandText = "INSERT INTO \"Club\" (\"Id\", \"Name\", \"Logo\", \"LeagueId\", \"LocationId\", \"CreatedByUserId\") VALUES (@Id, @Name, @Logo, @LeagueId, @LocationId, @CreatedByUserId)";
             command.Connection = connection;
             command.Parameters.AddWithValue("@Id", club.Id);
             command.Parameters.AddWithValue("@Name", club.Name);
             command.Parameters.AddWithValue("@Logo", club.Logo);
             command.Parameters.AddWithValue("@LeagueId", club.LeagueId);
             command.Parameters.AddWithValue("@LocationId", club.LocationId);
+            command.Parameters.AddWithValue("@CreatedByUserId", club.CreatedByUserId);
 
             using (connection)
             {
@@ -125,12 +126,16 @@ namespace ResultApp.Repository
 
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
-            command.CommandText = "UPDATE \"Club\" SET \"Name\" = @Name, \"Logo\" = @Logo, \"LeagueId\" = @LeagueId, \"LocationId\" = @LocationId WHERE \"Id\" = @Id";
+            command.CommandText = "UPDATE \"Club\" SET \"Name\" = @Name, \"Logo\" = @Logo, \"LeagueId\" = @LeagueId, \"UpdatedByUserId\" = @UpdatedByUserId, \"DateUpdated\" = @DateUpdated, \"LocationId\" = @LocationId WHERE \"Id\" = @Id";
 
+            command.Parameters.AddWithValue("@Id", id);
             command.Parameters.AddWithValue("@Name", club.Name);
             command.Parameters.AddWithValue("@Logo", club.Logo);
-            command.Parameters.AddWithValue("@SportId", club.LeagueId);
-            command.Parameters.AddWithValue("@CountryId", club.LocationId);
+            command.Parameters.AddWithValue("@LeagueId", club.LeagueId);
+            command.Parameters.AddWithValue("@LocationId", club.LocationId);
+            command.Parameters.AddWithValue("@UpdatedByUserId", club.UpdatedByUserId);
+            command.Parameters.AddWithValue("@DateUpdated", club.DateUpdated);
+
 
             using (connection)
             {

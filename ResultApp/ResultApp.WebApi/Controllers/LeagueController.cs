@@ -8,6 +8,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ResultApp.WebApi.Models.LeagueModels;
+using Microsoft.AspNet.Identity;
 
 namespace ResultApp.WebApi.Controllers
 {
@@ -60,7 +61,7 @@ namespace ResultApp.WebApi.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "League is null!");
             }
 
-            League leagueToInsert = new League(Guid.NewGuid(), league.Name, (Guid)league.SportId, (Guid)league.CountryId);
+            League leagueToInsert = new League(Guid.NewGuid(), league.Name, (Guid)league.SportId, (Guid)league.CountryId, User.Identity.GetUserId());
 
             int affectedRows = await LeagueService.InsertAsync(leagueToInsert);
 
@@ -104,7 +105,7 @@ namespace ResultApp.WebApi.Controllers
                 countryId = leagueById.CountryId;
             }
 
-            League leagueToUpdate = new League(id, name, (Guid)sportId, (Guid)countryId);
+            League leagueToUpdate = new League(id, name, (Guid)sportId, (Guid)countryId, User.Identity.GetUserId(), DateTime.Now);
 
             int affectedRows = await LeagueService.UpdateAsync(id, leagueToUpdate);
             if (affectedRows == 0)
@@ -130,9 +131,9 @@ namespace ResultApp.WebApi.Controllers
 
             if (affectedRows > 0)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, $"Club was deleted. Affected rows: {affectedRows}");
+                return Request.CreateResponse(HttpStatusCode.OK, $"League was deleted. Affected rows: {affectedRows}");
             }
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Club was not deleted!");
+            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "League was not deleted!");
         }
     }
 }

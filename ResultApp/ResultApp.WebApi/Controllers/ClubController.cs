@@ -8,6 +8,7 @@ using ResultApp.Service.Common;
 using ResultApp.Model;
 using ResultApp.WebApi.Models.ClubModels;
 using ResultApp.Common;
+using Microsoft.AspNet.Identity;
 
 namespace ResultApp.WebApi.Controllers
 {
@@ -60,7 +61,7 @@ namespace ResultApp.WebApi.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Club is null!");
             }
 
-            Club clubToInsert = new Club(Guid.NewGuid(), club.Name, club.Logo, (Guid)club.LeagueId, (Guid)club.LocationId);
+            Club clubToInsert = new Club(Guid.NewGuid(), club.Name, club.Logo, (Guid)club.LeagueId, (Guid)club.LocationId, User.Identity.GetUserId());
 
             int affectedRows = await ClubService.InsertAsync(clubToInsert);
 
@@ -110,7 +111,7 @@ namespace ResultApp.WebApi.Controllers
             }
 
 
-            Club clubToUpdate = new Club(id, name, logo, (Guid)leagueId, (Guid)locationId);
+            Club clubToUpdate = new Club(id, name, logo, (Guid)leagueId, (Guid)locationId, User.Identity.GetUserId(), DateTime.Now);
 
             int affectedRows = await ClubService.UpdateAsync(id, clubToUpdate);
             if (affectedRows == 0)

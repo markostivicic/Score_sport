@@ -20,5 +20,21 @@ namespace ResultApp.Model
             SportId = sportId;
             CountryId = countryId;
         }
+
+        public League(Guid id, string name, Guid sportId, Guid countryId, string createdByUserId) : base(createdByUserId)
+        {
+            Id = id;
+            Name = name;
+            SportId = sportId;
+            CountryId = countryId;
+        }
+
+        public League(Guid id, string name, Guid sportId, Guid countryId, string updatedByUserId, DateTime dateUpdated) : base(updatedByUserId, dateUpdated)
+        {
+            Id = id;
+            Name = name;
+            SportId = sportId;
+            CountryId = countryId;
+        }
     }
 }

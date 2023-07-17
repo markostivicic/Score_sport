@@ -76,12 +76,13 @@ namespace ResultApp.Repository
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
 
             NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "INSERT INTO \"League\" (\"Id\", \"Name\", \"SportId\", \"CountryId\") VALUES (@Id, @Name, @SportId, @CountryId)";
+            command.CommandText = "INSERT INTO \"League\" (\"Id\", \"Name\", \"SportId\", \"CountryId\", \"CreatedByUserId\") VALUES (@Id, @Name, @SportId, @CountryId, @CreatedByUserId)";
             command.Connection = connection;
             command.Parameters.AddWithValue("@Id", league.Id);
             command.Parameters.AddWithValue("@Name", league.Name);
-            command.Parameters.AddWithValue("@LeagueId", league.SportId);
-            command.Parameters.AddWithValue("@LocationId", league.CountryId);
+            command.Parameters.AddWithValue("@SportId", league.SportId);
+            command.Parameters.AddWithValue("@CountryId", league.CountryId);
+            command.Parameters.AddWithValue("@CreatedByUserId", league.CreatedByUserId);
 
             using (connection)
             {
@@ -107,12 +108,14 @@ namespace ResultApp.Repository
 
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
-            command.CommandText = "UPDATE \"League\" SET \"Name\" = @Name, \"SportId\" = @SportId, \"CountryId\" = @CountryId WHERE \"Id\" = @Id";
+            command.CommandText = "UPDATE \"League\" SET \"Name\" = @Name, \"SportId\" = @SportId, \"CountryId\" = @CountryId, \"UpdatedByUserId\" = @UpdatedByUserId, \"DateUpdated\" = @DateUpdated WHERE \"Id\" = @Id";
 
             command.Parameters.AddWithValue("@Name", league.Name);
             command.Parameters.AddWithValue("@SportId", league.SportId);
             command.Parameters.AddWithValue("@CountryId", league.CountryId);
             command.Parameters.AddWithValue("@Id", id);
+            command.Parameters.AddWithValue("@UpdatedByUserId", league.UpdatedByUserId);
+            command.Parameters.AddWithValue("@DateUpdated", league.DateUpdated);
 
             using (connection)
             {

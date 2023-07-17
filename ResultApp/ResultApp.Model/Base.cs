@@ -12,7 +12,7 @@ namespace ResultApp.Model
         public DateTime DateUpdated { get; set; }
         public string CreatedByUserId { get; set; }
         public string UpdatedByUserId { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
         public Base() { }
         public Base(string createdByUserId)
