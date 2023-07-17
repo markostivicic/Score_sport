@@ -129,25 +129,37 @@ namespace ResultApp.Repository
             command.CommandText = "UPDATE \"Club\" SET \"Name\" = @Name, \"Logo\" = @Logo, \"LeagueId\" = @LeagueId, \"UpdatedByUserId\" = @UpdatedByUserId, \"DateUpdated\" = @DateUpdated, \"LocationId\" = @LocationId WHERE \"Id\" = @Id";
 
             command.Parameters.AddWithValue("@Id", id);
-            command.Parameters.AddWithValue("@Name", club.Name);
-            command.Parameters.AddWithValue("@Logo", club.Logo);
+                command.Parameters.AddWithValue("@Name", club.Name);
+            }
+
+            if (!string.IsNullOrEmpty(club.Logo))
+            {
+                queryBuilder.Append("\"Logo\" = @Logo, ");
+                command.Parameters.AddWithValue("@Logo", club.Logo);
             command.Parameters.AddWithValue("@LeagueId", club.LeagueId);
             command.Parameters.AddWithValue("@LocationId", club.LocationId);
             command.Parameters.AddWithValue("@UpdatedByUserId", club.UpdatedByUserId);
             command.Parameters.AddWithValue("@DateUpdated", club.DateUpdated);
 
-
-            using (connection)
+            if (queryBuilder.Length > "UPDATE \"Club\" SET ".Length)
             {
-                try
-                    {
-                    connection.Open();
+                queryBuilder.Length -= 2;
+                queryBuilder.Append(" WHERE \"Id\" = @Id");
+                command.Parameters.AddWithValue("@Id", id);
+                command.CommandText = queryBuilder.ToString();
 
-                    affectedRows = await command.ExecuteNonQueryAsync();
-                }
-                catch (Exception)
+                using (connection)
                 {
-                    throw;
+                    try
+                    {
+                        connection.Open();
+
+                        affectedRows = await command.ExecuteNonQueryAsync();
+                    }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
                 }
             }
             return affectedRows;
