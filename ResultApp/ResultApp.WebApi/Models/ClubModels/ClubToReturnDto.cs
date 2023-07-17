@@ -1,27 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ResultApp.Model
+namespace ResultApp.WebApi.Models.ClubModels
 {
-    public class Club : Base
+    public class ClubToReturnDto
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Logo { get; set; }
         public Guid LeagueId { get; set; }
         public Guid LocationId { get; set; }
 
-        public Club(Guid id, string name, string logo, Guid leagueId, Guid locationId)
+        public ClubToReturnDto(string name, string logo, Guid leagueId, Guid locationId)
         {
-            Id = id;
             Name = name;
             Logo = logo;
             LeagueId = leagueId;
             LocationId = locationId;
         }
-
     }
 }

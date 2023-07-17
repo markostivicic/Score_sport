@@ -41,13 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IClubService.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="ICountryService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ResultApp.Common\ResultApp.Common.csproj">
+      <Project>{ef19bbdd-d472-4ac2-8dc5-45b2965c2d7d}</Project>
+      <Name>ResultApp.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ResultApp.Model\ResultApp.Model.csproj">
-      <Project>{AC62E46C-4788-4F02-AECA-A22466BF63BD}</Project>
+      <Project>{ac62e46c-4788-4f02-aeca-a22466bf63bd}</Project>
       <Name>ResultApp.Model</Name>
     </ProjectReference>
   </ItemGroup>

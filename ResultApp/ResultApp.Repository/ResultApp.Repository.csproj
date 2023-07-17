@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CountryRepository.cs" />
+    <Compile Include="ClubRepository.cs" />
     <Compile Include="RepositoryModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -108,6 +109,10 @@
     <ProjectReference Include="..\ResultApp.Repository.Common\ResultApp.Repository.Common.csproj">
       <Project>{4B72054D-30AF-489F-91CC-2D8A6757F4BE}</Project>
       <Name>ResultApp.Repository.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ResultApp.Common\ResultApp.Common.csproj">
+      <Project>{ef19bbdd-d472-4ac2-8dc5-45b2965c2d7d}</Project>
+      <Name>ResultApp.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
