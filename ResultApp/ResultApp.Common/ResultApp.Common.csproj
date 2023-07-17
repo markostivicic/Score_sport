@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClubFilter.cs" />
+    <Compile Include="CommentFilter.cs" />
     <Compile Include="LeagueFilter.cs" />
     <Compile Include="Paging.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

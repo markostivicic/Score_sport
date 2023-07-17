@@ -92,6 +92,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommentRepository.cs" />
     <Compile Include="CountryRepository.cs" />
     <Compile Include="ClubRepository.cs" />
     <Compile Include="LeagueRepository.cs" />

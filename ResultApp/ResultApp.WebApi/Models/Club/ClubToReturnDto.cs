@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultApp.WebApi.Models.ClubModels
+namespace ResultApp.WebApi.Models.Club
 {
     public class ClubToReturnDto
     {

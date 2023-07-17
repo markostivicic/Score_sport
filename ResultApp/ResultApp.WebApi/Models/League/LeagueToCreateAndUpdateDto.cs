@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ResultApp.WebApi.Models.LeagueModels
+namespace ResultApp.WebApi.Models.League
 {
     public class LeagueToCreateAndUpdateDto
     {

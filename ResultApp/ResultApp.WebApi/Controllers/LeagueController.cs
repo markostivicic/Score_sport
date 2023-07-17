@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
-using ResultApp.WebApi.Models.LeagueModels;
+using ResultApp.WebApi.Models.League;
 using Microsoft.AspNet.Identity;
 
 namespace ResultApp.WebApi.Controllers

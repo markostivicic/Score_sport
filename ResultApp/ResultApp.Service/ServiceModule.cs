@@ -17,6 +17,7 @@ namespace ResultApp.Service
             builder.RegisterType<CountryService>().As<ICountryService>();
             builder.RegisterType<ClubService>().As<IClubService>();
             builder.RegisterType<LeagueService>().As<ILeagueService>();
+            builder.RegisterType<CommentService>().As<ICommentService>();
         }
     }
 }

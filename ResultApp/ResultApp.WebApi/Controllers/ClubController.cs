@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using ResultApp.Service.Common;
 using ResultApp.Model;
-using ResultApp.WebApi.Models.ClubModels;
+using ResultApp.WebApi.Models.Club;
 using ResultApp.Common;
 using Microsoft.AspNet.Identity;
 

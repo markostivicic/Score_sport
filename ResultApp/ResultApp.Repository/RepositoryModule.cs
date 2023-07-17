@@ -15,6 +15,7 @@ namespace ResultApp.Repository
             builder.RegisterType<CountryRepository>().As<ICountryRepository>();
             builder.RegisterType<ClubRepository>().As<IClubRepository>();
             builder.RegisterType<LeagueRepository>().As<ILeagueRepository>();
+            builder.RegisterType<CommentRepository>().As<ICommentRepository>();
         }
 
     }
