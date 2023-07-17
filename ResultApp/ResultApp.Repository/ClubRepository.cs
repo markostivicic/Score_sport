@@ -148,18 +148,17 @@ namespace ResultApp.Repository
                 command.Parameters.AddWithValue("@Id", id);
                 command.CommandText = queryBuilder.ToString();
 
-                using (connection)
-                {
-                    try
+            using (connection)
+            {
+                try
                     {
-                        connection.Open();
+                    connection.Open();
 
-                        affectedRows = await command.ExecuteNonQueryAsync();
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
+                    affectedRows = await command.ExecuteNonQueryAsync();
+                }
+                catch (Exception)
+                {
+                    throw;
                 }
             }
             return affectedRows;
