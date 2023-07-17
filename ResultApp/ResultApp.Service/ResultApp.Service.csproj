@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="CountryService.cs" />
     <Compile Include="ClubService.cs" />
+    <Compile Include="LeagueService.cs" />
     <Compile Include="ServiceModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -16,6 +16,7 @@ namespace ResultApp.Service
             builder.RegisterModule<RepositoryModule>();
             builder.RegisterType<CountryService>().As<ICountryService>();
             builder.RegisterType<ClubService>().As<IClubService>();
+            builder.RegisterType<LeagueService>().As<ILeagueService>();
         }
     }
 }

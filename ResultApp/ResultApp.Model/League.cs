@@ -13,5 +13,12 @@ namespace ResultApp.Model
         public Guid SportId { get; set; }
         public Guid CountryId { get; set; }
 
+        public League(Guid id, string name, Guid sportId, Guid countryId)
+        {
+            Id = id;
+            Name = name;
+            SportId = sportId;
+            CountryId = countryId;
+        }
     }
 }

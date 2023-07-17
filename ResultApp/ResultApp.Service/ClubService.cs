@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Praksa.Common;
 using ResultApp.Common;
 using ResultApp.Model;
 using ResultApp.Repository.Common;

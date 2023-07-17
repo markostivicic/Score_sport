@@ -11,6 +11,7 @@ using ResultApp.Common;
 
 namespace ResultApp.WebApi.Controllers
 {
+    [Authorize]
     public class ClubController : ApiController
     {
         private IClubService ClubService { get; }
@@ -52,17 +53,14 @@ namespace ResultApp.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<HttpResponseMessage> InsertClub([FromBody] ClubToCreateDto club)
+        public async Task<HttpResponseMessage> InsertClub([FromBody] ClubToCreateAndUpdateDto club)
         {
             if (club == null)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Club is null!");
             }
-            if (!ModelState.IsValid)
-            {
-                return Request.CreateResponse(HttpStatusCode.BadRequest, "Fields can't be empty!");
-            }
-            Club clubToInsert = new Club(Guid.NewGuid(), club.Name, club.Logo, club.LeagueId, club.LocationId);
+
+            Club clubToInsert = new Club(Guid.NewGuid(), club.Name, club.Logo, (Guid)club.LeagueId, (Guid)club.LocationId);
 
             int affectedRows = await ClubService.InsertAsync(clubToInsert);
 
@@ -74,7 +72,7 @@ namespace ResultApp.WebApi.Controllers
         }
 
         [HttpPut]
-        public async Task<HttpResponseMessage> UpdateClub(Guid id, [FromBody] ClubToUpdateDto club)
+        public async Task<HttpResponseMessage> UpdateClub(Guid id, [FromBody] ClubToCreateAndUpdateDto club)
         {
             if (id == null)
             {
@@ -90,8 +88,29 @@ namespace ResultApp.WebApi.Controllers
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Club with that id was not found!");
             }
+            string name = club.Name;
+            string logo = club.Logo;
+            Guid? leagueId = club.LeagueId;
+            Guid? locationId = club.LocationId;
+            if (name == null)
+            {
+                name = clubById.Name;
+            }
+            if (logo == null)
+            {
+                logo = clubById.Logo;
+            }
+            if (leagueId == null)
+            {
+                leagueId = clubById.LeagueId;
+            }
+            if (locationId == null)
+            {
+                locationId = clubById.LocationId;
+            }
 
-            Club clubToUpdate = new Club(id, club.Name, club.Logo, clubById.LeagueId, clubById.LocationId);
+
+            Club clubToUpdate = new Club(id, name, logo, (Guid)leagueId, (Guid)locationId);
 
             int affectedRows = await ClubService.UpdateAsync(id, clubToUpdate);
             if (affectedRows == 0)

@@ -94,6 +94,7 @@
   <ItemGroup>
     <Compile Include="CountryRepository.cs" />
     <Compile Include="ClubRepository.cs" />
+    <Compile Include="LeagueRepository.cs" />
     <Compile Include="RepositoryModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

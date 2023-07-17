@@ -13,6 +13,8 @@ namespace ResultApp.Repository
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<CountryRepository>().As<ICountryRepository>();
+            builder.RegisterType<ClubRepository>().As<IClubRepository>();
+            builder.RegisterType<LeagueRepository>().As<ILeagueRepository>();
         }
 
     }

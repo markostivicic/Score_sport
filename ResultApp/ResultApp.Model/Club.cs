@@ -23,5 +23,14 @@ namespace ResultApp.Model
             LocationId = locationId;
         }
 
+        public Club(Guid id, string name, string logo, Guid leagueId, Guid locationId, string createdByUserId) : base(createdByUserId)
+        {
+            Id = id;
+            Name = name;
+            Logo = logo;
+            LeagueId = leagueId;
+            LocationId = locationId;
+        }
+
     }
 }

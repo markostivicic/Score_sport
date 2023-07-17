@@ -1,52 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Npgsql;
+using ResultApp.Common;
 using ResultApp.Model;
+using ResultApp.Repository.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ResultApp.Repository.Common;
-using Npgsql;
-using ResultApp.Common;
 
 namespace ResultApp.Repository
 {
-    public class ClubRepository : IClubRepository
+    public class LeagueRepository : ILeagueRepository
     {
         private readonly string connStr = Environment.GetEnvironmentVariable("connStr", EnvironmentVariableTarget.User);
-        public async Task<List<Club>> GetAllAsync(ClubFilter filter)
+        public async Task<List<League>> GetAllAsync(LeagueFilter filter)
         {
-            List<Club> clubs = new List<Club>();
+            List<League> leagues = new List<League>();
 
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
 
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
 
-            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM \"Club\" ");
+            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM \"League\" ");
+
+            queryBuilder.Append("WHERE \"League\".\"IsActive\" = @IsActive ");
+            command.Parameters.AddWithValue("@IsActive", filter.IsActive);
 
             if (filter.SportId != null)
             {
-                queryBuilder.Append("INNER JOIN \"League\" on \"LeagueId\" = \"League\".\"Id\" WHERE \"SportId\" = @SportId ");
+                queryBuilder.Append("AND \"SportId\" = @SportId");
                 command.Parameters.AddWithValue("@SportId", filter.SportId);
-            }
-            if (filter.LeagueId != null && filter.SportId != null)
-            {
-                queryBuilder.Append("AND \"LeagueId\" = @LeagueId ");
-                command.Parameters.AddWithValue("@LeagueId", filter.LeagueId);
-            }
-            else if(filter.LeagueId != null)
-            {
-                queryBuilder.Append("WHERE \"LeagueId\" = @LeagueId ");
-                command.Parameters.AddWithValue("@LeagueId", filter.LeagueId);
-            }
-            if (filter.SportId != null || filter.LeagueId != null)
-            {
-                queryBuilder.Append("AND \"Club\".\"IsActive\" = @IsActive ");
-                command.Parameters.AddWithValue("@IsActive", filter.IsActive);
-            }
-            else
-            {
-                queryBuilder.Append("WHERE \"Club\".\"IsActive\" = @IsActive ");
-                command.Parameters.AddWithValue("@IsActive", filter.IsActive);
             }
 
             command.CommandText = queryBuilder.ToString();
@@ -64,10 +48,9 @@ namespace ResultApp.Repository
                         {
                             Guid id = (Guid)reader["Id"];
                             string name = (string)reader["Name"];
-                            string logo = (string)reader["Logo"];
-                            Guid leagueId = (Guid)reader["LeagueId"];
-                            Guid locationId = (Guid)reader["LocationId"];
-                            clubs.Add(new Club(id, name, logo, leagueId, locationId));
+                            Guid sportId = (Guid)reader["SportId"];
+                            Guid countryId = (Guid)reader["CountryId"];
+                            leagues.Add(new League(id, name, sportId, countryId));
                         }
                     }
                 }
@@ -77,29 +60,28 @@ namespace ResultApp.Repository
                 }
             }
 
-            return clubs;
+            return leagues;
         }
 
-        public async Task<Club> GetByIdAsync(Guid id)
+        public async Task<League> GetByIdAsync(Guid id)
         {
-            Club club = await GetClubByIdAsync(id);
-            return club;
+            League league = await GetLeagueByIdAsync(id);
+            return league;
         }
 
-        public async Task<int> InsertAsync(Club club)
+        public async Task<int> InsertAsync(League league)
         {
             int affectedRows;
 
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
 
             NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "INSERT INTO \"Club\" (\"Id\", \"Name\", \"Logo\", \"LeagueId\", \"LocationId\") VALUES (@Id, @Name, @Logo, @LeagueId, @LocationId)";
+            command.CommandText = "INSERT INTO \"League\" (\"Id\", \"Name\", \"SportId\", \"CountryId\") VALUES (@Id, @Name, @SportId, @CountryId)";
             command.Connection = connection;
-            command.Parameters.AddWithValue("@Id", club.Id);
-            command.Parameters.AddWithValue("@Name", club.Name);
-            command.Parameters.AddWithValue("@Logo", club.Logo);
-            command.Parameters.AddWithValue("@LeagueId", club.LeagueId);
-            command.Parameters.AddWithValue("@LocationId", club.LocationId);
+            command.Parameters.AddWithValue("@Id", league.Id);
+            command.Parameters.AddWithValue("@Name", league.Name);
+            command.Parameters.AddWithValue("@LeagueId", league.SportId);
+            command.Parameters.AddWithValue("@LocationId", league.CountryId);
 
             using (connection)
             {
@@ -117,7 +99,7 @@ namespace ResultApp.Repository
 
             return affectedRows;
         }
-        public async Task<int> UpdateAsync(Guid id, Club club)
+        public async Task<int> UpdateAsync(Guid id, League league)
         {
             int affectedRows = 0;
 
@@ -125,17 +107,17 @@ namespace ResultApp.Repository
 
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
-            command.CommandText = "UPDATE \"Club\" SET \"Name\" = @Name, \"Logo\" = @Logo, \"LeagueId\" = @LeagueId, \"LocationId\" = @LocationId WHERE \"Id\" = @Id";
+            command.CommandText = "UPDATE \"League\" SET \"Name\" = @Name, \"SportId\" = @SportId, \"CountryId\" = @CountryId WHERE \"Id\" = @Id";
 
-            command.Parameters.AddWithValue("@Name", club.Name);
-            command.Parameters.AddWithValue("@Logo", club.Logo);
-            command.Parameters.AddWithValue("@SportId", club.LeagueId);
-            command.Parameters.AddWithValue("@CountryId", club.LocationId);
+            command.Parameters.AddWithValue("@Name", league.Name);
+            command.Parameters.AddWithValue("@SportId", league.SportId);
+            command.Parameters.AddWithValue("@CountryId", league.CountryId);
+            command.Parameters.AddWithValue("@Id", id);
 
             using (connection)
             {
                 try
-                    {
+                {
                     connection.Open();
 
                     affectedRows = await command.ExecuteNonQueryAsync();
@@ -149,8 +131,8 @@ namespace ResultApp.Repository
         }
         public async Task<int> DeleteAsync(Guid id)
         {
-            Club clubToDelete = await GetClubByIdAsync(id);
-            if (clubToDelete == null)
+            League leagueToDelete = await GetLeagueByIdAsync(id);
+            if (leagueToDelete == null)
             {
                 return 0;
             }
@@ -160,7 +142,7 @@ namespace ResultApp.Repository
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
 
             NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "UPDATE \"Club\" SET \"IsActive\" = false WHERE \"Id\"=@Id";
+            command.CommandText = "UPDATE \"League\" SET \"IsActive\" = false WHERE \"Id\"=@Id";
             command.Connection = connection;
             command.Parameters.AddWithValue("@Id", id);
 
@@ -181,14 +163,14 @@ namespace ResultApp.Repository
             return affectedRows;
         }
 
-        private async Task<Club> GetClubByIdAsync(Guid id)
+        private async Task<League> GetLeagueByIdAsync(Guid id)
         {
-            Club club = null;
+            League league = null;
 
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
 
             NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "SELECT * FROM \"Club\" WHERE \"Id\"=@Id AND \"IsActive\"= true";
+            command.CommandText = "SELECT * FROM \"League\" WHERE \"Id\"=@Id AND \"IsActive\"= true";
             command.Parameters.AddWithValue("@Id", id);
             command.Connection = connection;
 
@@ -204,10 +186,9 @@ namespace ResultApp.Repository
                         while (reader.Read())
                         {
                             string name = (string)reader["Name"];
-                            string logo = (string)reader["Logo"];
-                            Guid leagueId = (Guid)reader["LeagueId"];
-                            Guid locationId = (Guid)reader["LocationId"];
-                            club = new Club(id, name, logo, leagueId, locationId);
+                            Guid sportId = (Guid)reader["SportId"];
+                            Guid countryId = (Guid)reader["CountryId"];
+                            league = new League(id, name, sportId, countryId);
                         }
                     }
                 }
@@ -217,7 +198,7 @@ namespace ResultApp.Repository
                 }
             }
 
-            return club;
+            return league;
         }
     }
 }
