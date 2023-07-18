@@ -278,7 +278,6 @@
     <Compile Include="Models\Comment\CommentToReturnDto.cs" />
     <Compile Include="Models\Country\CountryToCreateAndUpdateDto.cs" />
     <Compile Include="Models\Country\CountryToReturnDto.cs" />
-    <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Match\MatchToUpdateDto.cs" />
     <Compile Include="Models\Match\MatchToCreateDto.cs" />
     <Compile Include="Models\Match\MatchToReturnDto.cs" />
