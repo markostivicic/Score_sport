@@ -1,5 +1,4 @@
 ﻿using Npgsql;
-using Praksa.Common;
 using ResultApp.Common;
 using ResultApp.Model;
 using System;
@@ -94,7 +93,7 @@ namespace ResultApp.Repository
         public async Task<Location> GetByIdAsync(Guid id)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("SELECT * FROM \"Location\" WHERE \"Id\"= @id ", connection);
+            var command = new NpgsqlCommand("SELECT * FROM \"Location\" WHERE \"Id\"= @id AND \"IsActive\" = true", connection);
             using (connection)
             {
                 connection.Open();

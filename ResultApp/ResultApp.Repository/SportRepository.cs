@@ -1,13 +1,10 @@
 ﻿using Npgsql;
-using Praksa.Common;
 using ResultApp.Common;
 using ResultApp.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static ResultApp.Repository.SportRepository;
 
 namespace ResultApp.Repository
 {
@@ -30,22 +27,6 @@ namespace ResultApp.Repository
             {
                 sb.Append(" AND \"Name\" LIKE @Name");
                 command.Parameters.AddWithValue("@Name", "%" + sportFilter.Name + "%");
-            }
-            if (paging == null)
-            {
-                paging = new Paging()
-                {
-                    PageNumber = 1,
-                    PageSize = 10
-                };
-            }
-            if (paging.PageSize == 0)
-            {
-                paging.PageSize = 3;
-            }
-            if (paging.PageNumber == 0)
-            {
-                paging.PageNumber = 1;
             }
             if (string.IsNullOrWhiteSpace(sorting.OrderBy))
             {
@@ -88,7 +69,7 @@ namespace ResultApp.Repository
         public async Task<Sport> GetByIdAsync(Guid id)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("SELECT * FROM \"Sport\" WHERE \"Id\"= @id ", connection);
+            var command = new NpgsqlCommand("SELECT * FROM \"Sport\" WHERE \"Id\"= @id AND \"IsActive\" = true ", connection);
             using (connection)
             {
                 connection.Open();

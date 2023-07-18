@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.UI.WebControls.WebParts;
 using Microsoft.AspNet.Identity;
-using Praksa.Common;
 
 namespace ResultApp.WebApi.Controllers
 {
@@ -27,7 +26,7 @@ namespace ResultApp.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<HttpResponseMessage> GetAllLocationAsync([FromUri]Sorting sorting, [FromUri] Paging paging = null, [FromUri] LocationFilter locationFilter = null)
+        public async Task<HttpResponseMessage> GetAllLocationAsync([FromUri] Sorting sorting, [FromUri] Paging paging = null, [FromUri] LocationFilter locationFilter = null)
         {
             try
             {
@@ -53,12 +52,13 @@ namespace ResultApp.WebApi.Controllers
             try
             {
                 Location location = await _service.GetByIdAsync(id);
-                LocationToReturnDto locationToReturn = new LocationToReturnDto(location.Name, location.Address, location.CountryId);
+                //todo 
                 if (location != null)
                 {
+                    LocationToReturnDto locationToReturn = new LocationToReturnDto(location.Name, location.Address, location.CountryId);
                     return Request.CreateResponse(HttpStatusCode.OK, locationToReturn);
                 }
-                
+
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Location doesnt exist");
             }
             catch (Exception ex)

@@ -11,6 +11,10 @@ namespace ResultApp.Common
         public int PageSize { get; set; } = 3;
         public int PageNumber { get; set; } = 1;
 
+        public Paging()
+        {
+
+        }
         public Paging(int pageSize, int pageNumber)
         {
             PageSize = pageSize;

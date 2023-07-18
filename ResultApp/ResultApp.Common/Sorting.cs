@@ -11,6 +11,10 @@ namespace ResultApp.Common
         public string OrderBy { get; set; } = "Id";
         public string SortOrder { get; set; } = "ASC";
 
+        public Sorting()
+        {
+
+        }
         public Sorting(string orderBy, string sortOrder)
         {
             OrderBy = orderBy;

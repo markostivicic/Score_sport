@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.UI.WebControls.WebParts;
 using Microsoft.AspNet.Identity;
-using Praksa.Common;
 
 namespace ResultApp.WebApi.Controllers
 {
@@ -27,7 +26,7 @@ namespace ResultApp.WebApi.Controllers
         }
         // GET: api/Sport
         [HttpGet]
-        public async Task<HttpResponseMessage> GetAllSportAsync([FromUri]Sorting sorting, [FromUri] Paging paging, [FromUri] SportFilter sportFilter = null)
+        public async Task<HttpResponseMessage> GetAllSportAsync([FromUri]Sorting sorting = null, [FromUri] Paging paging = null, [FromUri] SportFilter sportFilter = null)
         {
             try
             {

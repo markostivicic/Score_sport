@@ -1,5 +1,4 @@
-﻿using Praksa.Common;
-using ResultApp.Common;
+﻿using ResultApp.Common;
 using ResultApp.Model;
 using System;
 using System.Collections.Generic;
