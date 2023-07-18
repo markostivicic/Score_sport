@@ -46,6 +46,7 @@
     <Compile Include="IClubRepository.cs" />
     <Compile Include="ICommentRepository.cs" />
     <Compile Include="ICountryRepository.cs" />
+    <Compile Include="IMatchRepository.cs" />
     <Compile Include="ILeagueRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

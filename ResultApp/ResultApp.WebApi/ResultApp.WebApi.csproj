@@ -264,6 +264,7 @@
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MatchController.cs" />
     <Compile Include="Controllers\LeagueController.cs" />
     <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\SportController.cs" />
@@ -285,6 +286,9 @@
     <Compile Include="Models\Country\CountryToCreateAndUpdateDto.cs" />
     <Compile Include="Models\Country\CountryToReturnDto.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\Match\MatchToUpdateDto.cs" />
+    <Compile Include="Models\Match\MatchToCreateDto.cs" />
+    <Compile Include="Models\Match\MatchToReturnDto.cs" />
     <Compile Include="Models\League\LeagueToCreateAndUpdateDto.cs" />
     <Compile Include="Models\League\LeagueToReturnDto.cs.cs" />
     <Compile Include="Models\LocationToCreateAndUpdateDto.cs" />

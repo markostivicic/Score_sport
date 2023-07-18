@@ -95,6 +95,7 @@
     <Compile Include="CommentRepository.cs" />
     <Compile Include="LocationRepository.cs" />
     <Compile Include="CountryRepository.cs" />
+    <Compile Include="MatchRepository.cs" />
     <Compile Include="ClubRepository.cs" />
     <Compile Include="LeagueRepository.cs" />
     <Compile Include="RepositoryModule.cs" />

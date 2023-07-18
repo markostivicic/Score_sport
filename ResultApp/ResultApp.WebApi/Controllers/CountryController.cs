@@ -20,17 +20,17 @@ namespace ResultApp.WebApi.Controllers
         {
             return countries.Select(country => new CountryToReturnDto(country.Id,country.Name));
         }
-        private readonly ICountryService _countryRepository;
-        public CountryController(ICountryService countryRepository)
+        private readonly ICountryService _countryService;
+        public CountryController(ICountryService countryService)
         {
-            _countryRepository = countryRepository;
+            _countryService = countryService;
         }
         // GET: api/Country
         public async Task<HttpResponseMessage> Get()
         {
             try
             {
-                List<Country> countries = await _countryRepository.GetAllAsync();
+                List<Country> countries = await _countryService.GetAllAsync();
                 return Request.CreateResponse(HttpStatusCode.OK, MapCountryToCountryToReturn(countries));
             }
             catch (Exception ex)
@@ -45,7 +45,7 @@ namespace ResultApp.WebApi.Controllers
         {
             try
             {
-                Country country = await _countryRepository.GetByIdAsync(id);
+                Country country = await _countryService.GetByIdAsync(id);
                 if (country != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, MapCountryToCountryToReturn(new List<Country> { country}).First());
@@ -65,7 +65,7 @@ namespace ResultApp.WebApi.Controllers
             try
             {
                 Country mappedCountry = new Country(Guid.NewGuid(), country.Name, User.Identity.GetUserId());
-                Country newCountry = await _countryRepository.CreateAsync(mappedCountry);
+                Country newCountry = await _countryService.CreateAsync(mappedCountry);
                 if (newCountry != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, MapCountryToCountryToReturn(new List<Country>{ newCountry }).First());
@@ -84,14 +84,14 @@ namespace ResultApp.WebApi.Controllers
         {
             try
             {
-                Country countryInDatabase = await _countryRepository.GetByIdAsync(id);
+                Country countryInDatabase = await _countryService.GetByIdAsync(id);
                 if (country.Name.IsNullOrWhiteSpace() || countryInDatabase == null)
                 {
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
                 }
 
                 Country mappedCountry = new Country(id, country.Name, User.Identity.GetUserId(), DateTime.Now);
-                Country updatedCountry = await _countryRepository.UpdateAsync(id, mappedCountry);
+                Country updatedCountry = await _countryService.UpdateAsync(id, mappedCountry);
                 if (updatedCountry != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, MapCountryToCountryToReturn(new List<Country> { updatedCountry }).First());
@@ -109,7 +109,7 @@ namespace ResultApp.WebApi.Controllers
         {
             try
             {
-                bool isSuccess = await _countryRepository.DeleteAsync(id);
+                bool isSuccess = await _countryService.DeleteAsync(id);
                 if (isSuccess)
                 {
                     return Request.CreateResponse(HttpStatusCode.NoContent);

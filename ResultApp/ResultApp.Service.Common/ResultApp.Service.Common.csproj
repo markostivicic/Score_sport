@@ -44,6 +44,7 @@
     <Compile Include="IClubService.cs" />
     <Compile Include="ICommentService.cs" />
     <Compile Include="ICountryService.cs" />
+    <Compile Include="IMatchService.cs" />
     <Compile Include="ILeagueService.cs" />
     <Compile Include="ILocationService.cs" />
     <Compile Include="ISportService.cs" />

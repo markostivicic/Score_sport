@@ -27,14 +27,14 @@ namespace ResultApp.Service
             return await _countryRepository.GetByIdAsync(id);
         }
 
-        public async Task<Country> CreateAsync(Country product)
+        public async Task<Country> CreateAsync(Country country)
         {
-            return await _countryRepository.CreateAsync(product);
+            return await _countryRepository.CreateAsync(country);
         }
 
-        public async Task<Country> UpdateAsync(Guid id, Country product)
+        public async Task<Country> UpdateAsync(Guid id, Country country)
         {
-            return await _countryRepository.UpdateAsync(id, product);
+            return await _countryRepository.UpdateAsync(id, country);
         }
 
         public async Task<bool> DeleteAsync(Guid id)

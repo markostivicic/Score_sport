@@ -15,6 +15,7 @@ namespace ResultApp.Repository
             builder.RegisterType<SportRepository>().As<ISportRepository>();
             builder.RegisterType<LocationRepository>().As<ILocationRepository>();
             builder.RegisterType<CountryRepository>().As<ICountryRepository>();
+            builder.RegisterType<MatchRepository>().As<IMatchRepository>();
             builder.RegisterType<ClubRepository>().As<IClubRepository>();
             builder.RegisterType<LeagueRepository>().As<ILeagueRepository>();
             builder.RegisterType<CommentRepository>().As<ICommentRepository>();
