@@ -45,6 +45,8 @@
     <Compile Include="ICommentService.cs" />
     <Compile Include="ICountryService.cs" />
     <Compile Include="ILeagueService.cs" />
+    <Compile Include="ILocationService.cs" />
+    <Compile Include="ISportService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
