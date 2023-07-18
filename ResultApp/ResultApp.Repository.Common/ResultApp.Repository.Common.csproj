@@ -41,7 +41,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IFavouriteClubRepository.cs" />
     <Compile Include="ILocationRepository.cs" />
+    <Compile Include="IPlayerRepository.cs" />
     <Compile Include="ISportRepository.cs" />
     <Compile Include="IClubRepository.cs" />
     <Compile Include="ICommentRepository.cs" />
@@ -59,6 +61,9 @@
       <Project>{AC62E46C-4788-4F02-AECA-A22466BF63BD}</Project>
       <Name>ResultApp.Model</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

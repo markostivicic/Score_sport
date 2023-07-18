@@ -45,8 +45,10 @@
     <Compile Include="ICommentService.cs" />
     <Compile Include="ICountryService.cs" />
     <Compile Include="IMatchService.cs" />
+    <Compile Include="IFavouriteClubService.cs" />
     <Compile Include="ILeagueService.cs" />
     <Compile Include="ILocationService.cs" />
+    <Compile Include="IPlayerService.cs" />
     <Compile Include="ISportService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -59,6 +61,9 @@
       <Project>{ac62e46c-4788-4f02-aeca-a22466bf63bd}</Project>
       <Name>ResultApp.Model</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

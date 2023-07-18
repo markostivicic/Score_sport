@@ -10,6 +10,24 @@ namespace ResultApp.Model
     {
         public Guid Id { get; set; }
         public Guid ClubId { get; set; }
-        public Guid UserId { get; set; }
+
+        public FavouriteClub(Guid id, Guid clubId) 
+        {
+            Id = id;
+            ClubId = clubId;
+        }
+        public FavouriteClub(Guid id, Guid clubId, string createdByUserId) : base(createdByUserId)
+        {
+            Id = id;
+            ClubId = clubId;
+        }
+
+        public FavouriteClub(Guid id, Guid clubId, string updatedByUserId, DateTime dateUpdated) : base(updatedByUserId, dateUpdated)
+        {
+            Id = id;
+            ClubId = clubId;
+        }
+
+
     }
 }
