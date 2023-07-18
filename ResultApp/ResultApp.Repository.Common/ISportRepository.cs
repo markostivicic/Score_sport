@@ -1,4 +1,5 @@
-﻿using ResultApp.Common;
+﻿using Praksa.Common;
+using ResultApp.Common;
 using ResultApp.Model;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace ResultApp.Repository
     {
         Task<Sport> CreateAsync(Sport sport);
         Task<bool> DeleteAsync(Guid id);
-        Task<List<Sport>> GetAllAsync(SportFilter sportFilter = null);
+        Task<PageList<Sport>> GetAllAsync(Sorting sorting = null, Paging paging = null, SportFilter sportFilter = null);
         Task<Sport> GetByIdAsync(Guid id);
         Task<Sport> UpdateAsync(Guid id, Sport sport);
     }

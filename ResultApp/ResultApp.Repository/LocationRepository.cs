@@ -1,4 +1,5 @@
 ﻿using Npgsql;
+using Praksa.Common;
 using ResultApp.Common;
 using ResultApp.Model;
 using System;
@@ -12,12 +13,17 @@ namespace ResultApp.Repository
     public class LocationRepository : ILocationRepository
     {
         private string connStr = Environment.GetEnvironmentVariable("connStr", EnvironmentVariableTarget.User);
-        public async Task<List<Location>> GetAllAsync(LocationFilter locationFilter)
+        public async Task<PageList<Location>> GetAllAsync(Sorting sorting, Paging paging = null, LocationFilter locationFilter = null)
         {
             var connection = new NpgsqlConnection(connStr);
             var command = new NpgsqlCommand();
             command.Connection = connection;
-            StringBuilder sb = new StringBuilder("SELECT * FROM \"Location\" WHERE \"IsActive\" = @IsActive");
+            StringBuilder sb = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Location\" WHERE 1=1");
+            if (locationFilter.IsActive != null)
+            {
+                sb.Append(" AND \"IsActive\" = @IsActive");
+                command.Parameters.AddWithValue("@IsActive", locationFilter.IsActive);
+            }
             if (locationFilter.CountryId != null)
             {
                 sb.Append(" AND \"CountryId\" = @CountryId");
@@ -34,15 +40,40 @@ namespace ResultApp.Repository
                 command.Parameters.AddWithValue("@Address", "%" + locationFilter.Address + "%");
             }
 
-
+            if (paging == null)
+            {
+                paging = new Paging()
+                {
+                    PageNumber = 1,
+                    PageSize = 10
+                };
+            }
+            if (paging.PageSize == 0)
+            {
+                paging.PageSize = 10;
+            }
+            if (paging.PageNumber == 0)
+            {
+                paging.PageNumber = 1;
+            }
+            if (string.IsNullOrWhiteSpace(sorting.OrderBy))
+            {
+                sorting.OrderBy = "ASC";
+            }
+            if (string.IsNullOrWhiteSpace(sorting.SortOrder))
+            {
+                sorting.SortOrder = "Id";
+            }
+            sb.Append($" ORDER BY \"{sorting.OrderBy}\" {sorting.SortOrder}");
+            sb.Append(" LIMIT @pageSize OFFSET @offset");
             command.CommandText = sb.ToString();
             List<Location> locations = new List<Location>();
+            int totalCount = 0;
             using (connection)
             {
                 connection.Open();
-                
-                
-                command.Parameters.AddWithValue("@IsActive", locationFilter.IsActive);
+                command.Parameters.AddWithValue("@pageSize", paging.PageSize);
+                command.Parameters.AddWithValue("@offset", (paging.PageNumber - 1) * paging.PageSize);
                 var reader = await command.ExecuteReaderAsync();
                 while (reader.Read() && reader.HasRows)
                 {
@@ -54,10 +85,11 @@ namespace ResultApp.Repository
                         );
 
                     locations.Add(location);
+                    totalCount = Convert.ToInt32(reader["TotalCount"]);
 
                 }
             }
-            return locations;
+            return new PageList<Location>(locations, totalCount);
         }
         public async Task<Location> GetByIdAsync(Guid id)
         {
@@ -85,7 +117,7 @@ namespace ResultApp.Repository
         public async Task<Location> CreateAsync(Location location)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("INSERT INTO \"Location\" (\"Id\", \"Name\", \"Address\") VALUES (@id, @name, @address)", connection);
+            var command = new NpgsqlCommand("INSERT INTO \"Location\" (\"Id\", \"Name\", \"Address\", \"CountryId\", \"CreatedByUserId\") VALUES (@id, @name, @address, @countryId, @user)", connection);
             using (connection)
             {
                 connection.Open();
@@ -93,6 +125,8 @@ namespace ResultApp.Repository
                 command.Parameters.AddWithValue("@id", newId);
                 command.Parameters.AddWithValue("@name", location.Name);
                 command.Parameters.AddWithValue("@address", location.Address);
+                command.Parameters.AddWithValue("@countryId", location.CountryId);
+                command.Parameters.AddWithValue("@user", location.CreatedByUserId);
                 int affected = await command.ExecuteNonQueryAsync();
                 if (affected > 0)
                 {
@@ -110,13 +144,16 @@ namespace ResultApp.Repository
         public async Task<Location> UpdateAsync(Guid id, Location location)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("UPDATE \"Location\" SET \"Name\" = @name, \"Address\" = @address WHERE \"Id\" = @id", connection);
+            var command = new NpgsqlCommand("UPDATE \"Location\" SET \"Name\" = @name, \"Address\" = @address, \"CountryId\" = @countryId, \"UpdatedByUserId\" = @user, \"DateUpdated\" = @date WHERE \"Id\" = @id", connection);
             using (connection)
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@id", id);
                 command.Parameters.AddWithValue("@name", location.Name);
                 command.Parameters.AddWithValue("@address", location.Address);
+                command.Parameters.AddWithValue("@countryId", location.CountryId);
+                command.Parameters.AddWithValue("@user", location.UpdatedByUserId);
+                command.Parameters.AddWithValue("@date", location.DateUpdated);
                 int affected = await command.ExecuteNonQueryAsync();
                 if (affected > 0)
                 {

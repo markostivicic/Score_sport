@@ -9,9 +9,9 @@ namespace ResultApp.WebApi.Models
     {
         public string Name { get; set; }
         public string Address { get; set; }
-        public Guid CountryId { get; set; }
+        public Guid? CountryId { get; set; }
 
-        public LocationToCreateAndUpdateDto(string name, string address, Guid countryId)
+        public LocationToCreateAndUpdateDto(string name, string address, Guid? countryId)
         {
             Name = name;
             Address = address;

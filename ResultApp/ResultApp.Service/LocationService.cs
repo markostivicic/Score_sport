@@ -1,4 +1,5 @@
-﻿using ResultApp.Common;
+﻿using Praksa.Common;
+using ResultApp.Common;
 using ResultApp.Model;
 using ResultApp.Repository;
 using System;
@@ -17,9 +18,9 @@ namespace ResultApp.Service
         {
             _repository = repository;
         }
-        public async Task<List<Location>> GetAllAsync(LocationFilter locationFilter)
+        public async Task<PageList<Location>> GetAllAsync(Sorting sorting, Paging paging, LocationFilter locationFilter)
         {
-            return await _repository.GetAllAsync(locationFilter);
+            return await _repository.GetAllAsync(sorting, paging, locationFilter);
         }
 
         public async Task<Location> GetByIdAsync(Guid id)

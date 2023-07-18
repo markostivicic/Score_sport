@@ -16,5 +16,17 @@ namespace ResultApp.Model
             Id = id;
             Name = name;
         }
+
+        public Sport(Guid id, string name,string createdByUserId) : base(createdByUserId)
+        {
+            Id = id;
+            Name = name;
+        }
+
+        public Sport(Guid id, string name, string updatedByUserId, DateTime dateUpdated) : base(updatedByUserId, dateUpdated) 
+        {
+            Id = id;
+            Name = name;
+        }
     }
 }

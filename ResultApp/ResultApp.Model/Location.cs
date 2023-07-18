@@ -19,5 +19,21 @@ namespace ResultApp.Model
             Address = address;
             CountryId = countryId;
         }
+
+        public Location(Guid id, string name, string address, Guid countryId, string createdByUserId) : base(createdByUserId)
+        {
+            Id = id;
+            Name = name;
+            Address = address;
+            CountryId = countryId;
+        }
+
+        public Location(Guid id, string name, string address, Guid countryId, string updatedByUserId, DateTime dateUpdated) : base(updatedByUserId, dateUpdated)
+        {
+            Id = id;
+            Name = name;
+            Address = address;
+            CountryId = countryId;
+        }
     }
 }

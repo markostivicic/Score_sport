@@ -7,17 +7,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Web.Mvc;
-using HttpDeleteAttribute = System.Web.Http.HttpDeleteAttribute;
-using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
-using HttpPostAttribute = System.Web.Http.HttpPostAttribute;
-using HttpPutAttribute = System.Web.Http.HttpPutAttribute;
-using RouteAttribute = System.Web.Http.RouteAttribute;
+using System.Web.UI.WebControls.WebParts;
+using Microsoft.AspNet.Identity;
+using Praksa.Common;
 
 namespace ResultApp.WebApi.Controllers
 {
+    [Authorize]
     public class SportController : ApiController
     {
         private ISportService _service;
@@ -28,17 +27,17 @@ namespace ResultApp.WebApi.Controllers
         }
         // GET: api/Sport
         [HttpGet]
-        public async Task<HttpResponseMessage> GetAllSportAsync([FromUri] SportFilter sportFilter = null)
+        public async Task<HttpResponseMessage> GetAllSportAsync([FromUri]Sorting sorting, [FromUri] Paging paging, [FromUri] SportFilter sportFilter = null)
         {
             try
             {
-                List<Sport> sports = await _service.GetAllAsync(sportFilter);
-                List<SportToReturnDto> sportToReturns = new List<SportToReturnDto>();
-                foreach (Sport sport in sports)
+                PageList<Sport> sports = await _service.GetAllAsync(sorting, paging, sportFilter);
+                List<SportToReturnDto> sportToReturnDtos = new List<SportToReturnDto>();
+                foreach (var sport in sports.Items)
                 {
-                    sportToReturns.Add(new SportToReturnDto(sport.Name));
+                    sportToReturnDtos.Add(new SportToReturnDto(sport.Name));
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, sportToReturns);
+                return Request.CreateResponse(HttpStatusCode.OK, new PageList<SportToReturnDto>(sportToReturnDtos, sports.TotalCount));
             }
             catch (Exception ex)
             {
@@ -73,7 +72,7 @@ namespace ResultApp.WebApi.Controllers
         {
             try
             {
-                Sport mappedSport = new Sport(Guid.NewGuid(), sportToCreateAndUpdateDto.Name);
+                Sport mappedSport = new Sport(Guid.NewGuid(), sportToCreateAndUpdateDto.Name, User.Identity.GetUserId());
                 Sport newSport = await _service.CreateAsync(mappedSport);
                 if (newSport != null)
                 {
@@ -99,7 +98,8 @@ namespace ResultApp.WebApi.Controllers
                     return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
                 }
                 if (sportToCreateAndUpdateDto.Name != null) sportInDatabase.Name = sportToCreateAndUpdateDto.Name;
-                Sport updatedSport = await _service.UpdateAsync(id, sportInDatabase);
+                Sport sportToUpdate = new Sport(id, sportInDatabase.Name, User.Identity.GetUserId(), DateTime.Now);
+                Sport updatedSport = await _service.UpdateAsync(id, sportToUpdate);
                 if (updatedSport != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new SportToReturnDto(updatedSport.Name));

@@ -11,9 +11,12 @@ using System.Reflection.Emit;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.UI.WebControls.WebParts;
+using Microsoft.AspNet.Identity;
+using Praksa.Common;
 
 namespace ResultApp.WebApi.Controllers
 {
+    [Authorize]
     public class LocationController : ApiController
     {
         private ILocationService _service;
@@ -24,17 +27,17 @@ namespace ResultApp.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<HttpResponseMessage> GetAllLocationAsync([FromUri] LocationFilter locationFilter = null)
+        public async Task<HttpResponseMessage> GetAllLocationAsync([FromUri]Sorting sorting, [FromUri] Paging paging = null, [FromUri] LocationFilter locationFilter = null)
         {
             try
             {
-                List<Location> locations = await _service.GetAllAsync(locationFilter);
-                List<LocationToReturnDto> locationToReturns = new List<LocationToReturnDto>();
-                foreach (Location location in locations)
+                PageList<Location> locations = await _service.GetAllAsync(sorting, paging, locationFilter);
+                List<LocationToReturnDto> locationToReturnDtos = new List<LocationToReturnDto>();
+                foreach (var location in locations.Items)
                 {
-                    locationToReturns.Add(new LocationToReturnDto(location.Name, location.Address, location.CountryId));
+                    locationToReturnDtos.Add(new LocationToReturnDto(location.Name, location.Address, location.CountryId));
                 }
-                return Request.CreateResponse(HttpStatusCode.OK, locationToReturns);
+                return Request.CreateResponse(HttpStatusCode.OK, new PageList<LocationToReturnDto>(locationToReturnDtos, locations.TotalCount));
             }
             catch (Exception ex)
             {
@@ -50,11 +53,12 @@ namespace ResultApp.WebApi.Controllers
             try
             {
                 Location location = await _service.GetByIdAsync(id);
+                LocationToReturnDto locationToReturn = new LocationToReturnDto(location.Name, location.Address, location.CountryId);
                 if (location != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, location);
+                    return Request.CreateResponse(HttpStatusCode.OK, locationToReturn);
                 }
-                LocationToReturnDto locationToReturn = new LocationToReturnDto(location.Name, location.Address, location.CountryId);
+                
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "Location doesnt exist");
             }
             catch (Exception ex)
@@ -69,7 +73,7 @@ namespace ResultApp.WebApi.Controllers
         {
             try
             {
-                Location mappedLocation = new Location(Guid.NewGuid(), locationToCreateAndUpdateDto.Name, locationToCreateAndUpdateDto.Address, locationToCreateAndUpdateDto.CountryId);
+                Location mappedLocation = new Location(Guid.NewGuid(), locationToCreateAndUpdateDto.Name, locationToCreateAndUpdateDto.Address, (Guid)locationToCreateAndUpdateDto.CountryId, User.Identity.GetUserId());
                 Location newLocation = await _service.CreateAsync(mappedLocation);
                 if (newLocation != null)
                 {
@@ -96,7 +100,9 @@ namespace ResultApp.WebApi.Controllers
                 }
                 if (locationToCreateAndUpdateDto.Name != null) locationInDatabase.Name = locationToCreateAndUpdateDto.Name;
                 if (locationToCreateAndUpdateDto.Address != null) locationInDatabase.Address = locationToCreateAndUpdateDto.Address;
-                Location updatedLocation = await _service.UpdateAsync(id, locationInDatabase);
+                if (locationToCreateAndUpdateDto.CountryId != null) locationInDatabase.CountryId = (Guid)locationToCreateAndUpdateDto.CountryId;
+                Location locationToUpdate = new Location(id, locationInDatabase.Name, locationInDatabase.Address, locationInDatabase.CountryId, User.Identity.GetUserId(), DateTime.Now);
+                Location updatedLocation = await _service.UpdateAsync(id, locationToUpdate);
                 if (updatedLocation != null)
                 {
                     return Request.CreateResponse(HttpStatusCode.OK, new LocationToReturnDto(updatedLocation.Name, updatedLocation.Address, updatedLocation.CountryId));

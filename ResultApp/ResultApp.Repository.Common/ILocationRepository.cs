@@ -1,4 +1,5 @@
-﻿using ResultApp.Common;
+﻿using Praksa.Common;
+using ResultApp.Common;
 using ResultApp.Model;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace ResultApp.Repository
     {
         Task<Location> CreateAsync(Location location);
         Task<bool> DeleteAsync(Guid id);
-        Task<List<Location>> GetAllAsync(LocationFilter locationFilter = null);
+        Task<PageList<Location>> GetAllAsync(Sorting sorting = null, Paging paging = null, LocationFilter locationFilter = null);
         Task<Location> GetByIdAsync(Guid id);
         Task<Location> UpdateAsync(Guid id, Location location);
     }
