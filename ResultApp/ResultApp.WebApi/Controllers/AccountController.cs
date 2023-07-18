@@ -13,9 +13,12 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
-using ResultApp.WebApi.Models;
+using ResultApp.Model;
+using ResultApp.Model.Auth.AccountViewModels;
+using ResultApp.Model.Auth.AccountBindingModels;
 using ResultApp.WebApi.Providers;
 using ResultApp.WebApi.Results;
+using ResultApp.Service;
 
 namespace ResultApp.WebApi.Controllers
 {
@@ -24,38 +27,22 @@ namespace ResultApp.WebApi.Controllers
     public class AccountController : ApiController
     {
         private const string LocalLoginProvider = "Local";
-        private ApplicationUserManager _userManager;
-        private ApplicationRoleManager _roleManager;
-
-       
-
-        public AccountController()
+        public AccountController(UserService userService, RoleService roleService)
         {
-           
+           UserManager = userService;
+           RoleManager = roleService;
         }
 
-        public ApplicationUserManager UserManager
+        public UserService UserManager
         {
-            get
-            {
-                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
+            get;
+            set;
         }
 
-        public ApplicationRoleManager RoleManager
+        public RoleService RoleManager
         {
-            get
-            {
-                return _roleManager ?? Request.GetOwinContext().Get<ApplicationRoleManager>();
-            }
-            private set
-            {
-                _roleManager = value;
-            }
+            get;
+            set;
         }
 
         public ISecureDataFormat<AuthenticationTicket> AccessTokenFormat { get; private set; }
@@ -363,45 +350,12 @@ namespace ResultApp.WebApi.Controllers
             return Ok();
         }
 
-        // POST api/Account/RegisterExternal
-        [OverrideAuthentication]
-        [HostAuthentication(DefaultAuthenticationTypes.ExternalBearer)]
-        [Route("RegisterExternal")]
-        public async Task<IHttpActionResult> RegisterExternal(RegisterExternalBindingModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var info = await Authentication.GetExternalLoginInfoAsync();
-            if (info == null)
-            {
-                return InternalServerError();
-            }
-
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
-
-            IdentityResult result = await UserManager.CreateAsync(user);
-            if (!result.Succeeded)
-            {
-                return GetErrorResult(result);
-            }
-
-            result = await UserManager.AddLoginAsync(user.Id, info.Login);
-            if (!result.Succeeded)
-            {
-                return GetErrorResult(result); 
-            }
-            return Ok();
-        }
-
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _userManager != null)
+            if (disposing && UserManager != null)
             {
-                _userManager.Dispose();
-                _userManager = null;
+                UserManager.Dispose();
+                UserManager = null;
             }
 
             base.Dispose(disposing);

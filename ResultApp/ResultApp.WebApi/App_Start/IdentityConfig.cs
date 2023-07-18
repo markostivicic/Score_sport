@@ -3,7 +3,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
-using ResultApp.WebApi.Models;
+using ResultApp.Model;
+using ResultApp.Model.Auth;
 
 namespace ResultApp.WebApi
 {
