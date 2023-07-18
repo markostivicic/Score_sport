@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ILocationRepository.cs" />
+    <Compile Include="ISportRepository.cs" />
     <Compile Include="IClubRepository.cs" />
     <Compile Include="ICommentRepository.cs" />
     <Compile Include="ICountryRepository.cs" />

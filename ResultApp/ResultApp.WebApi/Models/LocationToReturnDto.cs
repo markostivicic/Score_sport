@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
-namespace ResultApp.Model
+namespace ResultApp.WebApi.Models
 {
-    public class Location : Base
+    public class LocationToReturnDto
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public Guid CountryId { get; set; }
-        public Location(Guid id, string name, string address, Guid countryId) 
+
+        public LocationToReturnDto(string name, string address, Guid countryId)
         {
-            Id = id;
             Name = name;
             Address = address;
             CountryId = countryId;

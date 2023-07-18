@@ -14,6 +14,8 @@ namespace ResultApp.Service
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterModule<RepositoryModule>();
+            builder.RegisterType<SportService>().As<ISportService>();
+            builder.RegisterType<LocationService>().As<ILocationService>();
             builder.RegisterType<CountryService>().As<ICountryService>();
             builder.RegisterType<ClubService>().As<IClubService>();
             builder.RegisterType<LeagueService>().As<ILeagueService>();
