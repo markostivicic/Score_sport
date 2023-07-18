@@ -287,8 +287,6 @@
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\League\LeagueToCreateAndUpdateDto.cs" />
     <Compile Include="Models\League\LeagueToReturnDto.cs.cs" />
-    <Compile Include="Models\LeagueModels\LeagueToCreateAndUpdateDto.cs" />
-    <Compile Include="Models\LeagueModels\LeagueToReturnDto.cs.cs" />
     <Compile Include="Models\LocationToCreateAndUpdateDto.cs" />
     <Compile Include="Models\LocationToReturnDto.cs" />
     <Compile Include="Models\SportToCreateAndUpdateDto.cs" />
