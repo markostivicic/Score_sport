@@ -15,7 +15,7 @@ namespace ResultApp.WebApi.Models.Match
         public Guid ClubHomeId { get; set; }
         public Guid ClubAwayId { get; set; }
 
-        public MatchToReturnDto(Guid id, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId, int? homeScore, int? awayScore)
+        public MatchToReturnDto(Guid id, int? homeScore, int? awayScore, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId)
         {
             Id = id;
             HomeScore = homeScore;

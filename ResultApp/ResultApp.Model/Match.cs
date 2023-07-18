@@ -25,15 +25,6 @@ namespace ResultApp.Model
             ClubAwayId = clubAwayId;
         }
 
-        public Match(Guid id, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId, string createdByUserId) : base(createdByUserId)
-        {
-            Id = id;
-            Time = time;
-            LocationId = locationId;
-            ClubHomeId = clubHomeId;
-            ClubAwayId = clubAwayId;
-        }
-
         public Match(Guid id, int? homeScore, int? awayScore, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId)
         {
             Id = id;
@@ -45,18 +36,16 @@ namespace ResultApp.Model
             ClubAwayId = clubAwayId;
         }
 
-        public Match(Guid id, int homeScore, int awayScore, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId, string createdByUserId) : base(createdByUserId)
+        public Match(Guid id, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId, string createdByUserId) : base(createdByUserId)
         {
             Id = id;
-            HomeScore = homeScore;
-            AwayScore = awayScore;
             Time = time;
             LocationId = locationId;
             ClubHomeId = clubHomeId;
             ClubAwayId = clubAwayId;
-        }
+        }      
 
-        public Match(Guid id, int homeScore, int awayScore, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId,
+        public Match(Guid id, int? homeScore, int? awayScore, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId,
             string updatedByUserId, DateTime dateUpdated) : base(updatedByUserId, dateUpdated)
         {
             Id = id;

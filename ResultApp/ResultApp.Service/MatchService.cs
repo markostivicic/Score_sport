@@ -5,7 +5,7 @@ using ResultApp.Service.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using ResultApp.Common;
 using System.Threading.Tasks;
 
 namespace ResultApp.Service
@@ -17,9 +17,9 @@ namespace ResultApp.Service
         {
             _matchRepository = matchRepository;
         }
-        public async Task<List<Match>> GetAllAsync()
+        public async Task<PageList<Match>> GetAllAsync(Sorting sorting, Paging paging, MatchFilter filter)
         {
-            return await _matchRepository.GetAllAsync();
+            return await _matchRepository.GetAllAsync(sorting, paging, filter);
         }
 
         public async Task<Match> GetByIdAsync(Guid id)

@@ -1,9 +1,7 @@
-﻿using Microsoft.Ajax.Utilities;
-using Microsoft.AspNet.Identity;
+﻿using Microsoft.AspNet.Identity;
+using ResultApp.Common;
 using ResultApp.Model;
-using ResultApp.Service;
 using ResultApp.Service.Common;
-using ResultApp.WebApi.Models.Country;
 using ResultApp.WebApi.Models.Match;
 using System;
 using System.Collections.Generic;
@@ -20,8 +18,8 @@ namespace ResultApp.WebApi.Controllers
     {
         private static IEnumerable<MatchToReturnDto> MapMatchToMatchToReturn(List<Match> matches)
         {
-            return matches.Select(match => new MatchToReturnDto(match.Id, match.Time,
-                match.LocationId, match.ClubHomeId, match.ClubAwayId, match.HomeScore, match.AwayScore));
+            return matches.Select(match => new MatchToReturnDto(match.Id, match.HomeScore, match.AwayScore, match.Time,
+                match.LocationId, match.ClubHomeId, match.ClubAwayId));
         }
 
         private readonly IMatchService _matchService;
@@ -30,22 +28,30 @@ namespace ResultApp.WebApi.Controllers
             _matchService = matchService;
         }
         // GET: api/Match
-        public async Task<HttpResponseMessage> Get()
+        public async Task<HttpResponseMessage> Get(string orderBy = "Time", string sortOrder = "ASC", int pageSize = 3, int pageNumber = 1, Guid? clubId = null, DateTime? time = null, Guid? leagueId = null, Guid? sportId = null, bool isFinished = true, bool isActive = true)
         {
-            //try
-            //{
-                List<Match> matches = await _matchService.GetAllAsync();
-                return Request.CreateResponse(HttpStatusCode.OK, MapMatchToMatchToReturn(matches));
-            //}
-            /*catch (Exception ex)
+            Sorting sorting = new Sorting(orderBy, sortOrder);
+            Paging paging = new Paging(pageSize, pageNumber);
+            MatchFilter filter = new MatchFilter(clubId, time, leagueId, sportId, isFinished, isActive);
+            try
+            {
+                PageList<Match> matches = await _matchService.GetAllAsync(sorting, paging, filter);
+                List<MatchToReturnDto> results = new List<MatchToReturnDto>();
+                foreach (var match in matches.Items)
+                {
+                    results.Add(new MatchToReturnDto(match.Id, match.HomeScore, match.AwayScore, match.Time, match.LocationId, match.ClubHomeId, match.ClubAwayId));
+                }
+                return Request.CreateResponse(HttpStatusCode.OK, new PageList<MatchToReturnDto>(results, matches.TotalCount));
+        }
+            catch (Exception ex)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
-            }*/
+            }
 
         }
 
-        // GET: api/Match/5
-        public async Task<HttpResponseMessage> Get(Guid id)
+    // GET: api/Match/5
+    public async Task<HttpResponseMessage> Get(Guid id)
         {
             try
             {
@@ -58,7 +64,7 @@ namespace ResultApp.WebApi.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "Something went wrong");
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
 
         }
@@ -121,12 +127,12 @@ namespace ResultApp.WebApi.Controllers
                 {
                     clubHomeId = matchInDatabase.ClubHomeId;
                 }
-                if (clubHomeId == null)
+                if (clubAwayId == null)
                 {
-                    clubHomeId = matchInDatabase.ClubHomeId;
+                    clubAwayId = matchInDatabase.ClubAwayId;
                 }
 
-                Match mappedMatch = new Match(id, (int)homeScore, (int)awayScore, (DateTime)time, (Guid)locationId,
+                Match mappedMatch = new Match(id, homeScore, awayScore, (DateTime)time, (Guid)locationId,
                     (Guid)clubHomeId, (Guid)clubAwayId, User.Identity.GetUserId(), DateTime.Now);
                 Match updatedMatch = await _matchService.UpdateAsync(id, mappedMatch);
 
@@ -138,7 +144,7 @@ namespace ResultApp.WebApi.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "Something went wrong");
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
 
@@ -156,7 +162,7 @@ namespace ResultApp.WebApi.Controllers
             }
             catch (Exception ex)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "Something went wrong");
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
     }
