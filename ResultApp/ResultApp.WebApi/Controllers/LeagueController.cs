@@ -41,11 +41,6 @@ namespace ResultApp.WebApi.Controllers
         public async Task<HttpResponseMessage> GetAllLeaguesAsync([FromUri] Sorting sorting, [FromUri] Paging paging, [FromUri] LeagueFilter leagueFilter)
         {
             PageList<League> leagues = await LeagueService.GetAllAsync(sorting, paging, leagueFilter);
-            if (leagues.Items.Count <= 0)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No leagues found.");
-            }
-
             List<LeagueToReturnDto> leagueViews = new List<LeagueToReturnDto>();
             foreach (var league in leagues.Items)
             {

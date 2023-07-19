@@ -31,11 +31,6 @@ namespace ResultApp.WebApi.Controllers
         public async Task<HttpResponseMessage> GetAllCommentsAsync([FromUri] Sorting sorting, [FromUri] Paging paging, [FromUri] CommentFilter commentFilter)
         {
             PageList<Comment> comments = await CommentService.GetAllAsync(sorting, paging, commentFilter);
-            if (comments.Items.Count <= 0)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No comments found.");
-            }
-
             List<CommentToReturnDto> commentViews = new List<CommentToReturnDto>();
             foreach (var comment in comments.Items)
             {

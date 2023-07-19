@@ -42,11 +42,6 @@ namespace ResultApp.WebApi.Controllers
         public async Task<HttpResponseMessage> GetAllClubsAsync([FromUri] Sorting sorting = null, [FromUri] Paging paging = null, [FromUri] ClubFilter clubFilter = null)
         {
             PageList<Club> clubs = await ClubService.GetAllAsync(sorting, paging, clubFilter);
-            if (clubs.Items.Count <= 0)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No clubs found.");
-            }
-
             List<ClubToReturnDto> clubViews = new List<ClubToReturnDto>();
             foreach (var club in clubs.Items)
             {

@@ -42,11 +42,6 @@ namespace ResultApp.WebApi.Controllers
         {
 
             PageList<Player> players = await PlayerService.GetPlayersAsync(sorting, paging, playerFilter);
-            if (players.TotalCount <= 0)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No players found.");
-            }
-
             List<PlayerToReturnDto> playerViews = new List<PlayerToReturnDto>();
             foreach (var player in players.Items)
             {

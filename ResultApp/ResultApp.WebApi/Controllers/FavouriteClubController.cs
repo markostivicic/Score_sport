@@ -37,11 +37,6 @@ namespace ResultApp.WebApi.Controllers
         public async Task<HttpResponseMessage> GetAllFavouriteClubsAsync([FromUri] Sorting sorting, [FromUri] Paging paging, [FromUri] FavouriteClubFilter favouriteClubFilter)
         {
             PageList<FavouriteClub> favouriteClubs = await FavouriteClubService.GetAllFavouriteClubsAsync(sorting, paging, favouriteClubFilter);
-            if (favouriteClubs.TotalCount <= 0)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No favourite clubs found.");
-            }
-
             List<FavouriteClubToReturnDto> favouriteClubViews = new List<FavouriteClubToReturnDto>();
             foreach (var favouriteClub in favouriteClubs.Items)
             {
