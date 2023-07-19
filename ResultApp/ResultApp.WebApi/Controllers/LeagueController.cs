@@ -8,11 +8,14 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web.Http;
 using ResultApp.WebApi.Models.League;
+using ResultApp.WebApi.Models.Country;
+using ResultApp.WebApi.Models.Sport;
 using Microsoft.AspNet.Identity;
+using Autofac.Core;
+using System.Web.UI.WebControls.WebParts;
 
 namespace ResultApp.WebApi.Controllers
 {
-    [Authorize]
     public class LeagueController : ApiController
     {
         private ILeagueService LeagueService { get; }
@@ -22,27 +25,38 @@ namespace ResultApp.WebApi.Controllers
             LeagueService = leagueService;
         }
 
-        [HttpGet]
-        public async Task<HttpResponseMessage> GetAllLeagues(Guid? sportId = null, bool isActive = true)
+        [NonAction]
+        public CountryToReturnDto MapCountryToCountryToReturnDto(Country country)
         {
-            LeagueFilter filter = new LeagueFilter(sportId, isActive);
+            return new CountryToReturnDto(country.Id, country.Name);
+        }
+        [NonAction]
+        public SportToReturnDto MapSportToSportToReturnDto(Sport sport)
+        {
+            return new SportToReturnDto(sport.Id, sport.Name);
+        }
 
-            List<League> leagues = await LeagueService.GetAllAsync(filter);
-            if (leagues.Count <= 0)
+        [Authorize(Roles = "User,Admin")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetAllLeaguesAsync([FromUri] Sorting sorting, [FromUri] Paging paging, [FromUri] LeagueFilter leagueFilter)
+        {
+            PageList<League> leagues = await LeagueService.GetAllAsync(sorting, paging, leagueFilter);
+            if (leagues.Items.Count <= 0)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No leagues found.");
             }
 
             List<LeagueToReturnDto> leagueViews = new List<LeagueToReturnDto>();
-            foreach (var league in leagues)
+            foreach (var league in leagues.Items)
             {
-                leagueViews.Add(new LeagueToReturnDto(league.Name, league.SportId, league.CountryId));
+                leagueViews.Add(new LeagueToReturnDto(league.Id, league.Name, league.SportId, league.CountryId, MapCountryToCountryToReturnDto(league.Country), MapSportToSportToReturnDto(league.Sport)));
             }
-            return Request.CreateResponse(HttpStatusCode.OK, leagueViews);
+            return Request.CreateResponse(HttpStatusCode.OK, new PageList<LeagueToReturnDto>(leagueViews, leagues.TotalCount));
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetLeagueById(Guid id)
+        public async Task<HttpResponseMessage> GetLeagueByIdAsync(Guid id)
         {
             League league = await LeagueService.GetByIdAsync(id);
             if (league == null)
@@ -50,11 +64,12 @@ namespace ResultApp.WebApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound, "League with that ID was not found!");
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new LeagueToReturnDto(league.Name, league.SportId, league.CountryId));
+            return Request.CreateResponse(HttpStatusCode.OK, new LeagueToReturnDto(league.Id, league.Name, league.SportId, league.CountryId, MapCountryToCountryToReturnDto(league.Country), MapSportToSportToReturnDto(league.Sport)));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<HttpResponseMessage> InsertLeague([FromBody] LeagueToCreateAndUpdateDto league)
+        public async Task<HttpResponseMessage> InsertLeagueAsync([FromBody] LeagueToCreateAndUpdateDto league)
         {
             if (league == null)
             {
@@ -72,8 +87,9 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "League was not inserted!");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
-        public async Task<HttpResponseMessage> UpdateLeague(Guid id, [FromBody] LeagueToCreateAndUpdateDto league)
+        public async Task<HttpResponseMessage> UpdateLeagueAsync(Guid id, [FromBody] LeagueToCreateAndUpdateDto league)
         {
             if (id == null)
             {
@@ -119,21 +135,24 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "League was not updated!");
         }
 
-        [HttpDelete]
-        public async Task<HttpResponseMessage> DeleteLeague(Guid id)
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("api/league/toggle/{id}")]
+        public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {
-            if (id == null)
+            try
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Id is null!");
+                bool isSuccess = await LeagueService.ToggleActivateAsync(id);
+                if (isSuccess)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, "League status changed");
+                }
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
-
-            int affectedRows = await LeagueService.DeleteAsync(id);
-
-            if (affectedRows > 0)
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, $"League was deleted. Affected rows: {affectedRows}");
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "League was not deleted!");
         }
     }
 }

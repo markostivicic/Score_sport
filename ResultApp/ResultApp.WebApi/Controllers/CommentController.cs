@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using Microsoft.AspNet.Identity;
+using Autofac.Core;
 
 namespace ResultApp.WebApi.Controllers
 {
@@ -25,27 +26,27 @@ namespace ResultApp.WebApi.Controllers
             CommentService = commentService;
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetAllComments(Guid? matchId = null, Guid? userId = null, bool isActive = true)
+        public async Task<HttpResponseMessage> GetAllCommentsAsync([FromUri] Sorting sorting, [FromUri] Paging paging, [FromUri] CommentFilter commentFilter)
         {
-            CommentFilter filter = new CommentFilter(matchId, userId, isActive);
-
-            List<Comment> comments = await CommentService.GetAllAsync(filter);
-            if (comments.Count <= 0)
+            PageList<Comment> comments = await CommentService.GetAllAsync(sorting, paging, commentFilter);
+            if (comments.Items.Count <= 0)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No comments found.");
             }
 
             List<CommentToReturnDto> commentViews = new List<CommentToReturnDto>();
-            foreach (var comment in comments)
+            foreach (var comment in comments.Items)
             {
                 commentViews.Add(new CommentToReturnDto(comment.Text, comment.MatchId, comment.CreatedByUserId, new UserToReturnDto(comment.CreatedByUserId, comment.User.UserName)));
             }
             return Request.CreateResponse(HttpStatusCode.OK, commentViews);
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetCommentById(Guid id)
+        public async Task<HttpResponseMessage> GetCommentByIdAsync(Guid id)
         {
             Comment comment = await CommentService.GetByIdAsync(id);
             if (comment == null)
@@ -56,8 +57,9 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new CommentToReturnDto(comment.Text, comment.MatchId, comment.CreatedByUserId, new UserToReturnDto(comment.CreatedByUserId, comment.User.UserName)));
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpPost]
-        public async Task<HttpResponseMessage> InsertComment([FromBody] CommentToCreateAndUpdateDto comment)
+        public async Task<HttpResponseMessage> InsertCommentAsync([FromBody] CommentToCreateAndUpdateDto comment)
         {
             if (comment == null)
             {
@@ -75,8 +77,9 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Comment was not inserted!");
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpPut]
-        public async Task<HttpResponseMessage> UpdateComment(Guid id, [FromBody] CommentToCreateAndUpdateDto comment)
+        public async Task<HttpResponseMessage> UpdateCommentAsync(Guid id, [FromBody] CommentToCreateAndUpdateDto comment)
         {
             if (id == null)
             {
@@ -117,21 +120,24 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Comment was not updated!");
         }
 
-        [HttpDelete]
-        public async Task<HttpResponseMessage> DeleteComment(Guid id)
+        [Authorize(Roles = "User,Admin")]
+        [HttpPut]
+        [Route("api/comment/toggle/{id}")]
+        public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {
-            if (id == null)
+            try
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Id is null!");
+                bool isSuccess = await CommentService.ToggleActivateAsync(id);
+                if (isSuccess)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, "Sport status changed");
+                }
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
-
-            int affectedRows = await CommentService.DeleteAsync(id);
-
-            if (affectedRows > 0)
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, $"Comment was deleted. Affected rows: {affectedRows}");
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Comment was not deleted!");
         }
     }
 }

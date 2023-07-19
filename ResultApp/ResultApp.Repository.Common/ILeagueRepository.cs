@@ -8,10 +8,10 @@ namespace ResultApp.Repository.Common
 {
     public interface ILeagueRepository
     {
-        Task<List<League>> GetAllAsync(LeagueFilter filter);
+        Task<PageList<League>> GetAllAsync(Sorting sorting, Paging paging, LeagueFilter leagueFilter);
         Task<League> GetByIdAsync(Guid id);
         Task<int> InsertAsync(League league);
         Task<int> UpdateAsync(Guid id, League league);
-        Task<int> DeleteAsync(Guid id);
+        Task<bool> ToggleActivateAsync(Guid id);
     }
 }

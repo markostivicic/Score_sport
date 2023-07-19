@@ -37,9 +37,9 @@ namespace ResultApp.Service
             return await _repository.UpdateAsync(id, sport);
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
-            return await _repository.DeleteAsync(id);
+            return await _repository.ToggleActivateAsync(id);
         }
     }
 }

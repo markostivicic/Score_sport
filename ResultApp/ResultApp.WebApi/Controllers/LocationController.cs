@@ -1,7 +1,7 @@
 ﻿using ResultApp.Common;
 using ResultApp.Model;
 using ResultApp.Service;
-using ResultApp.WebApi.Models;
+using ResultApp.WebApi.Models.Location;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +25,7 @@ namespace ResultApp.WebApi.Controllers
             _service = service;
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
         public async Task<HttpResponseMessage> GetAllLocationAsync([FromUri] Sorting sorting, [FromUri] Paging paging = null, [FromUri] LocationFilter locationFilter = null)
         {
@@ -44,7 +45,7 @@ namespace ResultApp.WebApi.Controllers
             }
 
         }
-
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
         [Route("api/location/{id}")]
         public async Task<HttpResponseMessage> GetLocationAsync(Guid id)
@@ -52,7 +53,6 @@ namespace ResultApp.WebApi.Controllers
             try
             {
                 Location location = await _service.GetByIdAsync(id);
-                //todo 
                 if (location != null)
                 {
                     LocationToReturnDto locationToReturn = new LocationToReturnDto(location.Name, location.Address, location.CountryId, new CountryToReturnDto(location.CountryId, location.Country.Name));
@@ -68,6 +68,7 @@ namespace ResultApp.WebApi.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<HttpResponseMessage> CreateLocationAsync([FromBody] LocationToCreateAndUpdateDto locationToCreateAndUpdateDto)
         {
@@ -87,6 +88,7 @@ namespace ResultApp.WebApi.Controllers
             }
 
         }
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("api/location/{id}")]
         public async Task<HttpResponseMessage> UpdateLocationAsync(Guid id, [FromBody] LocationToCreateAndUpdateDto locationToCreateAndUpdateDto)
@@ -114,16 +116,18 @@ namespace ResultApp.WebApi.Controllers
                 return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
         }
-        [HttpDelete]
-        [Route("api/location/{id}")]
-        public async Task<HttpResponseMessage> DeleteLocationCustomer(Guid id)
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("api/location/toggle/{id}")]
+        public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {
             try
             {
-                bool isSuccess = await _service.DeleteAsync(id);
+                bool isSuccess = await _service.ToggleActivateAsync(id);
                 if (isSuccess)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, "Location delete");
+                    return Request.CreateResponse(HttpStatusCode.OK, "Location status changed");
                 }
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }

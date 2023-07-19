@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ResultApp.Model
 {
-    public class Location : Base
+    public class Location : Base, ILocation
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

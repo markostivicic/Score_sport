@@ -1,4 +1,5 @@
-﻿using ResultApp.Model;
+﻿using ResultApp.Common;
+using ResultApp.Model;
 using ResultApp.Repository;
 using ResultApp.Repository.Common;
 using ResultApp.Service.Common;
@@ -17,9 +18,9 @@ namespace ResultApp.Service
         {
             _countryRepository = countryRepository;
         }
-        public async Task<List<Country>> GetAllAsync()
+        public async Task<PageList<Country>> GetAllAsync(Sorting sorting, Paging paging)
         {
-            return await _countryRepository.GetAllAsync();
+            return await _countryRepository.GetAllAsync(sorting, paging);
         }
 
         public async Task<Country> GetByIdAsync(Guid id)
@@ -37,9 +38,9 @@ namespace ResultApp.Service
             return await _countryRepository.UpdateAsync(id, country);
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
-            return await _countryRepository.DeleteAsync(id);
+            return await _countryRepository.ToggleActivateAsync(id);
         }
     }
 }

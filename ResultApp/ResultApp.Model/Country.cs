@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ResultApp.Model
 {
-    public class Country : Base
+    public class Country : Base, ICountry
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public Country(Guid id, string name) 
+        public Country(Guid id, string name)
         {
             Id = id;
             Name = name;

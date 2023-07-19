@@ -15,7 +15,7 @@ namespace ResultApp.Repository
 
         private string connStr = Environment.GetEnvironmentVariable("connStr", EnvironmentVariableTarget.User);
 
-        public async Task<PageList<Match>> GetAllAsync(Sorting sorting, Paging paging, MatchFilter filter)
+        public async Task<PageList<Match>> GetAllAsync(Sorting sorting, Paging paging, MatchFilter matchFilter)
         {
             List<Match> matches = new List<Match>();
             int totalCount = 0;
@@ -24,40 +24,40 @@ namespace ResultApp.Repository
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
 
-            StringBuilder queryBuilder = new StringBuilder("SELECT *, COUNT(*) OVER() AS TotalCount FROM \"Match\" INNER JOIN \"Club\" on \"ClubHomeId\" = \"Club\".\"Id\" INNER JOIN \"League\" on \"LeagueId\" = \"League\".\"Id\" ");
+            StringBuilder queryBuilder = new StringBuilder("SELECT *, COUNT(*) OVER() AS TotalCount FROM \"Match\" INNER JOIN \"Location\" on \"LocationId\" = \"Location\".\"Id\" INNER JOIN \"Club\" clubHome on \"ClubHomeId\" = clubHome.\"Id\" INNER JOIN \"Club\" clubAway on \"ClubAwayId\" = clubAway.\"Id\" INNER JOIN \"League\" on clubAway.\"LeagueId\" = \"League\".\"Id\" ");
             queryBuilder.Append("WHERE \"Match\".\"IsActive\" = @IsActive ");
-            command.Parameters.AddWithValue("@IsActive", filter.IsActive);
+            command.Parameters.AddWithValue("@IsActive", matchFilter.IsActive);
 
-            if(filter.IsFinished == false)
+            if(matchFilter.IsFinished == false)
             {
                 queryBuilder.Append($"AND \"HomeScore\" IS NULL AND \"AwayScore\" IS NULL ");
             }
-            else if(filter.IsFinished == true)
+            else if(matchFilter.IsFinished == true)
             {
                 queryBuilder.Append($"AND \"HomeScore\" IS NOT NULL AND \"AwayScore\" IS NOT NULL ");
             }
-            if (filter.ClubId != null)
+            if (matchFilter.ClubId != null)
             {
                 queryBuilder.Append("AND \"ClubHomeId\" = @ClubId OR \"ClubAwayId\" = @ClubId ");
-                command.Parameters.AddWithValue("@ClubId", filter.ClubId);
+                command.Parameters.AddWithValue("@ClubId", matchFilter.ClubId);
             }
-            if (filter.Time != null)
+            if (matchFilter.Time != null)
             {
                 queryBuilder.Append("AND CAST(\"Time\" AS DATE) = CAST(@Time AS DATE) ");
-                command.Parameters.AddWithValue("@Time", filter.Time);
+                command.Parameters.AddWithValue("@Time", matchFilter.Time);
             }
-            if (filter.LeagueId != null)
+            if (matchFilter.LeagueId != null)
             {
                 queryBuilder.Append("AND \"LeagueId\" = @LeagueId ");
-                command.Parameters.AddWithValue("@LeagueId", filter.LeagueId);
+                command.Parameters.AddWithValue("@LeagueId", matchFilter.LeagueId);
             }
-            if (filter.SportId != null)
+            if (matchFilter.SportId != null)
             {
                 queryBuilder.Append("AND \"SportId\"= @SportId ");
-                command.Parameters.AddWithValue("@SportId", filter.SportId);
+                command.Parameters.AddWithValue("@SportId", matchFilter.SportId);
             }
 
-            queryBuilder.Append($"ORDER BY \"{sorting.OrderBy}\" {sorting.SortOrder}");
+            queryBuilder.Append($"ORDER BY \"Match\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
             queryBuilder.Append(" LIMIT @PageSize OFFSET @Offset");
             command.Parameters.AddWithValue("@PageSize", paging.PageSize);
             command.Parameters.AddWithValue("@Offset", paging.PageNumber * paging.PageSize - paging.PageSize);
@@ -71,13 +71,33 @@ namespace ResultApp.Repository
                     while (reader.HasRows && reader.Read())
                     {
                         Match match = new Match(
-                            (Guid)reader["Id"],
+                            (Guid)reader[0],
                             reader.GetFieldValue<int?>(reader.GetOrdinal("HomeScore")),
                             reader.GetFieldValue<int?>(reader.GetOrdinal("AwayScore")),
                             (DateTime)reader["Time"],
                             (Guid)reader["LocationId"],
                             (Guid)reader["ClubHomeId"],
-                            (Guid)reader["ClubAwayId"]
+                            (Guid)reader["ClubAwayId"],
+                            new Location(
+                                (Guid)reader["LocationId"],
+                                (string)reader[13],
+                                (string)reader["Address"],
+                                (Guid)reader["CountryId"]
+                                ),
+                            new Club(
+                                (Guid)reader["ClubHomeId"],
+                                (string)reader[22],
+                                (string)reader[23],
+                                (Guid)reader["LeagueId"],
+                                (Guid)reader["LocationId"]
+                                ),
+                            new Club(
+                                (Guid)reader["ClubAwayId"],
+                                (string)reader[32],
+                                (string)reader[33],
+                                (Guid)reader["LeagueId"],
+                                (Guid)reader["LocationId"]
+                                )
                             );
                         matches.Add(match);
                     totalCount = reader.GetInt32(reader.GetOrdinal("TotalCount"));
@@ -90,7 +110,7 @@ namespace ResultApp.Repository
         public async Task<Match> GetByIdAsync(Guid id)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("SELECT * FROM \"Match\" WHERE \"Id\"= @id AND \"IsActive\" = TRUE ", connection);
+            var command = new NpgsqlCommand("SELECT * FROM \"Match\" INNER JOIN \"Location\" on \"LocationId\" = \"Location\".\"Id\" INNER JOIN \"Club\" clubHome on \"ClubHomeId\" = clubHome.\"Id\" INNER JOIN \"Club\" clubAway on \"ClubAwayId\" = clubAway.\"Id\" INNER JOIN \"League\" on clubAway.\"LeagueId\" = \"League\".\"Id\" WHERE \"Match\".\"Id\"= @id AND \"Match\".\"IsActive\" = TRUE ", connection);
             using (connection)
             {
                 connection.Open();
@@ -100,14 +120,34 @@ namespace ResultApp.Repository
                 if (reader.Read())
                 {
                     Match match = new Match(
-                        (Guid)reader["Id"],
-                        reader.GetFieldValue<int?>(reader.GetOrdinal("HomeScore")),
-                        reader.GetFieldValue<int?>(reader.GetOrdinal("AwayScore")),
-                        (DateTime)reader["Time"],
-                        (Guid)reader["LocationId"],
-                        (Guid)reader["ClubHomeId"],
-                        (Guid)reader["ClubAwayId"]
-                        );
+                            (Guid)reader[0],
+                            reader.GetFieldValue<int?>(reader.GetOrdinal("HomeScore")),
+                            reader.GetFieldValue<int?>(reader.GetOrdinal("AwayScore")),
+                            (DateTime)reader["Time"],
+                            (Guid)reader["LocationId"],
+                            (Guid)reader["ClubHomeId"],
+                            (Guid)reader["ClubAwayId"],
+                            new Location(
+                                (Guid)reader["LocationId"],
+                                (string)reader[13],
+                                (string)reader["Address"],
+                                (Guid)reader["CountryId"]
+                                ),
+                            new Club(
+                                (Guid)reader["ClubHomeId"],
+                                (string)reader[22],
+                                (string)reader[23],
+                                (Guid)reader["LeagueId"],
+                                (Guid)reader["LocationId"]
+                                ),
+                            new Club(
+                                (Guid)reader["ClubAwayId"],
+                                (string)reader[32],
+                                (string)reader[33],
+                                (Guid)reader["LeagueId"],
+                                (Guid)reader["LocationId"]
+                                )
+                            );
                     return match;
                 }
                 return null;
@@ -175,16 +215,15 @@ namespace ResultApp.Repository
             }
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("UPDATE \"Match\" SET \"IsActive\" = FALSE  WHERE \"Id\" = @id ", connection);
+            var command = new NpgsqlCommand("UPDATE \"Match\" SET \"IsActive\" = NOT \"IsActive\" WHERE \"Id\"=@Id", connection);
             using (connection)
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@id", id);
                 int affected = await command.ExecuteNonQueryAsync();
-
                 if (affected > 0)
                 {
                     return true;

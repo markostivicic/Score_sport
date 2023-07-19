@@ -1,4 +1,5 @@
 ﻿using Npgsql;
+using ResultApp.Common;
 using ResultApp.Model;
 using ResultApp.Repository.Common;
 using System;
@@ -13,11 +14,15 @@ namespace ResultApp.Repository
     {
         private string connStr = Environment.GetEnvironmentVariable("connStr", EnvironmentVariableTarget.User);
 
-        public async Task<List<Country>> GetAllAsync()
+        public async Task<PageList<Country>> GetAllAsync(Sorting sorting, Paging paging)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("SELECT * FROM \"Country\" WHERE \"IsActive\" = TRUE", connection);
+            var command = new NpgsqlCommand($"SELECT *, COUNT(*) OVER() as TotalCount FROM \"Country\" WHERE \"IsActive\" = TRUE ORDER BY \"{sorting.OrderBy}\" {sorting.SortOrder} LIMIT @PageSize OFFSET @Offset", connection);
+            command.Parameters.AddWithValue("@PageSize", paging.PageSize);
+            command.Parameters.AddWithValue("@Offset", paging.PageNumber * paging.PageSize - paging.PageSize);
+
             List<Country> countries = new List<Country>();
+            int totalCount = 0;
             using (connection)
             {
                 connection.Open();
@@ -29,9 +34,10 @@ namespace ResultApp.Repository
                         (string)reader["Name"]
                         );
                     countries.Add(product);
+                    totalCount = Convert.ToInt32(reader["TotalCount"]);
                 }
             }
-            return countries;
+            return new PageList<Country>(countries, totalCount);
         }
 
         public async Task<Country> GetByIdAsync(Guid id)
@@ -105,16 +111,15 @@ namespace ResultApp.Repository
             }
         }
 
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("UPDATE \"Country\" SET \"IsActive\" = FALSE  WHERE \"Id\" = @id ", connection);
+            var command = new NpgsqlCommand("UPDATE \"Country\" SET \"IsActive\" = NOT \"IsActive\" WHERE \"Id\"=@Id", connection);
             using (connection)
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@id", id);
                 int affected = await command.ExecuteNonQueryAsync();
-
                 if (affected > 0)
                 {
                     return true;

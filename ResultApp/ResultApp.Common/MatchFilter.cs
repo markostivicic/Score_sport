@@ -12,17 +12,8 @@ namespace ResultApp.Common
         public DateTime? Time { get; set; }
         public Guid? LeagueId { get; set; }
         public Guid? SportId { get; set; }
-        public bool IsFinished { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsFinished { get; set; } = false;
+        public bool IsActive { get; set; } = true;
         
-        public MatchFilter(Guid? clubId, DateTime? time, Guid? leagueId, Guid? sportId, bool isFinished, bool isActive)
-        {
-            ClubId = clubId;
-            Time = time;
-            LeagueId = leagueId;
-            SportId = sportId;
-            IsFinished = isFinished;
-            IsActive = isActive;
-        }
     }
 }

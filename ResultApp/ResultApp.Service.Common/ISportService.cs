@@ -9,7 +9,7 @@ namespace ResultApp.Service
     public interface ISportService
     {
         Task<Sport> CreateAsync(Sport sport);
-        Task<bool> DeleteAsync(Guid id);
+        Task<bool> ToggleActivateAsync(Guid id);
         Task<PageList<Sport>> GetAllAsync(Sorting sorting, Paging paging, SportFilter sportFilter);
         Task<Sport> GetByIdAsync(Guid id);
         Task<Sport> UpdateAsync(Guid id, Sport sport);

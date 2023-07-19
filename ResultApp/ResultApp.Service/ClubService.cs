@@ -17,9 +17,9 @@ namespace ResultApp.Service
             ClubRepository = clubRepository;
         }
 
-        public async Task<List<Club>> GetAllAsync(ClubFilter filter)
+        public async Task<PageList<Club>> GetAllAsync(Sorting sorting, Paging paging, ClubFilter clubFilter)
         {
-            return await ClubRepository.GetAllAsync(filter);
+            return await ClubRepository.GetAllAsync(sorting, paging, clubFilter);
         }
         public async Task<Club> GetByIdAsync(Guid id)
         {
@@ -33,9 +33,9 @@ namespace ResultApp.Service
         {
             return await ClubRepository.UpdateAsync(id, club);
         }
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
-            return await ClubRepository.DeleteAsync(id);
+            return await ClubRepository.ToggleActivateAsync(id);
         }
     }
 }

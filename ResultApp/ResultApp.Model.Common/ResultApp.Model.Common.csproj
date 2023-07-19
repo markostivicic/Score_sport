@@ -41,6 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IClub.cs" />
+    <Compile Include="IComment.cs" />
+    <Compile Include="ICountry.cs" />
+    <Compile Include="ILeague.cs" />
+    <Compile Include="ILocation.cs" />
+    <Compile Include="IMatch.cs" />
+    <Compile Include="ISport.cs" />
     <Compile Include="IFavouriteClub.cs" />
     <Compile Include="IPlayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

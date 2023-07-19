@@ -10,7 +10,7 @@ namespace ResultApp.Common
     {
         public string Name { get; set; }
         public string Address { get; set; }
-        public bool? IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
         public Guid? CountryId { get; set; }
 
     }

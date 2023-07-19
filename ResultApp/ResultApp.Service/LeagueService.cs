@@ -17,9 +17,9 @@ namespace ResultApp.Service
             LeagueRepository = leagueRepository;
         }
 
-        public async Task<List<League>> GetAllAsync(LeagueFilter filter)
+        public async Task<PageList<League>> GetAllAsync(Sorting sorting, Paging paging, LeagueFilter leagueFilter)
         {
-            return await LeagueRepository.GetAllAsync(filter);
+            return await LeagueRepository.GetAllAsync(sorting, paging, leagueFilter);
         }
         public async Task<League> GetByIdAsync(Guid id)
         {
@@ -33,9 +33,9 @@ namespace ResultApp.Service
         {
             return await LeagueRepository.UpdateAsync(id, league);
         }
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
-            return await LeagueRepository.DeleteAsync(id);
+            return await LeagueRepository.ToggleActivateAsync(id);
         }
     }
 }

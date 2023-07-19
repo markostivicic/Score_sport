@@ -12,30 +12,20 @@ namespace ResultApp.Repository
     {
 
         private string connStr = Environment.GetEnvironmentVariable("connStr", EnvironmentVariableTarget.User);
-        public async Task<PageList<Sport>> GetAllAsync(Sorting sorting = null, Paging paging = null,SportFilter sportFilter = null)
+        public async Task<PageList<Sport>> GetAllAsync(Sorting sorting, Paging paging,SportFilter sportFilter)
         {
             var connection = new NpgsqlConnection(connStr);
             var command = new NpgsqlCommand();
             command.Connection = connection;
-            StringBuilder sb = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Sport\" WHERE 1=1");
-            if (sportFilter.IsActive != null)
-            {
-                sb.Append(" AND \"IsActive\" = @IsActive");
-                command.Parameters.AddWithValue("@IsActive", sportFilter.IsActive);
-            }
+            StringBuilder sb = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Sport\" WHERE \"IsActive\" = @IsActive");
+            command.Parameters.AddWithValue("@IsActive", sportFilter.IsActive);
+
             if (!string.IsNullOrEmpty(sportFilter.Name))
             {
-                sb.Append(" AND \"Name\" LIKE @Name");
-                command.Parameters.AddWithValue("@Name", "%" + sportFilter.Name + "%");
+                sb.Append(" AND LOWER(\"Name\") LIKE @Name");
+                command.Parameters.AddWithValue("@Name", "%" + sportFilter.Name.ToLower() + "%");
             }
-            if (string.IsNullOrWhiteSpace(sorting.OrderBy))
-            {
-                sorting.OrderBy = "ASC";
-            }
-            if (string.IsNullOrWhiteSpace(sorting.SortOrder))
-            {
-                sorting.SortOrder = "Id";
-            }
+
             sb.Append($" ORDER BY \"{sorting.OrderBy}\" {sorting.SortOrder}");
             sb.Append(" LIMIT @pageSize OFFSET @offset");
             command.CommandText = sb.ToString();
@@ -128,10 +118,10 @@ namespace ResultApp.Repository
                 return null;
             }
         }
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("UPDATE \"Sport\" SET \"IsActive\" = false WHERE \"Id\"=@Id", connection);
+            var command = new NpgsqlCommand("UPDATE \"Sport\" SET \"IsActive\" = NOT \"IsActive\" WHERE \"Id\"=@Id", connection);
             using (connection)
             {
                 connection.Open();

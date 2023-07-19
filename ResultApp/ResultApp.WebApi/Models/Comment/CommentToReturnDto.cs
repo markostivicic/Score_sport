@@ -7,13 +7,15 @@ namespace ResultApp.WebApi.Models.Comment
 {
     public class CommentToReturnDto
     {
+        public Guid Id { get; set; }
         public string Text { get; set; }
         public Guid MatchId { get; set; }
         public string UserId { get; set; }
         public UserToReturnDto User { get; set; }
 
-        public CommentToReturnDto(string text, Guid matchId, string userId, UserToReturnDto user)
+        public CommentToReturnDto(Guid id, string text, Guid matchId, string userId, UserToReturnDto user)
         {
+            Id = id;
             Text = text;
             MatchId = matchId;
             UserId = userId;

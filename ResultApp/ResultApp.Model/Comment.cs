@@ -2,7 +2,7 @@
 
 namespace ResultApp.Model
 {
-    public class Comment : Base
+    public class Comment : Base, IComment
     {
         public Guid Id { get; set; }
         public string Text { get; set; }

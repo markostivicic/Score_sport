@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using ResultApp.WebApi.Models.Location;
+using ResultApp.WebApi.Models.Club;
 using System.Web;
 
 namespace ResultApp.WebApi.Models.Match
@@ -14,8 +14,11 @@ namespace ResultApp.WebApi.Models.Match
         public Guid LocationId { get; set; }
         public Guid ClubHomeId { get; set; }
         public Guid ClubAwayId { get; set; }
+        public LocationToReturnDto Location { get; set; }
+        public ClubToReturnDto ClubHome { get; set; }
+        public ClubToReturnDto ClubAway { get; set; }
 
-        public MatchToReturnDto(Guid id, int? homeScore, int? awayScore, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId)
+        public MatchToReturnDto(Guid id, int? homeScore, int? awayScore, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId, LocationToReturnDto location, ClubToReturnDto clubHome, ClubToReturnDto clubAway)
         {
             Id = id;
             HomeScore = homeScore;
@@ -24,6 +27,9 @@ namespace ResultApp.WebApi.Models.Match
             LocationId = locationId;
             ClubHomeId = clubHomeId;
             ClubAwayId = clubAwayId;
+            Location = location;
+            ClubHome = clubHome;
+            ClubAway = clubAway;
         }
 
     }

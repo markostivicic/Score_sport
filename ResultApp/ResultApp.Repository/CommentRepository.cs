@@ -13,28 +13,34 @@ namespace ResultApp.Repository
     public class CommentRepository : ICommentRepository
     {
         private readonly string connStr = Environment.GetEnvironmentVariable("connStr", EnvironmentVariableTarget.User);
-        public async Task<List<Comment>> GetAllAsync(CommentFilter filter)
+        public async Task<PageList<Comment>> GetAllAsync(Sorting sorting, Paging paging, CommentFilter commentFilter)
         {
             List<Comment> comments = new List<Comment>();
+            int totalCount = 0;
 
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
 
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
 
-            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM \"Comment\" INNER JOIN dbo.\"AspNetUsers\" ON \"Comment\".\"CreatedByUserId\" = dbo.\"AspNetUsers\".\"Id\" WHERE \"IsActive\" = @IsActive ");
-            command.Parameters.AddWithValue("@IsActive", filter.IsActive);
+            StringBuilder queryBuilder = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Comment\" INNER JOIN dbo.\"AspNetUsers\" ON \"Comment\".\"CreatedByUserId\" = dbo.\"AspNetUsers\".\"Id\" WHERE \"IsActive\" = @IsActive ");
+            command.Parameters.AddWithValue("@IsActive", commentFilter.IsActive);
 
-            if (filter.MatchId != null)
+            if (commentFilter.MatchId != null)
             {
                 queryBuilder.Append("AND \"MatchId\" = @MatchId ");
-                command.Parameters.AddWithValue("@MatchId", filter.MatchId);
+                command.Parameters.AddWithValue("@MatchId", commentFilter.MatchId);
             }
-            if (filter.UserId != null)
+            if (commentFilter.UserId != null)
             {
                 queryBuilder.Append("AND \"CreatedByUserId\" = @UserId ");
-                command.Parameters.AddWithValue("@UserId", filter.UserId.ToString());
+                command.Parameters.AddWithValue("@UserId", commentFilter.UserId.ToString());
             }
+
+            queryBuilder.Append($"ORDER BY \"Comment\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
+            queryBuilder.Append(" LIMIT @PageSize OFFSET @Offset");
+            command.Parameters.AddWithValue("@PageSize", paging.PageSize);
+            command.Parameters.AddWithValue("@Offset", paging.PageNumber * paging.PageSize - paging.PageSize);
 
             command.CommandText = queryBuilder.ToString();
 
@@ -49,7 +55,7 @@ namespace ResultApp.Repository
                     {
                         while (reader.Read())
                         {
-                            Guid id = (Guid)reader["Id"];
+                            Guid id = (Guid)reader[0];
                             string text = (string)reader["Text"];
                             Guid matchId = (Guid)reader["MatchId"];
                             string userId = (string)reader["CreatedByUserId"];
@@ -57,6 +63,7 @@ namespace ResultApp.Repository
                             user.Id = userId;
                             user.UserName = (string)reader["UserName"];
                             comments.Add(new Comment(id, text, matchId, userId, user));
+                            totalCount = reader.GetInt32(reader.GetOrdinal("TotalCount"));
                         }
                     }
                 }
@@ -66,7 +73,7 @@ namespace ResultApp.Repository
                 }
             }
 
-            return comments;
+            return new PageList<Comment>(comments, totalCount);
         }
 
         public async Task<Comment> GetByIdAsync(Guid id)
@@ -138,38 +145,21 @@ namespace ResultApp.Repository
             return affectedRows;
         }
 
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
-            Comment commentToDelete = await GetCommentByIdAsync(id);
-            if (commentToDelete == null)
-            {
-                return 0;
-            }
-
-            int affectedRows;
-
-            NpgsqlConnection connection = new NpgsqlConnection(connStr);
-
-            NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "UPDATE \"Comment\" SET \"IsActive\" = false WHERE \"Id\"=@Id";
-            command.Connection = connection;
-            command.Parameters.AddWithValue("@Id", id);
-
+            var connection = new NpgsqlConnection(connStr);
+            var command = new NpgsqlCommand("UPDATE \"Comment\" SET \"IsActive\" = NOT \"IsActive\" WHERE \"Id\"=@Id", connection);
             using (connection)
             {
-                try
+                connection.Open();
+                command.Parameters.AddWithValue("@id", id);
+                int affected = await command.ExecuteNonQueryAsync();
+                if (affected > 0)
                 {
-                    connection.Open();
-
-                    affectedRows = await command.ExecuteNonQueryAsync();
+                    return true;
                 }
-                catch (Exception)
-                {
-                    throw;
-                }
+                return false;
             }
-
-            return affectedRows;
         }
 
         private async Task<Comment> GetCommentByIdAsync(Guid id)

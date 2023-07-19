@@ -12,17 +12,15 @@ namespace ResultApp.Repository
     public class LocationRepository : ILocationRepository
     {
         private string connStr = Environment.GetEnvironmentVariable("connStr", EnvironmentVariableTarget.User);
-        public async Task<PageList<Location>> GetAllAsync(Sorting sorting, Paging paging = null, LocationFilter locationFilter = null)
+        public async Task<PageList<Location>> GetAllAsync(Sorting sorting, Paging paging, LocationFilter locationFilter)
         {
             var connection = new NpgsqlConnection(connStr);
             var command = new NpgsqlCommand();
             command.Connection = connection;
-            StringBuilder sb = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Location\" INNER JOIN \"Country\" ON \"Location\".\"CountryId\" = \"Country\".\"Id\"  WHERE 1=1");
-            if (locationFilter.IsActive != null)
-            {
-                sb.Append(" AND \"IsActive\" = @IsActive");
-                command.Parameters.AddWithValue("@IsActive", locationFilter.IsActive);
-            }
+            StringBuilder sb = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Location\" INNER JOIN \"Country\" ON \"Location\".\"CountryId\" = \"Country\".\"Id\"  WHERE \"Location\".\"IsActive\" = @IsActive"");
+
+            command.Parameters.AddWithValue("@IsActive", locationFilter.IsActive);
+            
             if (locationFilter.CountryId != null)
             {
                 sb.Append(" AND \"CountryId\" = @CountryId");
@@ -30,39 +28,15 @@ namespace ResultApp.Repository
             }
             if (!string.IsNullOrEmpty(locationFilter.Name))
             {
-                sb.Append(" AND \"Name\" LIKE @Name");
-                command.Parameters.AddWithValue("@Name", "%" + locationFilter.Name + "%");
+                sb.Append(" AND LOWER(\"Name\") LIKE @Name");
+                command.Parameters.AddWithValue("@Name", "%" + locationFilter.Name.ToLower() + "%");
             }
             if (!string.IsNullOrEmpty(locationFilter.Address))
             {
-                sb.Append(" AND \"Address\" LIKE @Address");
-                command.Parameters.AddWithValue("@Address", "%" + locationFilter.Address + "%");
+                sb.Append(" AND LOWER(\"Address\") LIKE @Address");
+                command.Parameters.AddWithValue("@Address", "%" + locationFilter.Address.ToLower() + "%");
             }
 
-            if (paging == null)
-            {
-                paging = new Paging()
-                {
-                    PageNumber = 1,
-                    PageSize = 10
-                };
-            }
-            if (paging.PageSize == 0)
-            {
-                paging.PageSize = 10;
-            }
-            if (paging.PageNumber == 0)
-            {
-                paging.PageNumber = 1;
-            }
-            if (string.IsNullOrWhiteSpace(sorting.OrderBy))
-            {
-                sorting.OrderBy = "ASC";
-            }
-            if (string.IsNullOrWhiteSpace(sorting.SortOrder))
-            {
-                sorting.SortOrder = "Id";
-            }
             sb.Append($" ORDER BY \"Location\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
             sb.Append(" LIMIT @pageSize OFFSET @offset");
             command.CommandText = sb.ToString();
@@ -165,10 +139,10 @@ namespace ResultApp.Repository
                 return null;
             }
         }
-        public async Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("UPDATE \"Location\" SET \"IsActive\" = false WHERE \"Id\"=@Id", connection);
+            var command = new NpgsqlCommand("UPDATE \"Location\" SET \"IsActive\" = NOT \"IsActive\" WHERE \"Id\"=@Id", connection);
             using (connection)
             {
                 connection.Open();

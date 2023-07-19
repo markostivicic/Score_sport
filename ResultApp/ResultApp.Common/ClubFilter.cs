@@ -8,15 +8,10 @@ namespace ResultApp.Common
 {
     public class ClubFilter
     {
+        public string Name { get; set; }
         public Guid? LeagueId { get; set; }
         public Guid? SportId { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
-        public ClubFilter(Guid? leagueId, Guid? sportId, bool isActive)
-        {
-            LeagueId = leagueId;
-            SportId = sportId;
-            IsActive = isActive;
-        }
     }
 }

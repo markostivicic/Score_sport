@@ -13,25 +13,34 @@ namespace ResultApp.Repository
     public class LeagueRepository : ILeagueRepository
     {
         private readonly string connStr = Environment.GetEnvironmentVariable("connStr", EnvironmentVariableTarget.User);
-        public async Task<List<League>> GetAllAsync(LeagueFilter filter)
+        public async Task<PageList<League>> GetAllAsync(Sorting sorting, Paging paging, LeagueFilter leagueFilter)
         {
             List<League> leagues = new List<League>();
+            int totalCount = 0;
 
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
-
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
 
-            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM \"League\" ");
+            StringBuilder queryBuilder = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"League\" INNER JOIN \"Country\" on \"CountryId\" = \"Country\".\"Id\" INNER JOIN \"Sport\" on \"SportId\" = \"Sport\".\"Id\"");
 
             queryBuilder.Append("WHERE \"League\".\"IsActive\" = @IsActive ");
-            command.Parameters.AddWithValue("@IsActive", filter.IsActive);
+            command.Parameters.AddWithValue("@IsActive", leagueFilter.IsActive);
 
-            if (filter.SportId != null)
+            if (leagueFilter.SportId != null)
             {
-                queryBuilder.Append("AND \"SportId\" = @SportId");
-                command.Parameters.AddWithValue("@SportId", filter.SportId);
+                queryBuilder.Append("AND \"SportId\" = @SportId ");
+                command.Parameters.AddWithValue("@SportId", leagueFilter.SportId);
             }
+            if (!string.IsNullOrEmpty(leagueFilter.Name))
+            {
+                queryBuilder.Append("AND LOWER(\"League\".\"Name\") LIKE @Name ");
+                command.Parameters.AddWithValue("@Name", "%" + leagueFilter.Name.ToLower() + "%");
+            }
+            queryBuilder.Append($"ORDER BY \"League\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
+            queryBuilder.Append(" LIMIT @PageSize OFFSET @Offset");
+            command.Parameters.AddWithValue("@PageSize", paging.PageSize);
+            command.Parameters.AddWithValue("@Offset", paging.PageNumber * paging.PageSize - paging.PageSize);
 
             command.CommandText = queryBuilder.ToString();
 
@@ -46,11 +55,14 @@ namespace ResultApp.Repository
                     {
                         while (reader.Read())
                         {
-                            Guid id = (Guid)reader["Id"];
-                            string name = (string)reader["Name"];
+                            Guid id = (Guid)reader[0];
+                            string name = (string)reader[1];
                             Guid sportId = (Guid)reader["SportId"];
                             Guid countryId = (Guid)reader["CountryId"];
-                            leagues.Add(new League(id, name, sportId, countryId));
+                            string countryName = (string)reader[10];
+                            string sportName = (string)reader[17];
+                            leagues.Add(new League(id, name, sportId, countryId, new Country(countryId, countryName), new Sport(sportId, sportName)));
+                            totalCount = Convert.ToInt32(reader["TotalCount"]);
                         }
                     }
                 }
@@ -60,7 +72,7 @@ namespace ResultApp.Repository
                 }
             }
 
-            return leagues;
+            return new PageList<League>(leagues,totalCount);
         }
 
         public async Task<League> GetByIdAsync(Guid id)
@@ -132,38 +144,21 @@ namespace ResultApp.Repository
             }
             return affectedRows;
         }
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
-            League leagueToDelete = await GetLeagueByIdAsync(id);
-            if (leagueToDelete == null)
-            {
-                return 0;
-            }
-
-            int affectedRows;
-
-            NpgsqlConnection connection = new NpgsqlConnection(connStr);
-
-            NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "UPDATE \"League\" SET \"IsActive\" = false WHERE \"Id\"=@Id";
-            command.Connection = connection;
-            command.Parameters.AddWithValue("@Id", id);
-
+            var connection = new NpgsqlConnection(connStr);
+            var command = new NpgsqlCommand("UPDATE \"League\" SET \"IsActive\" = NOT \"IsActive\" WHERE \"Id\"=@Id", connection);
             using (connection)
             {
-                try
+                connection.Open();
+                command.Parameters.AddWithValue("@id", id);
+                int affected = await command.ExecuteNonQueryAsync();
+                if (affected > 0)
                 {
-                    connection.Open();
-
-                    affectedRows = await command.ExecuteNonQueryAsync();
+                    return true;
                 }
-                catch (Exception)
-                {
-                    throw;
-                }
+                return false;
             }
-
-            return affectedRows;
         }
 
         private async Task<League> GetLeagueByIdAsync(Guid id)
@@ -173,7 +168,7 @@ namespace ResultApp.Repository
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
 
             NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "SELECT * FROM \"League\" WHERE \"Id\"=@Id AND \"IsActive\"= true";
+            command.CommandText = "SELECT * FROM \"League\" INNER JOIN \"Country\" on \"CountryId\" = \"Country\".\"Id\" INNER JOIN \"Sport\" on \"SportId\" = \"Sport\".\"Id\" WHERE \"League\".\"Id\"=@Id AND \"League\".\"IsActive\"= true";
             command.Parameters.AddWithValue("@Id", id);
             command.Connection = connection;
 
@@ -188,10 +183,12 @@ namespace ResultApp.Repository
                     {
                         while (reader.Read())
                         {
-                            string name = (string)reader["Name"];
+                            string name = (string)reader[1];
                             Guid sportId = (Guid)reader["SportId"];
                             Guid countryId = (Guid)reader["CountryId"];
-                            league = new League(id, name, sportId, countryId);
+                            string countryName = (string)reader[10];
+                            string sportName = (string)reader[17];
+                            league = new League(id, name, sportId, countryId, new Country(countryId, countryName), new Sport(sportId, sportName));
                         }
                     }
                 }

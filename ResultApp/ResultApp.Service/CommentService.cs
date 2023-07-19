@@ -17,9 +17,9 @@ namespace ResultApp.Service
             CommentRepository = commentRepository;
         }
 
-        public async Task<List<Comment>> GetAllAsync(CommentFilter filter)
+        public async Task<PageList<Comment>> GetAllAsync(Sorting sorting, Paging paging, CommentFilter commentFilter)
         {
-            return await CommentRepository.GetAllAsync(filter);
+            return await CommentRepository.GetAllAsync(sorting, paging, commentFilter);
         }
         public async Task<Comment> GetByIdAsync(Guid id)
         {
@@ -33,9 +33,9 @@ namespace ResultApp.Service
         {
             return await CommentRepository.UpdateAsync(id, comment);
         }
-        public async Task<int> DeleteAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
-            return await CommentRepository.DeleteAsync(id);
+            return await CommentRepository.ToggleActivateAsync(id);
         }
     }
 }

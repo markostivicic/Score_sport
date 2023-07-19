@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace ResultApp.WebApi.Models
+namespace ResultApp.WebApi.Models.Sport
 {
-    public class SportToReturnDto
+    public class SportToCreateAndUpdateDto
     {
         public string Name { get; set; }
 
-        public SportToReturnDto(string name)
+        public SportToCreateAndUpdateDto(string name) 
         {
             Name = name;
         }

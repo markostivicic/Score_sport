@@ -9,10 +9,13 @@ using ResultApp.Model;
 using ResultApp.WebApi.Models.Club;
 using ResultApp.Common;
 using Microsoft.AspNet.Identity;
+using Autofac.Core;
+using ResultApp.WebApi.Models.Country;
+using ResultApp.WebApi.Models.League;
+using ResultApp.WebApi.Models.Location;
 
 namespace ResultApp.WebApi.Controllers
 {
-    [Authorize]
     public class ClubController : ApiController
     {
         private IClubService ClubService { get; }
@@ -22,27 +25,39 @@ namespace ResultApp.WebApi.Controllers
             ClubService = clubService;
         }
 
-        [HttpGet]
-        public async Task<HttpResponseMessage> GetAllClubs(Guid? leagueId = null, Guid? sportId = null, bool isActive = true)
+        [NonAction]
+        public LeagueToReturnDto MapLeagueToLeagueToReturnDto(League league)
         {
-            ClubFilter filter = new ClubFilter(leagueId, sportId, isActive);
+            return new LeagueToReturnDto(league.Id, league.Name, league.SportId, league.CountryId);
+        }
 
-            List<Club> clubs = await ClubService.GetAllAsync(filter);
-            if (clubs.Count <= 0)
+        [NonAction]
+        public LocationToReturnDto MapLocationToLocationToReturnDto(Location location)
+        {
+            return new LocationToReturnDto(location.Id, location.Name, location.Address, location.CountryId);
+        }
+
+        [Authorize(Roles = "User,Admin")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetAllClubsAsync([FromUri] Sorting sorting = null, [FromUri] Paging paging = null, [FromUri] ClubFilter clubFilter = null)
+        {
+            PageList<Club> clubs = await ClubService.GetAllAsync(sorting, paging, clubFilter);
+            if (clubs.Items.Count <= 0)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No clubs found.");
             }
 
             List<ClubToReturnDto> clubViews = new List<ClubToReturnDto>();
-            foreach (var club in clubs)
+            foreach (var club in clubs.Items)
             {
-                clubViews.Add(new ClubToReturnDto(club.Id, club.Name, club.Logo, club.LeagueId, club.LocationId));
+                clubViews.Add(new ClubToReturnDto(club.Id, club.Name, club.Logo, club.LeagueId, club.LocationId, MapLeagueToLeagueToReturnDto(club.League), MapLocationToLocationToReturnDto(club.Location)));
             }
-            return Request.CreateResponse(HttpStatusCode.OK, clubViews);
+            return Request.CreateResponse(HttpStatusCode.OK, new PageList<ClubToReturnDto>(clubViews, clubs.TotalCount));
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
-        public async Task<HttpResponseMessage> GetClubById(Guid id)
+        public async Task<HttpResponseMessage> GetClubByIdAsync(Guid id)
         {
             Club club = await ClubService.GetByIdAsync(id);
             if (club == null)
@@ -50,11 +65,12 @@ namespace ResultApp.WebApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound, "Club with that ID was not found!");
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new ClubToReturnDto(club.Id, club.Name, club.Logo, club.LeagueId, club.LocationId));
+            return Request.CreateResponse(HttpStatusCode.OK, new ClubToReturnDto(club.Id, club.Name, club.Logo, club.LeagueId, club.LocationId, MapLeagueToLeagueToReturnDto(club.League), MapLocationToLocationToReturnDto(club.Location)));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<HttpResponseMessage> InsertClub([FromBody] ClubToCreateAndUpdateDto club)
+        public async Task<HttpResponseMessage> InsertClubAsync([FromBody] ClubToCreateAndUpdateDto club)
         {
             if (club == null)
             {
@@ -72,8 +88,9 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Club was not inserted!");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
-        public async Task<HttpResponseMessage> UpdateClub(Guid id, [FromBody] ClubToCreateAndUpdateDto club)
+        public async Task<HttpResponseMessage> UpdateClubAsync(Guid id, [FromBody] ClubToCreateAndUpdateDto club)
         {
             if (id == null)
             {
@@ -125,21 +142,24 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Club was not updated!");
         }
 
-        [HttpDelete]
-        public async Task<HttpResponseMessage> DeleteClub(Guid id)
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("api/club/toggle/{id}")]
+        public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {
-            if (id == null)
+            try
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Id is null!");
+                bool isSuccess = await ClubService.ToggleActivateAsync(id);
+                if (isSuccess)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, "Club status changed");
+                }
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
-
-            int affectedRows = await ClubService.DeleteAsync(id);
-
-            if (affectedRows > 0)
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, $"Club was deleted. Affected rows: {affectedRows}");
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Club was not deleted!");
         }
     }
 }

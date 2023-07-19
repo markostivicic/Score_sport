@@ -1,8 +1,13 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Autofac.Core;
+using Microsoft.AspNet.Identity;
 using ResultApp.Common;
 using ResultApp.Model;
 using ResultApp.Service.Common;
+using ResultApp.WebApi.Models.Club;
+using ResultApp.WebApi.Models.Country;
+using ResultApp.WebApi.Models.Location;
 using ResultApp.WebApi.Models.Match;
+using ResultApp.WebApi.Models.Sport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +18,13 @@ using System.Web.Http;
 
 namespace ResultApp.WebApi.Controllers
 {
-    [Authorize]
     public class MatchController : ApiController
     {
-        private static IEnumerable<MatchToReturnDto> MapMatchToMatchToReturn(List<Match> matches)
+        [NonAction]
+        private IEnumerable<MatchToReturnDto> MapMatchToMatchToReturn(List<Match> matches)
         {
             return matches.Select(match => new MatchToReturnDto(match.Id, match.HomeScore, match.AwayScore, match.Time,
-                match.LocationId, match.ClubHomeId, match.ClubAwayId));
+                match.LocationId, match.ClubHomeId, match.ClubAwayId, MapLocationToLocationToReturnDto(match.Location), MapClubToClubToReturnDto(match.ClubHome), MapClubToClubToReturnDto(match.ClubAway)));
         }
 
         private readonly IMatchService _matchService;
@@ -27,19 +32,28 @@ namespace ResultApp.WebApi.Controllers
         {
             _matchService = matchService;
         }
-        // GET: api/Match
-        public async Task<HttpResponseMessage> Get(string orderBy = "Time", string sortOrder = "ASC", int pageSize = 3, int pageNumber = 1, Guid? clubId = null, DateTime? time = null, Guid? leagueId = null, Guid? sportId = null, bool isFinished = true, bool isActive = true)
+
+        [NonAction]
+        public ClubToReturnDto MapClubToClubToReturnDto(Club club)
         {
-            Sorting sorting = new Sorting(orderBy, sortOrder);
-            Paging paging = new Paging(pageSize, pageNumber);
-            MatchFilter filter = new MatchFilter(clubId, time, leagueId, sportId, isFinished, isActive);
+            return new ClubToReturnDto(club.Id, club.Name, club.Logo, club.LeagueId, club.LocationId);
+        }
+        [NonAction]
+        public LocationToReturnDto MapLocationToLocationToReturnDto(Location location)
+        {
+            return new LocationToReturnDto(location.Id, location.Name, location.Address, location.CountryId);
+        }
+
+        [Authorize(Roles = "User,Admin")]
+        public async Task<HttpResponseMessage> GetAsync([FromUri] Sorting sorting, [FromUri] Paging paging, [FromUri] MatchFilter matchFilter)
+        {
             try
             {
-                PageList<Match> matches = await _matchService.GetAllAsync(sorting, paging, filter);
+                PageList<Match> matches = await _matchService.GetAllAsync(sorting, paging, matchFilter);
                 List<MatchToReturnDto> results = new List<MatchToReturnDto>();
                 foreach (var match in matches.Items)
                 {
-                    results.Add(new MatchToReturnDto(match.Id, match.HomeScore, match.AwayScore, match.Time, match.LocationId, match.ClubHomeId, match.ClubAwayId));
+                    results.Add(new MatchToReturnDto(match.Id, match.HomeScore, match.AwayScore, match.Time, match.LocationId, match.ClubHomeId, match.ClubAwayId, MapLocationToLocationToReturnDto(match.Location), MapClubToClubToReturnDto(match.ClubHome), MapClubToClubToReturnDto(match.ClubAway)));
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new PageList<MatchToReturnDto>(results, matches.TotalCount));
         }
@@ -50,8 +64,8 @@ namespace ResultApp.WebApi.Controllers
 
         }
 
-    // GET: api/Match/5
-    public async Task<HttpResponseMessage> Get(Guid id)
+        [Authorize(Roles = "User,Admin")]
+        public async Task<HttpResponseMessage> GetAsync(Guid id)
         {
             try
             {
@@ -69,8 +83,8 @@ namespace ResultApp.WebApi.Controllers
 
         }
 
-        // POST: api/Match
-        public async Task<HttpResponseMessage> Post([FromBody] MatchToCreateDto match)
+        [Authorize(Roles = "Admin")]
+        public async Task<HttpResponseMessage> PostAsync([FromBody] MatchToCreateDto match)
         {
             try
             {
@@ -79,7 +93,7 @@ namespace ResultApp.WebApi.Controllers
                 Match newMatch = await _matchService.CreateAsync(mappedMatch);
                 if (newMatch != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, MapMatchToMatchToReturn(new List<Match> { newMatch }).First());
+                    return Request.CreateResponse(HttpStatusCode.OK, "Match inserted");
                 }
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
@@ -90,8 +104,8 @@ namespace ResultApp.WebApi.Controllers
 
         }
 
-        // PUT: api/Match/5
-        public async Task<HttpResponseMessage> Put(Guid id, [FromBody] MatchToUpdateDto match)
+        [Authorize(Roles = "Admin")]
+        public async Task<HttpResponseMessage> PutAsync(Guid id, [FromBody] MatchToUpdateDto match)
         {
             try
             {
@@ -138,7 +152,7 @@ namespace ResultApp.WebApi.Controllers
 
                 if (mappedMatch != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, MapMatchToMatchToReturn(new List<Match> { updatedMatch }).First());
+                    return Request.CreateResponse(HttpStatusCode.NoContent);
                 }
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
@@ -148,15 +162,17 @@ namespace ResultApp.WebApi.Controllers
             }
         }
 
-        // DELETE: api/Match/5
-        public async Task<HttpResponseMessage> Delete(Guid id)
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("api/match/toggle/{id}")]
+        public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {
             try
             {
-                bool isSuccess = await _matchService.DeleteAsync(id);
+                bool isSuccess = await _matchService.ToggleActivateAsync(id);
                 if (isSuccess)
                 {
-                    return Request.CreateResponse(HttpStatusCode.NoContent);
+                    return Request.CreateResponse(HttpStatusCode.OK, "Sport status changed");
                 }
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
