@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Praksa.Common
+namespace ResultApp.Common
 {
     public class Sorting
     {
         public string OrderBy { get; set; } = "Id";
         public string SortOrder { get; set; } = "ASC";
+
     }
 }

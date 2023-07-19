@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Praksa.Common
+namespace ResultApp.Common
 {
     public class Paging
     {
         public int PageSize { get; set; } = 3;
         public int PageNumber { get; set; } = 1;
+
     }
 }

@@ -41,9 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FavouriteClubFilter.cs" />
+    <Compile Include="MatchFilter.cs" />
+    <Compile Include="PageList.cs" />
+    <Compile Include="LocationFilter.cs" />
+    <Compile Include="ClubFilter.cs" />
+    <Compile Include="CommentFilter.cs" />
+    <Compile Include="LeagueFilter.cs" />
     <Compile Include="Paging.cs" />
+    <Compile Include="PlayerFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sorting.cs" />
+    <Compile Include="SportFilter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
