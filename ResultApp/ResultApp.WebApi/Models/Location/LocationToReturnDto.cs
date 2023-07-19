@@ -14,6 +14,13 @@ namespace ResultApp.WebApi.Models.Location
         public Guid CountryId { get; set; }
         public CountryToReturnDto Country { get; set; }
 
+        public LocationToReturnDto(Guid id, string name, string address, Guid countryId)
+        {
+            Id = id;
+            Name = name;
+            Address = address;
+            CountryId = countryId;
+        }
         public LocationToReturnDto(Guid id, string name, string address, Guid countryId, CountryToReturnDto country)
         {
             Id = id;

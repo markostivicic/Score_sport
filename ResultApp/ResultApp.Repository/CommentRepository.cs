@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ResultApp.Repository
 {
@@ -169,7 +170,7 @@ namespace ResultApp.Repository
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
 
             NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "SELECT * FROM \"Comment\" WHERE \"Id\"=@Id AND \"IsActive\"= true";
+            command.CommandText = "SELECT * FROM \"Comment\" INNER JOIN dbo.\"AspNetUsers\" ON \"Comment\".\"CreatedByUserId\" = dbo.\"AspNetUsers\".\"Id\" WHERE \"Comment\".\"Id\"=@Id AND \"IsActive\"= true";
             command.Parameters.AddWithValue("@Id", id);
             command.Connection = connection;
 
@@ -187,7 +188,10 @@ namespace ResultApp.Repository
                             string text = (string)reader["Text"];
                             Guid matchId = (Guid)reader["MatchId"];
                             string userId = (string)reader["CreatedByUserId"];
-                            comment = new Comment(id, text, matchId, userId);
+                            User user = new User();
+                            user.Id = userId;
+                            user.UserName = (string)reader["UserName"];
+                            comment = new Comment(id, text, matchId, userId, user);
                         }
                     }
                 }

@@ -17,7 +17,7 @@ namespace ResultApp.Repository
             var connection = new NpgsqlConnection(connStr);
             var command = new NpgsqlCommand();
             command.Connection = connection;
-            StringBuilder sb = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Location\" INNER JOIN \"Country\" ON \"Location\".\"CountryId\" = \"Country\".\"Id\"  WHERE \"Location\".\"IsActive\" = @IsActive"");
+            StringBuilder sb = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Location\" INNER JOIN \"Country\" ON \"Location\".\"CountryId\" = \"Country\".\"Id\"  WHERE \"Location\".\"IsActive\" = @IsActive");
 
             command.Parameters.AddWithValue("@IsActive", locationFilter.IsActive);
             
@@ -69,7 +69,7 @@ namespace ResultApp.Repository
         public async Task<Location> GetByIdAsync(Guid id)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("SELECT * FROM \"Location\" WHERE \"Id\"= @id AND \"IsActive\" = true", connection);
+            var command = new NpgsqlCommand("SELECT * FROM \"Location\" INNER JOIN \"Country\" ON \"Location\".\"CountryId\" = \"Country\".\"Id\" WHERE \"Location\".\"Id\"= @id AND \"Location\".\"IsActive\" = true", connection);
             using (connection)
             {
                 connection.Open();

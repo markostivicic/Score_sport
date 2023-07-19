@@ -145,6 +145,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ResultApp.Common\ResultApp.Common.csproj">
+      <Project>{ef19bbdd-d472-4ac2-8dc5-45b2965c2d7d}</Project>
+      <Name>ResultApp.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ResultApp.Model.Common\ResultApp.Model.Common.csproj">
       <Project>{cd32b131-5b00-422f-9f31-351e5227ed9c}</Project>
       <Name>ResultApp.Model.Common</Name>
