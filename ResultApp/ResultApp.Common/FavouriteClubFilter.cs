@@ -9,12 +9,7 @@ namespace ResultApp.Common
     public class FavouriteClubFilter
     {
         public string UserId { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
 
-        public FavouriteClubFilter(string userId, bool isActive)
-        {
-            UserId = userId;
-            IsActive = isActive;
-        }
     }
 }

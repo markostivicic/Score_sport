@@ -19,9 +19,9 @@ namespace ResultApp.Service
             PlayerRepository = playerRepository;
         }
 
-        public async Task<List<Player>> GetPlayersAsync(PlayerFilter filter)
+        public async Task<PageList<Player>> GetPlayersAsync(Sorting sorting, Paging paging, PlayerFilter playerFilter)
         {
-            return await PlayerRepository.GetPlayersAsync(filter);
+            return await PlayerRepository.GetPlayersAsync(sorting, paging, playerFilter);
         }
         public async Task<Player> GetPlayerByIdAsync(Guid id)
         {
@@ -35,9 +35,9 @@ namespace ResultApp.Service
         {
             return await PlayerRepository.UpdatePlayerAsync(id, player);
         }
-        public async Task<int> DeletePlayerAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
-            return await PlayerRepository.DeletePlayerAsync(id);
+            return await PlayerRepository.ToggleActivateAsync(id);
         }
 
     }

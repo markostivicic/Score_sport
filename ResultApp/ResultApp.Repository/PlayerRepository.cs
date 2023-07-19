@@ -51,7 +51,7 @@ namespace ResultApp.Repository
             }
         }
 
-        public async Task<List<Player>> GetPlayersAsync(PlayerFilter filter)
+        public async Task<PageList<Player>> GetPlayersAsync(Sorting sorting, Paging paging, PlayerFilter playerFilter)
         {
             List<Player> players = new List<Player>();
 
@@ -59,19 +59,22 @@ namespace ResultApp.Repository
 
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
-
-            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM \"Player\" ");
+            int totalCount = 0;
+            StringBuilder queryBuilder = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Player\" INNER JOIN \"Club\" ON \"Player\".\"ClubId\" = \"Club\".\"Id\" INNER JOIN \"Country\" ON \"Player\".\"CountryId\" = \"Country\".\"Id\" ");
 
             queryBuilder.Append("WHERE \"Player\".\"IsActive\" = @IsActive ");
-            command.Parameters.AddWithValue("@IsActive", filter.IsActive);
+            command.Parameters.AddWithValue("@IsActive", playerFilter.IsActive);
 
 
-            if (filter.ClubId != null)
+            if (playerFilter.ClubId != null)
             {
                 queryBuilder.Append("AND \"ClubId\" = @ClubId");
-                command.Parameters.AddWithValue("@ClubId", filter.ClubId);
+                command.Parameters.AddWithValue("@ClubId", playerFilter.ClubId);
             }
-
+            queryBuilder.Append($" ORDER BY \"Player\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
+            queryBuilder.Append(" LIMIT @pageSize OFFSET @offset");
+            command.Parameters.AddWithValue("@pageSize", paging.PageSize);
+            command.Parameters.AddWithValue("@offset", (paging.PageNumber - 1) * paging.PageSize);
             command.CommandText = queryBuilder.ToString();
 
             using (connection)
@@ -85,14 +88,17 @@ namespace ResultApp.Repository
                     {
                         while (reader.Read())
                         {
-                            Guid id = (Guid)reader["Id"];
+                            Guid id = (Guid)reader[0];
                             string firstName = (string)reader["FirstName"];
                             string lastName = (string)reader["LastName"];
                             string image = (string)reader["Image"];
                             DateTime doB = (DateTime)reader["DoB"];
                             Guid clubId = (Guid)reader["ClubId"];
                             Guid countryId = (Guid)reader["CountryId"];
-                            players.Add(new Player(id, firstName, lastName, image, doB, clubId, countryId));
+                            Club club = new Club((Guid)reader[12], (string)reader[13], (string)reader[14], (Guid)reader[15], (Guid)reader[16]);
+                            Country country = new Country((Guid)reader[6], (string)reader[23]);
+                            players.Add(new Player(id, firstName, lastName, image, doB, clubId, countryId, club, country));
+                            totalCount = Convert.ToInt32(reader["TotalCount"]);
                         }
                     }
                 }
@@ -101,7 +107,7 @@ namespace ResultApp.Repository
                     throw;
                 }
             }
-            return players;
+            return new PageList<Player>(players, totalCount);
         }
 
         public async Task<Player> GetPlayerByIdAsync(Guid id)
@@ -111,7 +117,7 @@ namespace ResultApp.Repository
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
 
             NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "SELECT * FROM \"Player\" WHERE \"Id\"=@Id AND \"IsActive\"= true";
+            command.CommandText = "SELECT * FROM \"Player\" INNER JOIN \"Club\" ON \"Player\".\"ClubId\" = \"Club\".\"Id\" INNER JOIN \"Country\" ON \"Player\".\"CountryId\" = \"Country\".\"Id\" WHERE \"Player\".\"Id\"=@Id AND \"Player\".\"IsActive\"= true";
             command.Parameters.AddWithValue("@Id", id);
             command.Connection = connection;
 
@@ -132,7 +138,9 @@ namespace ResultApp.Repository
                             DateTime doB = (DateTime)reader["DoB"];
                             Guid clubId = (Guid)reader["clubId"];
                             Guid countryId = (Guid)reader["CountryId"];
-                            player = new Player(id, firstName, lastName, image, doB, clubId, countryId);
+                            Club club = new Club((Guid)reader[12], (string)reader[13], (string)reader[14], (Guid)reader[15], (Guid)reader[16]);
+                            Country country = new Country((Guid)reader[6], (string)reader[23]);
+                            player = new Player(id, firstName, lastName, image, doB, clubId, countryId, club, country);
                         }
                     }
                 }
@@ -179,38 +187,21 @@ namespace ResultApp.Repository
             }
             return numberOfAffectedRows;
         }
-        public async Task<int> DeletePlayerAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
-            Player playerToDelete = await GetPlayerByIdAsync(id);
-            if (playerToDelete == null)
-            {
-                return 0;
-            }
-
-            int numberOfAffectedRows;
-
-            NpgsqlConnection connection = new NpgsqlConnection(connStr);
-
-            NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "UPDATE \"Player\" SET \"IsActive\" = false WHERE \"Id\"=@Id";
-            command.Connection = connection;
-            command.Parameters.AddWithValue("@Id", id);
-
+            var connection = new NpgsqlConnection(connStr);
+            var command = new NpgsqlCommand("UPDATE \"Player\" SET \"IsActive\" = NOT \"IsActive\" WHERE \"Id\"=@Id", connection);
             using (connection)
             {
-                try
+                connection.Open();
+                command.Parameters.AddWithValue("@id", id);
+                int affected = await command.ExecuteNonQueryAsync();
+                if (affected > 0)
                 {
-                    connection.Open();
-
-                    numberOfAffectedRows = await command.ExecuteNonQueryAsync();
+                    return true;
                 }
-                catch (Exception)
-                {
-                    throw;
-                }
+                return false;
             }
-
-            return numberOfAffectedRows;
         }
 
     }

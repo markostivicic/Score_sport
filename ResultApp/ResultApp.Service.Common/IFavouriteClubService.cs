@@ -10,9 +10,9 @@ namespace ResultApp.Service.Common
 {
     public interface IFavouriteClubService
     {
-        Task<List<FavouriteClub>> GetAllFavouriteClubsAsync(FavouriteClubFilter filter);
+        Task<PageList<FavouriteClub>> GetAllFavouriteClubsAsync(Sorting sorting, Paging paging, FavouriteClubFilter favouriteClubFilter);
         Task<int> PostFavouriteClubAsync(FavouriteClub favouriteClub);
         Task<FavouriteClub> GetFavouriteClubByIdAsync(Guid id);
-        Task<int> DeleteFavouriteClubAsync(Guid id);
+        Task<bool> ToggleActivateAsync(Guid id);
     }
 }

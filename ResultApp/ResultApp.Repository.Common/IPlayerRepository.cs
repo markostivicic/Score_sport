@@ -11,9 +11,9 @@ namespace ResultApp.Repository.Common
     public interface IPlayerRepository
     {
         Task<int> PostPlayerAsync(Player player);
-        Task<List<Player>> GetPlayersAsync(PlayerFilter filter);
+        Task<PageList<Player>> GetPlayersAsync(Sorting sorting, Paging paging, PlayerFilter playerFilter);
         Task<Player> GetPlayerByIdAsync(Guid id);
         Task<int> UpdatePlayerAsync(Guid id, Player player);
-        Task<int> DeletePlayerAsync(Guid id);
+        Task<bool> ToggleActivateAsync(Guid id);
     }
 }

@@ -13,7 +13,6 @@ namespace ResultApp.Model
         public string Logo { get; set; }
         public Guid LeagueId { get; set; }
         public Guid LocationId { get; set; }
-
         public Club(Guid id, string name, string logo, Guid leagueId, Guid locationId)
         {
             Id = id;
@@ -22,7 +21,6 @@ namespace ResultApp.Model
             LeagueId = leagueId;
             LocationId = locationId;
         }
-
         public Club(Guid id, string name, string logo, Guid leagueId, Guid locationId, string createdByUserId) : base(createdByUserId)
         {
             Id = id;

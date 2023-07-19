@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Autofac.Core;
+using Microsoft.AspNet.Identity;
 using ResultApp.Common;
 using ResultApp.Model;
 using ResultApp.Service.Common;
 using ResultApp.WebApi.Models;
+using ResultApp.WebApi.Models.Club;
+using ResultApp.WebApi.Models.Country;
 using ResultApp.WebApi.Models.Player;
 using System;
 using System.Collections.Generic;
@@ -14,7 +17,6 @@ using System.Web.Http;
 
 namespace ResultApp.WebApi.Controllers
 {
-    [Authorize]
     public class PlayerController : ApiController
     {
         private IPlayerService PlayerService { get; }
@@ -24,25 +26,36 @@ namespace ResultApp.WebApi.Controllers
             PlayerService = playerService;
         }
 
-        [HttpGet]
-        public async Task<HttpResponseMessage> GetAllPlayersAsync(Guid? clubId = null, bool isActive = true)
+        private ClubToReturnDto MapClubToClubToReturnDto(Club club)
         {
-            PlayerFilter filter = new PlayerFilter(clubId, isActive);
+            return new ClubToReturnDto(club.Id, club.Name, club.Logo, club.LeagueId, club.LocationId);
+        }
 
-            List<Player> players = await PlayerService.GetPlayersAsync(filter);
-            if (players.Count <= 0)
+        private CountryToReturnDto MapCountryToCountryToReturnDto(Country country)
+        {
+            return new CountryToReturnDto(country.Id, country.Name);
+        }
+
+        [Authorize(Roles = "User,Admin")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetAllPlayersAsync([FromUri] Sorting sorting, [FromUri] Paging paging, [FromUri] PlayerFilter playerFilter)
+        {
+
+            PageList<Player> players = await PlayerService.GetPlayersAsync(sorting, paging, playerFilter);
+            if (players.TotalCount <= 0)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No players found.");
             }
 
             List<PlayerToReturnDto> playerViews = new List<PlayerToReturnDto>();
-            foreach (var player in players)
+            foreach (var player in players.Items)
             {
-                playerViews.Add(new PlayerToReturnDto(player.FirstName, player.LastName, player.Image, player.DoB, player.ClubId, player.CountryId));
+                playerViews.Add(new PlayerToReturnDto(player.Id,player.FirstName, player.LastName, player.Image, player.DoB, player.ClubId, player.CountryId, MapClubToClubToReturnDto(player.Club), MapCountryToCountryToReturnDto(player.Country)));
             }
-            return Request.CreateResponse(HttpStatusCode.OK, playerViews);
+            return Request.CreateResponse(HttpStatusCode.OK, new PageList<PlayerToReturnDto>(playerViews, players.TotalCount));
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
         public async Task<HttpResponseMessage> GetPlayerByIdAsync(Guid id)
         {
@@ -52,9 +65,10 @@ namespace ResultApp.WebApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound, "Player with that ID was not found!");
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new PlayerToReturnDto(player.FirstName, player.LastName, player.Image, player.DoB, player.ClubId, player.CountryId));
+            return Request.CreateResponse(HttpStatusCode.OK, new PlayerToReturnDto(player.Id, player.FirstName, player.LastName, player.Image, player.DoB, player.ClubId, player.CountryId, MapClubToClubToReturnDto(player.Club), MapCountryToCountryToReturnDto(player.Country)));
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<HttpResponseMessage> PostPlayerAsync([FromBody] PlayerToCreateAndUpdateDto player)
         {
@@ -74,6 +88,7 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Player was not inserted!");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<HttpResponseMessage> UpdatePlayerAsync(Guid id, [FromBody] PlayerToCreateAndUpdateDto player)
         {
@@ -136,21 +151,24 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Player was not updated!");
         }
 
-        [HttpDelete]
-        public async Task<HttpResponseMessage> DeletePlayerAsync(Guid id)
+        [Authorize(Roles = "Admin")]
+        [HttpPut]
+        [Route("api/player/toggle/{id}")]
+        public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {
-            if (id == null)
+            try
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Id is null!");
+                bool isSuccess = await PlayerService.ToggleActivateAsync(id);
+                if (isSuccess)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, "Player status changed");
+                }
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
-
-            int numberOfAffectedRows = await PlayerService.DeletePlayerAsync(id);
-
-            if (numberOfAffectedRows > 0)
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, $"Player was deleted. Affected rows: {numberOfAffectedRows}");
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Player was not deleted!");
         }
     }
 }

@@ -3,6 +3,7 @@ using ResultApp.Model;
 using ResultApp.Service;
 using ResultApp.Service.Common;
 using ResultApp.WebApi.Models.Comment;
+using ResultApp.WebApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,6 @@ using Microsoft.AspNet.Identity;
 
 namespace ResultApp.WebApi.Controllers
 {
-    [Authorize]
     public class CommentController : ApiController
     {
         private ICommentService CommentService { get; }
@@ -39,7 +39,7 @@ namespace ResultApp.WebApi.Controllers
             List<CommentToReturnDto> commentViews = new List<CommentToReturnDto>();
             foreach (var comment in comments)
             {
-                commentViews.Add(new CommentToReturnDto(comment.Text, comment.MatchId, comment.CreatedByUserId));
+                commentViews.Add(new CommentToReturnDto(comment.Text, comment.MatchId, comment.CreatedByUserId, new UserToReturnDto(comment.CreatedByUserId, comment.User.UserName)));
             }
             return Request.CreateResponse(HttpStatusCode.OK, commentViews);
         }
@@ -53,7 +53,7 @@ namespace ResultApp.WebApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound, "Comment with that ID was not found!");
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new CommentToReturnDto(comment.Text, comment.MatchId, comment.CreatedByUserId));
+            return Request.CreateResponse(HttpStatusCode.OK, new CommentToReturnDto(comment.Text, comment.MatchId, comment.CreatedByUserId, new UserToReturnDto(comment.CreatedByUserId, comment.User.UserName)));
         }
 
         [HttpPost]

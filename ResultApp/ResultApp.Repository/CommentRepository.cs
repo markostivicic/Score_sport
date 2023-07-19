@@ -22,7 +22,7 @@ namespace ResultApp.Repository
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
 
-            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM \"Comment\" WHERE \"IsActive\" = @IsActive ");
+            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM \"Comment\" INNER JOIN dbo.\"AspNetUsers\" ON \"Comment\".\"CreatedByUserId\" = dbo.\"AspNetUsers\".\"Id\" WHERE \"IsActive\" = @IsActive ");
             command.Parameters.AddWithValue("@IsActive", filter.IsActive);
 
             if (filter.MatchId != null)
@@ -53,7 +53,10 @@ namespace ResultApp.Repository
                             string text = (string)reader["Text"];
                             Guid matchId = (Guid)reader["MatchId"];
                             string userId = (string)reader["CreatedByUserId"];
-                            comments.Add(new Comment(id, text, matchId, userId));
+                            User user = new User();
+                            user.Id = userId;
+                            user.UserName = (string)reader["UserName"];
+                            comments.Add(new Comment(id, text, matchId, userId, user));
                         }
                     }
                 }

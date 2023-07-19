@@ -14,6 +14,7 @@ using System.Web.Http;
 using Microsoft.AspNet.Identity;
 using ResultApp.WebApi.Models;
 using ResultApp.WebApi.Models.FavouriteClub;
+using ResultApp.WebApi.Models.Club;
 
 namespace ResultApp.WebApi.Controllers
 {
@@ -26,25 +27,30 @@ namespace ResultApp.WebApi.Controllers
             FavouriteClubService = favouriteClubService;
         }
 
-        [HttpGet]
-        public async Task<HttpResponseMessage> GetAllFavouriteClubsAsync(string userId = null, bool isActive = true)
+        private ClubToReturnDto MapClubToClubToReturnDto(Club club)
         {
-            FavouriteClubFilter filter = new FavouriteClubFilter(userId, isActive);
+            return new ClubToReturnDto(club.Id, club.Name, club.Logo, club.LeagueId, club.LocationId);
+        }
 
-            List<FavouriteClub> favouriteClubs = await FavouriteClubService.GetAllFavouriteClubsAsync(filter);
-            if (favouriteClubs.Count <= 0)
+        [Authorize(Roles = "User,Admin")]
+        [HttpGet]
+        public async Task<HttpResponseMessage> GetAllFavouriteClubsAsync([FromUri] Sorting sorting, [FromUri] Paging paging, [FromUri] FavouriteClubFilter favouriteClubFilter)
+        {
+            PageList<FavouriteClub> favouriteClubs = await FavouriteClubService.GetAllFavouriteClubsAsync(sorting, paging, favouriteClubFilter);
+            if (favouriteClubs.TotalCount <= 0)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, "No favourite clubs found.");
             }
 
             List<FavouriteClubToReturnDto> favouriteClubViews = new List<FavouriteClubToReturnDto>();
-            foreach (var favouriteClub in favouriteClubs)
+            foreach (var favouriteClub in favouriteClubs.Items)
             {
-                favouriteClubViews.Add(new FavouriteClubToReturnDto(favouriteClub.ClubId, favouriteClub.CreatedByUserId));
+                favouriteClubViews.Add(new FavouriteClubToReturnDto(favouriteClub.Id, favouriteClub.ClubId, favouriteClub.CreatedByUserId, MapClubToClubToReturnDto(favouriteClub.Club)));
             }
-            return Request.CreateResponse(HttpStatusCode.OK, favouriteClubViews);
+            return Request.CreateResponse(HttpStatusCode.OK, new PageList<FavouriteClubToReturnDto>(favouriteClubViews, favouriteClubs.TotalCount));
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpGet]
         public async Task<HttpResponseMessage> GetFavouriteClubByIdAsync(Guid id)
         {
@@ -54,9 +60,10 @@ namespace ResultApp.WebApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound, "Favourite club with that ID was not found!");
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new FavouriteClubToReturnDto(favouriteClub.ClubId, favouriteClub.CreatedByUserId));
+            return Request.CreateResponse(HttpStatusCode.OK, new FavouriteClubToReturnDto(favouriteClub.Id, favouriteClub.ClubId, favouriteClub.CreatedByUserId, MapClubToClubToReturnDto(favouriteClub.Club)));
         }
 
+        [Authorize(Roles = "User,Admin")]
         [HttpPost]
         public async Task<HttpResponseMessage> PostFavouriteClubAsync([FromBody] FavouriteClubToCreateAndUpdate favouriteClub)
         {
@@ -76,21 +83,24 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Favourite club was not inserted!");
         }
 
-        [HttpDelete]
-        public async Task<HttpResponseMessage> DeleteFavouriteClubAsync(Guid id)
+        [Authorize(Roles = "User,Admin")]
+        [HttpPut]
+        [Route("api/favouriteclub/toggle/{id}")]
+        public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {
-            if (id == null)
+            try
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Id is null!");
+                bool isSuccess = await FavouriteClubService.ToggleActivateAsync(id);
+                if (isSuccess)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, "FavouriteClub status changed");
+                }
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
-
-            int numberOfAffectedRows = await FavouriteClubService.DeleteFavouriteClubAsync(id);
-
-            if (numberOfAffectedRows > 0)
+            catch (Exception ex)
             {
-                return Request.CreateResponse(HttpStatusCode.OK, $"Favourite club was deleted. Affected rows: {numberOfAffectedRows}");
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.Message);
             }
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Favourite club was not deleted!");
         }
     }
 }

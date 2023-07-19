@@ -36,7 +36,7 @@ namespace ResultApp.WebApi.Controllers
             List<ClubToReturnDto> clubViews = new List<ClubToReturnDto>();
             foreach (var club in clubs)
             {
-                clubViews.Add(new ClubToReturnDto(club.Name, club.Logo, club.LeagueId, club.LocationId));
+                clubViews.Add(new ClubToReturnDto(club.Id, club.Name, club.Logo, club.LeagueId, club.LocationId));
             }
             return Request.CreateResponse(HttpStatusCode.OK, clubViews);
         }
@@ -50,7 +50,7 @@ namespace ResultApp.WebApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound, "Club with that ID was not found!");
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new ClubToReturnDto(club.Name, club.Logo, club.LeagueId, club.LocationId));
+            return Request.CreateResponse(HttpStatusCode.OK, new ClubToReturnDto(club.Id, club.Name, club.Logo, club.LeagueId, club.LocationId));
         }
 
         [HttpPost]

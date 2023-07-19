@@ -293,6 +293,7 @@
     <Compile Include="Models\Player\PlayerToReturnDto.cs" />
     <Compile Include="Models\SportToCreateAndUpdateDto.cs" />
     <Compile Include="Models\SportToReturnDto.cs" />
+    <Compile Include="Models\UserToReturnDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
@@ -371,7 +372,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\NewFolder1\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\bootstrap.min.js.map" />

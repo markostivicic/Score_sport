@@ -48,7 +48,6 @@
     <Compile Include="ClubFilter.cs" />
     <Compile Include="CommentFilter.cs" />
     <Compile Include="LeagueFilter.cs" />
-
     <Compile Include="Paging.cs" />
     <Compile Include="PlayerFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

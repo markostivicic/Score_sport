@@ -12,10 +12,10 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.UI.WebControls.WebParts;
 using Microsoft.AspNet.Identity;
+using ResultApp.WebApi.Models.Country;
 
 namespace ResultApp.WebApi.Controllers
 {
-    [Authorize]
     public class LocationController : ApiController
     {
         private ILocationService _service;
@@ -34,7 +34,7 @@ namespace ResultApp.WebApi.Controllers
                 List<LocationToReturnDto> locationToReturnDtos = new List<LocationToReturnDto>();
                 foreach (var location in locations.Items)
                 {
-                    locationToReturnDtos.Add(new LocationToReturnDto(location.Name, location.Address, location.CountryId));
+                    locationToReturnDtos.Add(new LocationToReturnDto(location.Name, location.Address, location.CountryId, new CountryToReturnDto(location.CountryId, location.Country.Name)));
                 }
                 return Request.CreateResponse(HttpStatusCode.OK, new PageList<LocationToReturnDto>(locationToReturnDtos, locations.TotalCount));
             }
@@ -55,7 +55,7 @@ namespace ResultApp.WebApi.Controllers
                 //todo 
                 if (location != null)
                 {
-                    LocationToReturnDto locationToReturn = new LocationToReturnDto(location.Name, location.Address, location.CountryId);
+                    LocationToReturnDto locationToReturn = new LocationToReturnDto(location.Name, location.Address, location.CountryId, new CountryToReturnDto(location.CountryId, location.Country.Name));
                     return Request.CreateResponse(HttpStatusCode.OK, locationToReturn);
                 }
 
@@ -77,7 +77,7 @@ namespace ResultApp.WebApi.Controllers
                 Location newLocation = await _service.CreateAsync(mappedLocation);
                 if (newLocation != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new LocationToReturnDto(newLocation.Name, newLocation.Address, newLocation.CountryId));
+                    return Request.CreateResponse(HttpStatusCode.OK, new LocationToReturnDto(newLocation.Name, newLocation.Address, newLocation.CountryId, new CountryToReturnDto(newLocation.CountryId, newLocation.Country.Name)));
                 }
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
@@ -105,7 +105,7 @@ namespace ResultApp.WebApi.Controllers
                 Location updatedLocation = await _service.UpdateAsync(id, locationToUpdate);
                 if (updatedLocation != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new LocationToReturnDto(updatedLocation.Name, updatedLocation.Address, updatedLocation.CountryId));
+                    return Request.CreateResponse(HttpStatusCode.OK, new LocationToReturnDto(updatedLocation.Name, updatedLocation.Address, updatedLocation.CountryId, new CountryToReturnDto(updatedLocation.CountryId, updatedLocation.Country.Name)));
                 }
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }

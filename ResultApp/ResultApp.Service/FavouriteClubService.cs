@@ -18,9 +18,9 @@ namespace ResultApp.Service
             FavouriteClubRepository = favouriteClubRepository;
         }
 
-        public async Task<List<FavouriteClub>> GetAllFavouriteClubsAsync(FavouriteClubFilter filter)
+        public async Task<PageList<FavouriteClub>> GetAllFavouriteClubsAsync(Sorting sorting, Paging paging, FavouriteClubFilter favouriteClubFilter)
         {
-            return await FavouriteClubRepository.GetAllFavouriteClubsAsync(filter);
+            return await FavouriteClubRepository.GetAllFavouriteClubsAsync(sorting, paging, favouriteClubFilter);
         }
         public async Task<FavouriteClub> GetFavouriteClubByIdAsync(Guid id)
         {
@@ -31,9 +31,9 @@ namespace ResultApp.Service
             return await FavouriteClubRepository.PostFavouriteClubAsync(favouriteClub);
         }
 
-        public async Task<int> DeleteFavouriteClubAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
-            return await FavouriteClubRepository.DeleteFavouriteClubAsync(id);
+            return await FavouriteClubRepository.ToggleActivateAsync(id);
         }
     }
 }

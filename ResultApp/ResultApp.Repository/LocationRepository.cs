@@ -17,7 +17,7 @@ namespace ResultApp.Repository
             var connection = new NpgsqlConnection(connStr);
             var command = new NpgsqlCommand();
             command.Connection = connection;
-            StringBuilder sb = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Location\" WHERE 1=1");
+            StringBuilder sb = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Location\" INNER JOIN \"Country\" ON \"Location\".\"CountryId\" = \"Country\".\"Id\"  WHERE 1=1");
             if (locationFilter.IsActive != null)
             {
                 sb.Append(" AND \"IsActive\" = @IsActive");
@@ -63,7 +63,7 @@ namespace ResultApp.Repository
             {
                 sorting.SortOrder = "Id";
             }
-            sb.Append($" ORDER BY \"{sorting.OrderBy}\" {sorting.SortOrder}");
+            sb.Append($" ORDER BY \"Location\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
             sb.Append(" LIMIT @pageSize OFFSET @offset");
             command.CommandText = sb.ToString();
             List<Location> locations = new List<Location>();
@@ -76,11 +76,13 @@ namespace ResultApp.Repository
                 var reader = await command.ExecuteReaderAsync();
                 while (reader.Read() && reader.HasRows)
                 {
+                    Country country = new Country((Guid)reader["CountryId"], (string)reader[10]);
                     Location location = new Location(
                         (Guid)reader["Id"],
                         (string)reader["Name"],
                         (string)reader["Address"],
-                        (Guid)reader["CountryId"]
+                        (Guid)reader["CountryId"],
+                        country
                         );
 
                     locations.Add(location);
@@ -101,11 +103,13 @@ namespace ResultApp.Repository
                 var reader = await command.ExecuteReaderAsync();
                 if (reader.Read())
                 {
+                    Country country = new Country((Guid)reader["CountryId"], (string)reader[10]);
                     Location location = new Location(
                         (Guid)reader["Id"],
                         (string)reader["Name"],
                         (string)reader["Address"],
-                        (Guid)reader["CountryId"]
+                        (Guid)reader["CountryId"],
+                        country
                         );
 
                     return location;

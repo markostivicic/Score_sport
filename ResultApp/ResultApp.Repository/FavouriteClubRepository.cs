@@ -15,7 +15,7 @@ namespace ResultApp.Repository
     {
         private readonly string connStr = Environment.GetEnvironmentVariable("connStr", EnvironmentVariableTarget.User);
 
-        public async Task<List<FavouriteClub>> GetAllFavouriteClubsAsync(FavouriteClubFilter filter)
+        public async Task<PageList<FavouriteClub>> GetAllFavouriteClubsAsync(Sorting sorting, Paging paging, FavouriteClubFilter favouriteClubFilter)
         {
             List<FavouriteClub> favouriteClubs = new List<FavouriteClub>();
 
@@ -23,15 +23,19 @@ namespace ResultApp.Repository
 
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
+            int totalCount = 0;
+            StringBuilder queryBuilder = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"FavouriteClub\" INNER JOIN \"Club\" ON \"FavouriteClub\".\"ClubId\" = \"Club\".\"Id\" WHERE \"FavouriteClub\".\"IsActive\" = @IsActive ");
+            command.Parameters.AddWithValue("@IsActive", favouriteClubFilter.IsActive);
 
-            StringBuilder queryBuilder = new StringBuilder("SELECT * FROM \"FavouriteClub\" WHERE \"IsActive\" = @IsActive ");
-            command.Parameters.AddWithValue("@IsActive", filter.IsActive);
-
-            if (filter.UserId != null)
+            if (favouriteClubFilter.UserId != null)
             {
                 queryBuilder.Append("AND \"CreatedByUserId\" = @UserId ");
-                command.Parameters.AddWithValue("@UserId", filter.UserId);
+                command.Parameters.AddWithValue("@UserId", favouriteClubFilter.UserId);
             }
+            queryBuilder.Append($"ORDER BY \"FavouriteClub\".\"{sorting.OrderBy}\" {sorting.SortOrder} ");
+            queryBuilder.Append("LIMIT @pageSize OFFSET @offset");
+            command.Parameters.AddWithValue("@pageSize", paging.PageSize);
+            command.Parameters.AddWithValue("@offset", (paging.PageNumber - 1) * paging.PageSize);
 
             command.CommandText = queryBuilder.ToString();
 
@@ -49,7 +53,9 @@ namespace ResultApp.Repository
                             Guid id = (Guid)reader["Id"];
                             Guid clubId = (Guid)reader["ClubId"];
                             string createdByUserId = (string)reader["CreatedByUserId"];
-                            favouriteClubs.Add(new FavouriteClub(id, clubId, createdByUserId));
+                            Club club = new Club((Guid)reader[7], (string)reader[8], (string)reader[9], (Guid)reader[10], (Guid)reader[11]);
+                            favouriteClubs.Add(new FavouriteClub(id, clubId, club, createdByUserId));
+                            totalCount = Convert.ToInt32(reader["TotalCount"]);
                         }
                     }
                 }
@@ -59,7 +65,7 @@ namespace ResultApp.Repository
                 }
             }
 
-            return favouriteClubs;
+            return new PageList<FavouriteClub>(favouriteClubs, totalCount);
 
         }
         public async Task<int> PostFavouriteClubAsync(FavouriteClub favouriteClub)
@@ -99,7 +105,7 @@ namespace ResultApp.Repository
             NpgsqlConnection connection = new NpgsqlConnection(connStr);
 
             NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "SELECT * FROM \"FavouriteClub\" WHERE \"Id\"=@Id AND \"IsActive\"= true";
+            command.CommandText = "SELECT * FROM \"FavouriteClub\" INNER JOIN \"Club\" ON \"FavouriteClub\".\"ClubId\" = \"Club\".\"Id\" WHERE \"FavouriteClub\".\"IsActive\" = true AND \"FavouriteClub\".\"Id\"=@Id ";
             command.Parameters.AddWithValue("@Id", id);
             command.Connection = connection;
 
@@ -116,7 +122,8 @@ namespace ResultApp.Repository
                         {
                             Guid clubId = (Guid)reader["ClubId"];
                             string createdByUserId = (string)reader["CreatedByUserId"];
-                            favouriteClub = new FavouriteClub(id, clubId, createdByUserId);
+                            Club club = new Club((Guid)reader[7], (string)reader[8], (string)reader[9], (Guid)reader[10], (Guid)reader[11]);
+                            favouriteClub = new FavouriteClub(id, clubId, club, createdByUserId);
                         }
                     }
                 }
@@ -129,38 +136,21 @@ namespace ResultApp.Repository
             return favouriteClub;
         }
 
-        public async Task<int> DeleteFavouriteClubAsync(Guid id)
+        public async Task<bool> ToggleActivateAsync(Guid id)
         {
-            FavouriteClub favouriteCLub = await GetFavouriteClubByIdAsync(id);
-            if (favouriteCLub == null)
-            {
-                return 0;
-            }
-
-            int numberOfAffectedRows;
-
-            NpgsqlConnection connection = new NpgsqlConnection(connStr);
-
-            NpgsqlCommand command = new NpgsqlCommand();
-            command.CommandText = "UPDATE \"FavouriteClub\" SET \"IsActive\" = false WHERE \"Id\"=@Id";
-            command.Connection = connection;
-            command.Parameters.AddWithValue("@Id", id);
-
+            var connection = new NpgsqlConnection(connStr);
+            var command = new NpgsqlCommand("UPDATE \"FavouriteClub\" SET \"IsActive\" = NOT \"IsActive\" WHERE \"Id\"=@Id", connection);
             using (connection)
             {
-                try
+                connection.Open();
+                command.Parameters.AddWithValue("@id", id);
+                int affected = await command.ExecuteNonQueryAsync();
+                if (affected > 0)
                 {
-                    connection.Open();
-
-                    numberOfAffectedRows = await command.ExecuteNonQueryAsync();
+                    return true;
                 }
-                catch (Exception)
-                {
-                    throw;
-                }
+                return false;
             }
-
-            return numberOfAffectedRows;
         }
     }
 }
