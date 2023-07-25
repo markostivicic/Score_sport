@@ -8,7 +8,7 @@ namespace ResultApp.Common
 {
     public class Paging
     {
-        public int PageSize { get; set; } = 3;
+        public int PageSize { get; set; } = 20;
         public int PageNumber { get; set; } = 1;
 
     }

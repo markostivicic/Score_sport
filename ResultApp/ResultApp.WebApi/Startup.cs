@@ -8,6 +8,7 @@ using System.Web.Http;
 using Microsoft.Owin;
 using Owin;
 using ResultApp.Service;
+using Newtonsoft.Json.Serialization;
 
 [assembly: OwinStartup(typeof(ResultApp.WebApi.Startup))]
 
@@ -28,6 +29,12 @@ namespace ResultApp.WebApi
 
             var resolver = new AutofacWebApiDependencyResolver(container);
             config.DependencyResolver = resolver;
+
+            var formatters = GlobalConfiguration.Configuration.Formatters;
+            var jsonFormatter = formatters.JsonFormatter;
+            var settings = jsonFormatter.SerializerSettings;
+
+            settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
     }
 }
