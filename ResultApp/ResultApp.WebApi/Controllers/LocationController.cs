@@ -78,7 +78,7 @@ namespace ResultApp.WebApi.Controllers
                 Location newLocation = await _service.CreateAsync(mappedLocation);
                 if (newLocation != null)
                 {
-                    return Request.CreateResponse(HttpStatusCode.OK, new LocationToReturnDto(newLocation.Id, newLocation.Name, newLocation.Address, newLocation.CountryId, new CountryToReturnDto(newLocation.CountryId, newLocation.Country.Name)));
+                    return Request.CreateResponse(HttpStatusCode.OK, "Location created!");
                 }
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Bad request");
             }
