@@ -29,12 +29,15 @@ namespace ResultApp.WebApi
 
             var resolver = new AutofacWebApiDependencyResolver(container);
             config.DependencyResolver = resolver;
+        }
 
+        public static void ConfigureJSONFormatter()
+        {
             var formatters = GlobalConfiguration.Configuration.Formatters;
             var jsonFormatter = formatters.JsonFormatter;
             var settings = jsonFormatter.SerializerSettings;
-
             settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
+
     }
 }

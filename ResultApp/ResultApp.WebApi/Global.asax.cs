@@ -21,6 +21,7 @@ namespace ResultApp.WebApi
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             Startup.ConfigureAutofac(GlobalConfiguration.Configuration);
+            Startup.ConfigureJSONFormatter();
         }
     }
 }
