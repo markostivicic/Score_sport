@@ -118,7 +118,7 @@ namespace ResultApp.WebApi.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPut]
+        [HttpDelete]
         [Route("api/location/toggle/{id}")]
         public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {

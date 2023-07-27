@@ -79,7 +79,7 @@ namespace ResultApp.WebApi.Controllers
         }
 
         [Authorize(Roles = "User,Admin")]
-        [HttpPut]
+        [HttpDelete]
         [Route("api/favouriteclub/toggle/{id}")]
         public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {

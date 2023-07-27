@@ -131,7 +131,7 @@ namespace ResultApp.WebApi.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPut]
+        [HttpDelete]
         [Route("api/league/toggle/{id}")]
         public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {
