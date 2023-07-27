@@ -19,6 +19,7 @@ using ResultApp.Model.Auth.AccountBindingModels;
 using ResultApp.WebApi.Providers;
 using ResultApp.WebApi.Results;
 using ResultApp.Service;
+using System.Net;
 
 namespace ResultApp.WebApi.Controllers
 {
@@ -255,6 +256,12 @@ namespace ResultApp.WebApi.Controllers
             }
 
             return logins;
+        }
+
+        [Route("Verify"), HttpGet]
+        public HttpResponseMessage Verify()
+        {
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
 
         // POST api/Account/Register
