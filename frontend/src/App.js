@@ -1,79 +1,55 @@
 import "./App.css";
 import { ToastContainer, toast } from "react-toastify";
-import { Routes } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
+import { getHeaders, redirectToLoginIfNeeded } from "./services/AuthService";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
 import { useResultContext } from "./context/ResultContext";
-import Button from "./components/Button";
-import Pagination from "./components/Pagination";
-import Input from "./components/Input";
-import Form from "./components/Form";
-import { v4 as uuid } from "uuid";
-import Select from "./components/Select";
-import Table from "./components/Table";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import Navbar from "./components/Navbar";
+import Spinner from "./components/Spinner";
 
 function App() {
-  const { loggedIn } = useResultContext();
-
-  const [list, setList] = useState([
-    { id: "Id1", name: "name1" },
-    { id: "Id2", name: "name2" },
-  ]);
-
   const navigate = useNavigate();
+  const { authenticatedUser, setAuthenticatedUser } = useResultContext();
 
-  function renderData() {
-    return list.map((listItem) => {
-      return (
-        <tr key={uuid()}>
-          <td>{listItem.id}</td>
-          <td>{listItem.name}</td>
-          <td>
-            <FontAwesomeIcon
-              className="cursor-pointer"
-              onClick={() => navigate(`/update/nesto/${listItem.id}`)}
-              icon={faPenToSquare}
-            />
-          </td>
-          <td>
-            <FontAwesomeIcon
-              className="cursor-pointer"
-              onClick={() => setList([...list, { id: "novi", name: "novi" }])}
-              icon={faTrash}
-            />
-          </td>
-        </tr>
-      );
-    });
+  useEffect(() => {
+    async function verifyAsync() {
+      try {
+        const response = await axios.get(
+          "https://localhost:44345/api/account/verify",
+          {
+            headers: getHeaders(),
+          }
+        );
+        setAuthenticatedUser(response.data);
+      } catch (err) {
+        redirectToLoginIfNeeded(navigate, err, toast);
+      }
+    }
+    verifyAsync();
+  }, []);
+
+  const path = useLocation().pathname;
+  if (!authenticatedUser && path !== "/login" && path !== "/register") {
+    return <Spinner />;
   }
 
   return (
     <>
-      <Navbar />
-      <Table tableHeaders={["Id", "Name"]} renderData={renderData} />
-      <Form
-        handleOnSubmit={(e) => {
-          e.preventDefault();
-          console.log("submit form");
-        }}
-        className="width-400"
-        formElements={[
-          <Input key={uuid()} id={"id"} type="date" labelText="test" />,
-          <Select
-            key={uuid()}
-            options={[
-              { name: "sdf", id: "sfd" },
-              { name: "sf", id: "sf" },
-            ]}
-            labelText="testselect"
-          />,
-        ]}
-      />
-      <Pagination pageCount={10} />
-      <Routes></Routes>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="*" element={<Navigate to={"/"} />} />
+      </Routes>
       <ToastContainer />
     </>
   );

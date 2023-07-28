@@ -7,11 +7,12 @@ export function useResultContext() {
 }
 
 export function ResultContextProvider({ children }) {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [authenticatedUser, setAuthenticatedUser] = useState(null);
   return (
     <ResultContext.Provider
       value={{
-        loggedIn,
+        authenticatedUser,
+        setAuthenticatedUser,
       }}
     >
       {children}

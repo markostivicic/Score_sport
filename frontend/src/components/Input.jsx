@@ -9,7 +9,7 @@ export default function Input({ id, type, isRequired, labelText }) {
         id={id}
         name={id}
         type={type}
-        required={isRequired ? isRequired : true}
+        required={isRequired || true}
         className="form-control"
       />
     </div>

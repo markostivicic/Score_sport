@@ -20,6 +20,7 @@ using ResultApp.WebApi.Providers;
 using ResultApp.WebApi.Results;
 using ResultApp.Service;
 using System.Net;
+using ResultApp.WebApi.Models;
 
 namespace ResultApp.WebApi.Controllers
 {
@@ -259,9 +260,10 @@ namespace ResultApp.WebApi.Controllers
         }
 
         [Route("Verify"), HttpGet]
-        public HttpResponseMessage Verify()
+        public async Task<HttpResponseMessage> Verify()
         {
-            return Request.CreateResponse(HttpStatusCode.OK);
+            string userId = User.Identity.GetUserId();
+            return Request.CreateResponse(HttpStatusCode.OK, new VerifyDto (User.Identity.GetUserName(), (await UserManager.GetRolesAsync(userId))[0]));
         }
 
         // POST api/Account/Register
@@ -283,10 +285,6 @@ namespace ResultApp.WebApi.Controllers
                 return GetErrorResult(result);
             }
 
-            if (!RoleManager.RoleExists("Admin"))
-            {
-               await RoleManager.CreateAsync(new ApplicationRole("Admin"));   
-            }
 
             if (!RoleManager.RoleExists("User"))
             {

@@ -303,6 +303,7 @@
     <Compile Include="Models\Player\PlayerToCreateAndUpdateDto.cs" />
     <Compile Include="Models\Player\PlayerToReturnDto.cs" />
     <Compile Include="Models\UserToReturnDto.cs" />
+    <Compile Include="Models\VerifyDto.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\ApplicationOAuthProvider.cs" />
     <Compile Include="Results\ChallengeResult.cs" />
