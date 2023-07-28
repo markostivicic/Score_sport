@@ -7,14 +7,12 @@ import Input from "../../components/Input";
 import API from "../../services/AxiosService";
 import { toast } from "react-toastify";
 import { v4 as uuid } from "uuid";
+import { getHeaders } from "../../services/AuthService";
 
 export default function SportUpdate() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedSport, setSelectedSport] = useState();
-
-  const token =
-    "8mTvr1VPxmamgrHenYNXw_rJg-qJBFe-H71w2lZlbfn_ETZaBoL5o296rsvfSoGgJdgWAXkkHE-DixpQ7HcIT0Kc_iVTLdzYxTln-cELuo8YI_oIVYV7S-rr6c8zZvKBx0q1oKUz1v7_phQ6voMK8sp7DnLOHG2qpzYepbo6wM8bL3UvYLHhMdaKaAtkqMNQjZ_YMCbppDjxFSMaPZq8QgbEwoCszssw2HiZtQxs33NYz0k4orTj8X36uD5LS1YKEPImZ3sxbqL1PncAIGWmW7tcQsuUFSCk7POI9v0tAdKN7CpmjfaYtZsB67DnqbHg5XcBhoD8kYZ3q_PyoKuNt8ioYFCXNoP4ysfnjlNiFiHQcov8REIlWAIg97LD7gjM3GUmB_O9A5BV1ZUp17Q1Z5Pd-RroInuCmCb-etTPlkrRNnkPNxbZ7g0wgOGcMwcQ_yD6tAdCAIJ_9dcEgzkM8PzNyiMn8wXzIwcXwVF74bRD_CwJg49cylgRX9k4g9bxDkNFGreoi2Ld7Sfj5avZBg";
 
   useEffect(() => {
     if (id === "") {
@@ -26,9 +24,7 @@ export default function SportUpdate() {
   async function getSportByIdAsync() {
     try {
       await API.get(`/sport/${id}`, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+        headers: getHeaders(),
       }).then((response) => {
         setSelectedSport(response.data);
       });
@@ -47,15 +43,13 @@ export default function SportUpdate() {
 
     try {
       await API.put(`/sport/${id}`, sportToUpdate, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+        headers: getHeaders(),
       }).then(() => {
-        toast.success("Sport updated");
+        toast.success("Sport azuriran");
         navigate("/sport");
       });
     } catch (e) {
-      toast.error("Sport not updated");
+      toast.error("Sport nije azuriran");
       console.log(e);
     }
   }

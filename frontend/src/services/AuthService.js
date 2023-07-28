@@ -1,6 +1,6 @@
 export function redirectToLoginIfNeeded(navigate, error, toast) {
   if (error.response?.status !== 401) {
-    toast.error("Something went wrong");
+    toast.error("Nešto je pošlo po zlu");
     return;
   }
   navigate("/login", { replace: true });

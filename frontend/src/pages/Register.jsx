@@ -45,7 +45,7 @@ export default function Register() {
       })
       .catch((err) => {
         if (!err.response.data.modelState) {
-          toast.error("An error has occured");
+          toast.error("Dogodila se pogreška");
           return;
         }
         const errors = err.response.data.modelState[""];
