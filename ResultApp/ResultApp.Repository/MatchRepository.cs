@@ -28,11 +28,11 @@ namespace ResultApp.Repository
             queryBuilder.Append("WHERE \"Match\".\"IsActive\" = @IsActive ");
             command.Parameters.AddWithValue("@IsActive", matchFilter.IsActive);
 
-            if(matchFilter.IsFinished == false)
+            if(matchFilter.IsFinished != null && matchFilter.IsFinished == false)
             {
                 queryBuilder.Append($"AND \"HomeScore\" IS NULL AND \"AwayScore\" IS NULL ");
             }
-            else if(matchFilter.IsFinished == true)
+            else if(matchFilter.IsFinished != null && matchFilter.IsFinished == true)
             {
                 queryBuilder.Append($"AND \"HomeScore\" IS NOT NULL AND \"AwayScore\" IS NOT NULL ");
             }
@@ -48,7 +48,7 @@ namespace ResultApp.Repository
             }
             if (matchFilter.LeagueId != null)
             {
-                queryBuilder.Append("AND \"LeagueId\" = @LeagueId ");
+                queryBuilder.Append("AND clubHome.\"LeagueId\" = @LeagueId ");
                 command.Parameters.AddWithValue("@LeagueId", matchFilter.LeagueId);
             }
             if (matchFilter.SportId != null)
