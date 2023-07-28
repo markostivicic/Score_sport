@@ -2,6 +2,8 @@ import React from "react";
 import { v4 as uuid } from "uuid";
 
 export default function Table({ tableHeaders, renderData }) {
+  const tableData = renderData();
+
   return (
     <div className="table-responsive">
       <table className="table table-hover">
@@ -14,7 +16,7 @@ export default function Table({ tableHeaders, renderData }) {
             <th>Delete</th>
           </tr>
         </thead>
-        <tbody>{renderData()}</tbody>
+        <tbody>{tableData}</tbody>
       </table>
     </div>
   );

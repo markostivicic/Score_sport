@@ -74,7 +74,7 @@ namespace ResultApp.Repository
             queryBuilder.Append($" ORDER BY \"Player\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
             queryBuilder.Append(" LIMIT @pageSize OFFSET @offset");
             command.Parameters.AddWithValue("@pageSize", paging.PageSize);
-            command.Parameters.AddWithValue("@offset", (paging.PageNumber - 1) * paging.PageSize);
+            command.Parameters.AddWithValue("@offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);
             command.CommandText = queryBuilder.ToString();
 
             using (connection)

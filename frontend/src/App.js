@@ -15,6 +15,9 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import { useResultContext } from "./context/ResultContext";
 import Spinner from "./components/Spinner";
+import Sport from "./pages/sport/Sport";
+import SportCreate from "./pages/sport/SportCreate";
+import SportUpdate from "./pages/sport/SportUpdate";
 
 function App() {
   const navigate = useNavigate();
@@ -45,6 +48,9 @@ function App() {
   return (
     <>
       <Routes>
+        <Route path="/sport" element={<Sport />} />
+        <Route path="/sport/create" element={<SportCreate />} />
+        <Route path="/sport/update/:id" element={<SportUpdate />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

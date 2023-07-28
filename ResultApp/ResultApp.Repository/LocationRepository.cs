@@ -46,7 +46,7 @@ namespace ResultApp.Repository
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@pageSize", paging.PageSize);
-                command.Parameters.AddWithValue("@offset", (paging.PageNumber - 1) * paging.PageSize);
+                command.Parameters.AddWithValue("@offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);
                 var reader = await command.ExecuteReaderAsync();
                 while (reader.Read() && reader.HasRows)
                 {

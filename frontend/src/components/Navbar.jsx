@@ -16,7 +16,7 @@ export default function Navbar() {
     navigate("/login", { replace: true });
   }
   return (
-    <nav className="navbar navbar-expand-md bg-dark fixed-top">
+    <nav className="navbar navbar-expand-md bg-dark">
       <div className="container">
         <a href="#" className="navbar-brand">
           <img
