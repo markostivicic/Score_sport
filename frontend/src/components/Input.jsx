@@ -1,7 +1,13 @@
 import React from "react";
 import Label from "./Label";
 
-export default function Input({ id, type, isRequired, labelText }) {
+export default function Input({
+  id,
+  type,
+  isRequired,
+  labelText,
+  defaultValue,
+}) {
   return (
     <div className="my-4">
       <Label htmlFor={id} text={labelText} />
@@ -9,6 +15,7 @@ export default function Input({ id, type, isRequired, labelText }) {
         id={id}
         name={id}
         type={type}
+        defaultValue={defaultValue || ""}
         required={isRequired ? isRequired : true}
         className="form-control"
       />

@@ -3,7 +3,7 @@ import ReactPaginate from "react-paginate";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
-export default function Pagination({ pageCount, changePage, pageNumber }) {
+export default function Pagination({ pageCount, changePage }) {
   return (
     <div>
       <ReactPaginate
@@ -11,7 +11,6 @@ export default function Pagination({ pageCount, changePage, pageNumber }) {
         nextLabel={<FontAwesomeIcon icon={faArrowRight} />}
         pageCount={pageCount}
         onPageChange={changePage}
-        forcePage={pageNumber}
         containerClassName={"paginationBttns"}
         previousLinkClassName={"previousBttn"}
         nextLinkClassName={"nextBttn"}

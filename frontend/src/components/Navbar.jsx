@@ -5,7 +5,7 @@ import Button from "./Button";
 
 export default function Navbar() {
   return (
-    <nav className="navbar navbar-expand-md bg-dark fixed-top">
+    <nav className="navbar navbar-expand-md bg-dark">
       <div className="container">
         <a href="#" className="navbar-brand">
           <img

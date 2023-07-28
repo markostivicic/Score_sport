@@ -1,4 +1,5 @@
-import { useState, createContext, ReactNode, useContext } from "react";
+import axios from "axios";
+import { useState, createContext, useContext } from "react";
 
 const ResultContext = createContext();
 
@@ -8,6 +9,7 @@ export function useResultContext() {
 
 export function ResultContextProvider({ children }) {
   const [loggedIn, setLoggedIn] = useState(false);
+
   return (
     <ResultContext.Provider
       value={{
