@@ -1,23 +1,24 @@
 import React from "react";
 import Label from "./Label";
 
-export default function Input({
+export default function ControlledInput({
   id,
   type,
   isRequired,
   labelText,
-  defaultValue,
-  wrapperClassName
+  value,
+  onChange,
 }) {
   return (
-    <div className={wrapperClassName || "my-4"}>
+    <div className="my-4">
       <Label htmlFor={id} text={labelText} />
       <input
         id={id}
         name={id}
         type={type}
+        value={value}
+        onChange={onChange}
         required={isRequired || true}
-        defaultValue={defaultValue || ""}
         className="form-control"
       />
     </div>

@@ -1,5 +1,5 @@
 .paginationBttns {
-    width: 80%;
+    width: 98%;
     height: 40px;
     list-style: none;
     display: flex;
@@ -47,4 +47,17 @@
   .logo{
     width: 150px;
     aspect-ratio: 16/9;
+  }
+
+  caption{
+    caption-side: top;
+  }
+
+  .modal{
+    display: block !important;
+  }
+
+  .club-logo{
+    width: 150px;
+    aspect-ratio: 1/1;
   }
