@@ -18,10 +18,13 @@ import Spinner from "./components/Spinner";
 import Sport from "./pages/sport/Sport";
 import SportCreate from "./pages/sport/SportCreate";
 import SportUpdate from "./pages/sport/SportUpdate";
+import SingleMatch from "./pages/SingleMatch";
 
 function App() {
   const navigate = useNavigate();
   const { authenticatedUser, setAuthenticatedUser } = useResultContext();
+
+  const path = useLocation().pathname;
 
   useEffect(() => {
     async function verifyAsync() {
@@ -34,13 +37,13 @@ function App() {
         );
         setAuthenticatedUser(response.data);
       } catch (err) {
-        redirectToLoginIfNeeded(navigate, err, toast);
+        if (path !== "/login" && path !== "/register")
+          redirectToLoginIfNeeded(navigate, err, toast);
       }
     }
     verifyAsync();
   }, []);
 
-  const path = useLocation().pathname;
   if (!authenticatedUser && path !== "/login" && path !== "/register") {
     return <Spinner />;
   }
@@ -54,6 +57,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/single-match/:id" element={<SingleMatch />} />
         <Route path="*" element={<Navigate to={"/"} />} />
       </Routes>
       <ToastContainer />

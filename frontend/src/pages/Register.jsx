@@ -15,6 +15,7 @@ export default function Register() {
 
   useEffect(() => {
     setAuthenticatedUser(null);
+    localStorage.removeItem("token");
   }, []);
 
   function handleOnInput() {

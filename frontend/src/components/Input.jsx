@@ -7,9 +7,10 @@ export default function Input({
   isRequired,
   labelText,
   defaultValue,
+  wrapperClassName
 }) {
   return (
-    <div className="my-4">
+    <div className={wrapperClassName || "my-4"}>
       <Label htmlFor={id} text={labelText} />
       <input
         id={id}

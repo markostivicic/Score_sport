@@ -1,14 +1,14 @@
 import React from "react";
+import { extractHoursAndMinutes } from "../../services/DateTimeService";
+import { useNavigate } from "react-router-dom";
 
 export default function Match({ match }) {
-  function extractHoursAndMinutes(fullDate) {
-    const date = new Date(fullDate);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    return hours.toString() + ":" + minutes.toString().padStart(2, "0");
-  }
+  const navigate = useNavigate();
   return (
-    <tr className="cursor-pointer">
+    <tr
+      className="cursor-pointer"
+      onClick={() => navigate(`/single-match/${match.id}`)}
+    >
       <td>{extractHoursAndMinutes(match.time)}</td>
       <td>{match.clubHome.name}</td>
       <td>{match.clubAway.name}</td>

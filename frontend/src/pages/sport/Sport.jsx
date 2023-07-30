@@ -2,19 +2,23 @@ import React, { useEffect, useState } from "react";
 import Table from "../../components/Table";
 import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
-import API from "../../services/AxiosService";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { v4 as uuid } from "uuid";
-import { toast } from "react-toastify";
-import { getHeaders } from "../../services/AuthService";
+import {
+  getSportsAsync,
+  deleteSportByIdAsync,
+} from "../../services/SportService";
+import Button from "../../components/Button";
+import Background from "../../components/Background";
+import Modal from "../../components/Modal";
 
 export default function Sport() {
   const navigate = useNavigate();
   const [sports, setSports] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [pageCount, setPageCount] = useState(1);
+  const [selectedSport, setSelectedSport] = useState(null);
 
   const pageLength = 3;
 
@@ -22,37 +26,34 @@ export default function Sport() {
     fetchSportsAsync();
   }, [pageNumber]);
 
+  const handleConfirmDelete = () => {
+    deleteSportAsync(selectedSport.id);
+    setSelectedSport(null);
+  };
+
+  const handleCancelDelete = () => {
+    setSelectedSport(null);
+  };
+
   async function fetchSportsAsync() {
-    try {
-      await API.get(`/sport?pageSize=${pageLength}&pageNumber=${pageNumber}`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setSports(response.data.items);
-        setPageCount(Math.ceil(response.data.totalCount / pageLength));
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    const { items, totalCount } = await getSportsAsync(
+      navigate,
+      pageLength,
+      pageNumber
+    );
+    setSports(items);
+    setPageCount(Math.ceil(totalCount / pageLength));
   }
 
   async function deleteSportAsync(id) {
-    try {
-      await API.delete(`/sport/toggle/${id}`, {
-        headers: getHeaders(),
-      }).then(() => {
-        fetchSportsAsync();
-        toast.success("Sport obrisan");
-      });
-    } catch (e) {
-      toast.error("Sport nije obrisan");
-      console.log(e);
-    }
+    await deleteSportByIdAsync(id, navigate);
+    fetchSportsAsync();
   }
 
   function renderData() {
     return sports.map((sport) => {
       return (
-        <tr key={uuid()}>
+        <tr key={sport.id}>
           <td>{sport.name}</td>
           <td>
             <FontAwesomeIcon
@@ -65,11 +66,7 @@ export default function Sport() {
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => {
-                if (
-                  window.confirm("Are you sure you want to delete this sport?")
-                ) {
-                  deleteSportAsync(sport.id);
-                }
+                setSelectedSport(sport);
               }}
               icon={faTrash}
             />
@@ -84,10 +81,21 @@ export default function Sport() {
   };
 
   return (
-    <div>
+    <Background>
       <Navbar />
-      <Table tableHeaders={["Name"]} renderData={renderData} />
+      <Table tableHeaders={["Name"]} renderData={renderData}>
+        <Modal
+          selectedItem={selectedSport}
+          handleCancelDelete={handleCancelDelete}
+          handleConfirmDelete={handleConfirmDelete}
+        />
+      </Table>
+      <Button
+        text="Dodaj"
+        handleOnClick={() => navigate("/sport/create")}
+        margin="my-3"
+      />
       <Pagination pageCount={pageCount} changePage={changePage} />
-    </div>
+    </Background>
   );
 }

@@ -4,10 +4,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Form from "../../components/Form";
 import Input from "../../components/Input";
-import API from "../../services/AxiosService";
-import { toast } from "react-toastify";
-import { v4 as uuid } from "uuid";
-import { getHeaders } from "../../services/AuthService";
+import Background from "../../components/Background";
+import FormContainer from "../../components/FormContainer";
+import {
+  getSportByIdAsync,
+  updateSportByIdAsync,
+} from "../../services/SportService";
 
 export default function SportUpdate() {
   const navigate = useNavigate();
@@ -18,19 +20,12 @@ export default function SportUpdate() {
     if (id === "") {
       navigate("/sport");
     }
-    getSportByIdAsync();
+    getSportAsync();
   }, []);
 
-  async function getSportByIdAsync() {
-    try {
-      await API.get(`/sport/${id}`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setSelectedSport(response.data);
-      });
-    } catch (e) {
-      console.log(e);
-    }
+  async function getSportAsync() {
+    const data = await getSportByIdAsync(id, navigate);
+    setSelectedSport(data);
   }
 
   async function updateSportAsync(e) {
@@ -41,35 +36,23 @@ export default function SportUpdate() {
       name: sportName,
     };
 
-    try {
-      await API.put(`/sport/${id}`, sportToUpdate, {
-        headers: getHeaders(),
-      }).then(() => {
-        toast.success("Sport azuriran");
-        navigate("/sport");
-      });
-    } catch (e) {
-      toast.error("Sport nije azuriran");
-      console.log(e);
-    }
+    await updateSportByIdAsync(id, sportToUpdate);
+    navigate("/sport");
   }
 
   return (
-    <div>
+    <Background>
       <Navbar />
-      <Form
-        formElements={[
+      <FormContainer>
+        <Form handleOnSubmit={updateSportAsync}>
           <Input
-            key={uuid()}
             id="sportUpdateName"
             type="text"
             labelText="Name"
             defaultValue={selectedSport?.name}
-          />,
-        ]}
-        handleOnSubmit={updateSportAsync}
-        className="width-400"
-      />
-    </div>
+          />
+        </Form>
+      </FormContainer>
+    </Background>
   );
 }

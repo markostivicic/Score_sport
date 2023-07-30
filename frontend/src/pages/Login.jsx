@@ -2,11 +2,19 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useResultContext } from "../context/ResultContext";
+import { useEffect } from "react";
+import Form from "../components/Form";
+import Input from "../components/Input";
 
 export default function Login() {
   const navigate = useNavigate();
   const [isWrongPassword, setIsWrongPassword] = useState(false);
   const { setAuthenticatedUser } = useResultContext();
+
+  useEffect(() => {
+    setAuthenticatedUser(null);
+    localStorage.removeItem("token");
+  }, []);
 
   async function handleOnSubmitAsync(e) {
     e.preventDefault();
@@ -15,7 +23,7 @@ export default function Login() {
       "Content-Type": "application/x-www-form-urlencoded",
     };
     const loginCredentials = {
-      username: form.elements["email"].value,
+      username: form.elements["username"].value,
       password: form.elements["password"].value,
       grant_type: "password",
     };
@@ -41,45 +49,26 @@ export default function Login() {
 
   return (
     <div className="d-flex justify-content-center flex-column align-items-center vw-100 vh-100">
-      <form
-        onSubmit={handleOnSubmitAsync}
-        className="d-flex flex-column gap-3 width-400 px-2"
-      >
-        <div>
-          <label htmlFor="email" className="form-label">
-            Email
-          </label>
-          <input
-            id="email"
-            name="email"
-            className="form-control"
-            type="email"
-            required
-          />
-        </div>
-
-        <div>
-          <label htmlFor="password" className="form-label">
-            Lozinka
-          </label>
-          <input
-            id="password"
-            name="password"
-            className={`form-control`}
-            type="password"
-            required
-          />
-        </div>
-        {isWrongPassword && (
-          <p className="text-danger text-center">
-            Pogrešno korisničko ime ili lozinka
-          </p>
-        )}
-        <button type="submit" className="btn btn-primary">
-          Prijava
-        </button>
-      </form>
-      <p role="button" className="my-4" onClick={() => navigate("/register")}>
+      <Form handleOnSubmit={handleOnSubmitAsync} buttonText="Prijava">
+        <Input
+          id="username"
+          type="text"
+          wrapperClassName="my-2"
+          labelText="Korisničko ime"
+        />
+        <Input
+          id="password"
+          type="password"
+          labelText="Lozinka"
+          wrapperClassName="my-4"
+        />
+      </Form>
+      {isWrongPassword && (
+        <p className="text-danger text-center my-3">
+          Pogrešno korisničko ime ili lozinka
+        </p>
+      )}
+      <p role="link" className="my-4" onClick={() => navigate("/register")}>
         Kreiraj novi profil
       </p>
     </div>

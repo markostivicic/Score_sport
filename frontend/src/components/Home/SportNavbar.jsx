@@ -1,14 +1,8 @@
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import API from "../../services/AxiosService";
-import {
-  getHeaders,
-  redirectToLoginIfNeeded,
-} from "../../services/AuthService";
-import { toast } from "react-toastify";
+import { getSportsAsync } from "../../services/SportService";
 import { useNavigate } from "react-router-dom";
-import { v4 as uuid } from "uuid";
 import { useResultContext } from "../../context/ResultContext";
 import ControlledInput from "../ControlledInput";
 
@@ -20,27 +14,13 @@ export default function SportNavbar() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function getClubs() {
-      try {
-        const response = await API.get("/sport?pageSize=100&pageNumber=0", {
-          headers: getHeaders(),
-        });
-        const sportsFromDatabase = response.data.items;
-        setSports(sportsFromDatabase);
-        sportsFromDatabase.length > 0 && setCurrentSport(sportsFromDatabase[0]);
-      } catch (err) {
-        redirectToLoginIfNeeded(err, navigate, toast);
-      }
+    async function getAllSportsAsync() {
+      const { items } = await getSportsAsync(navigate, 100, 0);
+      setSports(items);
+      items.length > 0 && setCurrentSport(items[0]);
     }
-    getClubs();
+    getAllSportsAsync();
   }, []);
-
-  // id,
-  // type,
-  // isRequired,
-  // labelText,
-  // value,
-  // onSelectChange,
 
   return (
     <nav className="navbar navbar-expand-md">
@@ -48,7 +28,7 @@ export default function SportNavbar() {
         <ul className="navbar-nav">
           {sports?.map((sport) => {
             return (
-              <li className="nav-item" key={uuid()}>
+              <li className="nav-item" key={sport.id}>
                 <span
                   onClick={() => setCurrentSport(sport)}
                   className={`nav-link cursor-pointer ${
@@ -67,7 +47,9 @@ export default function SportNavbar() {
             type="date"
             isRequired={false}
             value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
+            onChange={(e) => {
+              setSelectedDate(e.target.value);
+            }}
           />
         </div>
       </div>
