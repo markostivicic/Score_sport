@@ -5,60 +5,62 @@ import Pagination from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
-import {
-  getSportsAsync,
-  deleteSportByIdAsync,
-} from "../../services/SportService";
 import Button from "../../components/Button";
+import {
+  getLeaguesAsync,
+  deleteLeagueByIdAsync,
+} from "../../services/LeagueService";
 import Background from "../../components/Background";
 import Modal from "../../components/Modal";
 
-export default function Sport() {
+export default function League() {
   const navigate = useNavigate();
-  const [sports, setSports] = useState([]);
+  const [leagues, setLeagues] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [pageCount, setPageCount] = useState(1);
-  const [selectedSport, setSelectedSport] = useState(null);
+  const [selectedLeague, setSelectedLeague] = useState(null);
 
   const pageLength = 3;
 
   useEffect(() => {
-    fetchSportsAsync();
+    fetchLeaguesAsync();
   }, [pageNumber]);
 
   const handleConfirmDelete = () => {
-    deleteSportAsync(selectedSport.id);
-    setSelectedSport(null);
+    deleteLeagueAsync(selectedLeague.id);
+    setSelectedLeague(null);
   };
 
   const handleCancelDelete = () => {
-    setSelectedSport(null);
+    setSelectedLeague(null);
   };
 
-  async function fetchSportsAsync() {
-    const { items, totalCount } = await getSportsAsync(
+  async function fetchLeaguesAsync() {
+    const { items, totalCount } = await getLeaguesAsync(
       navigate,
       pageLength,
       pageNumber
     );
-    setSports(items);
+    setLeagues(items);
     setPageCount(Math.ceil(totalCount / pageLength));
   }
 
-  async function deleteSportAsync(id) {
-    await deleteSportByIdAsync(id, navigate);
-    fetchSportsAsync();
+  async function deleteLeagueAsync(id) {
+    await deleteLeagueByIdAsync(id, navigate);
+    fetchLeaguesAsync();
   }
 
   function renderData() {
-    return sports.map((sport) => {
+    return leagues.map((league) => {
       return (
-        <tr key={sport.id}>
-          <td>{sport.name}</td>
+        <tr key={league.id}>
+          <td>{league.name}</td>
+          <td>{league.sport.name}</td>
+          <td>{league.country.name}</td>
           <td>
             <FontAwesomeIcon
               className="cursor-pointer"
-              onClick={() => navigate(`/sport/update/${sport.id}`)}
+              onClick={() => navigate(`/league/update/${league.id}`)}
               icon={faPenToSquare}
             />
           </td>
@@ -66,7 +68,7 @@ export default function Sport() {
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => {
-                setSelectedSport(sport);
+                setSelectedLeague(league);
               }}
               icon={faTrash}
             />
@@ -83,16 +85,16 @@ export default function Sport() {
   return (
     <Background>
       <Navbar />
-      <Table tableHeaders={["Ime"]} renderData={renderData}>
+      <Table tableHeaders={["Ime", "Sport", "Država"]} renderData={renderData}>
         <Modal
-          selectedItem={selectedSport}
+          selectedItem={selectedLeague}
           handleCancelDelete={handleCancelDelete}
           handleConfirmDelete={handleConfirmDelete}
         />
       </Table>
       <Button
         text="Dodaj"
-        handleOnClick={() => navigate("/sport/create")}
+        handleOnClick={() => navigate("/league/create")}
         margin="my-3"
       />
       <Pagination pageCount={pageCount} changePage={changePage} />

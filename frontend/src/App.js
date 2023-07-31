@@ -18,6 +18,15 @@ import Spinner from "./components/Spinner";
 import Sport from "./pages/sport/Sport";
 import SportCreate from "./pages/sport/SportCreate";
 import SportUpdate from "./pages/sport/SportUpdate";
+import Country from "./pages/country/Country";
+import CountryCreate from "./pages/country/CountryCreate";
+import CountryUpdate from "./pages/country/CountryUpdate";
+import Location from "./pages/location/Location";
+import LocationCreate from "./pages/location/LocationCreate";
+import LocationUpdate from "./pages/location/LocationUpdate";
+import League from "./pages/league/League";
+import LeagueCreate from "./pages/league/LeagueCreate";
+import LeagueUpdate from "./pages/league/LeagueUpdate";
 import SingleMatch from "./pages/SingleMatch";
 
 function App() {
@@ -54,6 +63,15 @@ function App() {
         <Route path="/sport" element={<Sport />} />
         <Route path="/sport/create" element={<SportCreate />} />
         <Route path="/sport/update/:id" element={<SportUpdate />} />
+        <Route path="/country" element={<Country />} />
+        <Route path="/country/create" element={<CountryCreate />} />
+        <Route path="/country/update/:id" element={<CountryUpdate />} />
+        <Route path="/location" element={<Location />} />
+        <Route path="/location/create" element={<LocationCreate />} />
+        <Route path="/location/update/:id" element={<LocationUpdate />} />
+        <Route path="/league" element={<League />} />
+        <Route path="/league/create" element={<LeagueCreate />} />
+        <Route path="/league/update/:id" element={<LeagueUpdate />} />
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

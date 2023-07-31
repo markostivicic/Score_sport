@@ -6,59 +6,59 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import {
-  getSportsAsync,
-  deleteSportByIdAsync,
-} from "../../services/SportService";
+  getCountrysAsync,
+  deleteCountryByIdAsync,
+} from "../../services/CountryService";
 import Button from "../../components/Button";
 import Background from "../../components/Background";
 import Modal from "../../components/Modal";
 
-export default function Sport() {
+export default function Country() {
   const navigate = useNavigate();
-  const [sports, setSports] = useState([]);
+  const [countrys, setCountrys] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [pageCount, setPageCount] = useState(1);
-  const [selectedSport, setSelectedSport] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   const pageLength = 3;
 
   useEffect(() => {
-    fetchSportsAsync();
+    fetchCountrysAsync();
   }, [pageNumber]);
 
   const handleConfirmDelete = () => {
-    deleteSportAsync(selectedSport.id);
-    setSelectedSport(null);
+    deleteCountryAsync(selectedCountry.id);
+    setSelectedCountry(null);
   };
 
   const handleCancelDelete = () => {
-    setSelectedSport(null);
+    setSelectedCountry(null);
   };
 
-  async function fetchSportsAsync() {
-    const { items, totalCount } = await getSportsAsync(
+  async function fetchCountrysAsync() {
+    const { items, totalCount } = await getCountrysAsync(
       navigate,
       pageLength,
       pageNumber
     );
-    setSports(items);
+    setCountrys(items);
     setPageCount(Math.ceil(totalCount / pageLength));
   }
 
-  async function deleteSportAsync(id) {
-    await deleteSportByIdAsync(id, navigate);
-    fetchSportsAsync();
+  async function deleteCountryAsync(id) {
+    await deleteCountryByIdAsync(id, navigate);
+    fetchCountrysAsync();
   }
 
   function renderData() {
-    return sports.map((sport) => {
+    return countrys.map((country) => {
       return (
-        <tr key={sport.id}>
-          <td>{sport.name}</td>
+        <tr key={country.id}>
+          <td>{country.name}</td>
           <td>
             <FontAwesomeIcon
               className="cursor-pointer"
-              onClick={() => navigate(`/sport/update/${sport.id}`)}
+              onClick={() => navigate(`/country/update/${country.id}`)}
               icon={faPenToSquare}
             />
           </td>
@@ -66,7 +66,7 @@ export default function Sport() {
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => {
-                setSelectedSport(sport);
+                setSelectedCountry(country);
               }}
               icon={faTrash}
             />
@@ -85,14 +85,14 @@ export default function Sport() {
       <Navbar />
       <Table tableHeaders={["Ime"]} renderData={renderData}>
         <Modal
-          selectedItem={selectedSport}
+          selectedItem={selectedCountry}
           handleCancelDelete={handleCancelDelete}
           handleConfirmDelete={handleConfirmDelete}
         />
       </Table>
       <Button
         text="Dodaj"
-        handleOnClick={() => navigate("/sport/create")}
+        handleOnClick={() => navigate("/country/create")}
         margin="my-3"
       />
       <Pagination pageCount={pageCount} changePage={changePage} />
