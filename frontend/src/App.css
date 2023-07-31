@@ -61,3 +61,18 @@
     width: 150px;
     aspect-ratio: 1/1;
   }
+  .resize-none{
+    resize: none;
+  }
+
+  .white-space-initial{
+    word-wrap: break-word;
+  }
+
+  .max-width{
+    max-width: 370px;
+  }
+
+  .max-height-full{
+    max-height: 100%;
+  }

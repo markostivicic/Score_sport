@@ -2,10 +2,15 @@ import { getHeaders, redirectToLoginIfNeeded } from "./AuthService";
 import API from "./AxiosService";
 import { toast } from "react-toastify";
 
-export async function getCommentsAsync(navigate, pageLength, pageNumber) {
+export async function getCommentsAsync(
+  navigate,
+  pageLength,
+  pageNumber,
+  matchId
+) {
   try {
     const response = await API.get(
-      `/comment?pageSize=${pageLength}&pageNumber=${pageNumber}`,
+      `/comment?pageSize=${pageLength}&pageNumber=${pageNumber}&matchId=${matchId}`,
       { headers: getHeaders() }
     );
     return response.data;

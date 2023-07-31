@@ -6,6 +6,7 @@ import {
   extractHoursAndMinutes,
 } from "../services/DateTimeService";
 import Club from "../components/SingleMatch/Club";
+import CommentSection from "../components/SingleMatch/CommentSection";
 
 export default function SingleMatch() {
   const { id } = useParams();
@@ -26,7 +27,7 @@ export default function SingleMatch() {
   if (!match) return null;
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 d-flex flex-column">
       <div className="row row-cols-3">
         <Club club={match.clubHome} />
         <div className="col text-center d-flex justify-content-center align-items-center flex-column gap-3">
@@ -43,6 +44,7 @@ export default function SingleMatch() {
         </div>
         <Club club={match.clubAway} />
       </div>
+      <CommentSection matchId={id} />
     </div>
   );
 }
