@@ -29,6 +29,12 @@ import LeagueCreate from "./pages/league/LeagueCreate";
 import LeagueUpdate from "./pages/league/LeagueUpdate";
 import SingleMatch from "./pages/SingleMatch";
 
+import Club from "./pages/club/Club";
+import ClubCreate from "./pages/club/ClubCreate";
+import ClubUpdate from "./pages/club/ClubUpdate";
+import Player from "./pages/player/Player";
+import PlayerCreate from "./pages/player/PlayerCreate";
+import PlayerUpdate from "./pages/player/PlayerUpdate";
 function App() {
   const navigate = useNavigate();
   const { authenticatedUser, setAuthenticatedUser } = useResultContext();
@@ -63,6 +69,12 @@ function App() {
         <Route path="/sport" element={<Sport />} />
         <Route path="/sport/create" element={<SportCreate />} />
         <Route path="/sport/update/:id" element={<SportUpdate />} />
+        <Route path="/club" element={<Club />} />
+        <Route path="/club/create" element={<ClubCreate />} />
+        <Route path="/club/update/:id" element={<ClubUpdate />} />
+        <Route path="/player" element={<Player />} />
+        <Route path="/player/create" element={<PlayerCreate />} />
+        <Route path="/player/update/:id" element={<PlayerUpdate />} />
         <Route path="/country" element={<Country />} />
         <Route path="/country/create" element={<CountryCreate />} />
         <Route path="/country/update/:id" element={<CountryUpdate />} />

@@ -36,7 +36,7 @@ namespace ResultApp.WebApi.Controllers
             return new CountryToReturnDto(country.Id, country.Name);
         }
 
-        [Authorize(Roles = "User,Admin")]
+        //[Authorize(Roles = "User,Admin")]
         [HttpGet]
         public async Task<HttpResponseMessage> GetAllPlayersAsync([FromUri] Sorting sorting, [FromUri] Paging paging, [FromUri] PlayerFilter playerFilter)
         {
@@ -50,7 +50,7 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new PageList<PlayerToReturnDto>(playerViews, players.TotalCount));
         }
 
-        [Authorize(Roles = "User,Admin")]
+        //[Authorize(Roles = "User,Admin")]
         [HttpGet]
         public async Task<HttpResponseMessage> GetPlayerByIdAsync(Guid id)
         {
@@ -63,7 +63,7 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new PlayerToReturnDto(player.Id, player.FirstName, player.LastName, player.Image, player.DoB, player.ClubId, player.CountryId, MapClubToClubToReturnDto(player.Club), MapCountryToCountryToReturnDto(player.Country)));
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<HttpResponseMessage> PostPlayerAsync([FromBody] PlayerToCreateAndUpdateDto player)
         {
@@ -83,7 +83,7 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Player was not inserted!");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<HttpResponseMessage> UpdatePlayerAsync(Guid id, [FromBody] PlayerToCreateAndUpdateDto player)
         {
@@ -146,7 +146,7 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Player was not updated!");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("api/player/toggle/{id}")]
         public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
