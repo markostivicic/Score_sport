@@ -39,7 +39,12 @@ export default function Club({ club }) {
       )}
 
       <div className="d-flex flex-column align-items-center">
-        <img className="club-logo" src={club.logo} alt="club-home-logo" />
+        <img
+          onClick={() => navigate(`/single-club/${club.id}`)}
+          className="club-logo cursor-pointer"
+          src={club.logo}
+          alt="club-home-logo"
+        />
         <span>{club.name}</span>
       </div>
     </div>

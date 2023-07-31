@@ -10,7 +10,7 @@ export async function getCommentsAsync(
 ) {
   try {
     const response = await API.get(
-      `/comment?pageSize=${pageLength}&pageNumber=${pageNumber}&matchId=${matchId}`,
+      `/comment?pageSize=${pageLength}&pageNumber=${pageNumber}&matchId=${matchId}&orderBy=DateCreated`,
       { headers: getHeaders() }
     );
     return response.data;
