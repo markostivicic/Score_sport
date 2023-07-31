@@ -4,11 +4,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Form from "../../components/Form";
 import Input from "../../components/Input";
-import API from "../../services/AxiosService";
-import { toast } from "react-toastify";
-import { v4 as uuid } from "uuid";
-import { getHeaders } from "../../services/AuthService";
 import Select from "../../components/Select";
+import Background from "../../components/Background";
+import FormContainer from "../../components/FormContainer";
+import {
+  getLeagueByIdAsync,
+  updateLeagueByIdAsync,
+} from "../../services/LeagueService";
+import { getCountrysAsync } from "../../services/CountryService";
+import { getSportsAsync } from "../../services/SportService";
 
 export default function LeagueUpdate() {
   const navigate = useNavigate();
@@ -21,47 +25,16 @@ export default function LeagueUpdate() {
     if (id === "") {
       navigate("/league");
     }
-    getLeagueByIdAsync();
-  }, []);
-  useEffect(() => {
-    fetchCountrysAsync();
+    getLeagueAsync();
     fetchSportsAsync();
+    fetchCountrysAsync();
   }, []);
 
-  async function getLeagueByIdAsync() {
-    try {
-      await API.get(`/league/${id}`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setSelectedLeague(response.data);
-      });
-    } catch (e) {
-      console.log(e);
-    }
+  async function getLeagueAsync() {
+    const data = await getLeagueByIdAsync(id, navigate);
+    setSelectedLeague(data);
   }
-  async function fetchCountrysAsync() {
-    try {
-      await API.get(`/country`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setCountrys(response.data.items);
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  async function fetchSportsAsync() {
-    try {
-      await API.get(`/sport`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setSports(response.data.items);
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  console.log(selectedLeague);
+
   async function updateLeagueAsync(e) {
     e.preventDefault();
 
@@ -74,47 +47,38 @@ export default function LeagueUpdate() {
       countryId: leagueCountry,
     };
 
-    try {
-      await API.put(`/league/${id}`, leagueToUpdate, {
-        headers: getHeaders(),
-      }).then(() => {
-        toast.success("Lokacija azurirana");
-        navigate("/league");
-      });
-    } catch (e) {
-      toast.error("Lokacija nije azurirana");
-      console.log(e);
-    }
+    await updateLeagueByIdAsync(id, leagueToUpdate);
+    navigate("/league");
+  }
+
+  async function fetchCountrysAsync() {
+    const { items } = await getCountrysAsync(navigate, 100, 0);
+    setCountrys(items);
+  }
+  async function fetchSportsAsync() {
+    const { items } = await getSportsAsync(navigate, 100, 0);
+    setSports(items);
   }
 
   return (
-    <div>
+    <Background>
       <Navbar />
-      <Form
-        formElements={[
+      <FormContainer>
+        <Form handleOnSubmit={updateLeagueAsync}>
           <Input
-            key={uuid()}
             id="leagueUpdateName"
             type="text"
             labelText="Ime"
             defaultValue={selectedLeague?.name}
-          />,
+          />
+          <Select id="leagueUpdateSport" options={sports} labelText="Sport" />
           <Select
-            key={uuid()}
-            id="leagueUpdateSport"
-            options={sports}
-            labelText="Sport"
-          />,
-          <Select
-            key={uuid()}
             id="leagueUpdateCountry"
             options={countrys}
             labelText="Država"
-          />,
-        ]}
-        handleOnSubmit={updateLeagueAsync}
-        className="width-400"
-      />
-    </div>
+          />
+        </Form>
+      </FormContainer>
+    </Background>
   );
 }

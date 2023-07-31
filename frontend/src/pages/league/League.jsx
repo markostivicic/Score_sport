@@ -2,20 +2,23 @@ import React, { useEffect, useState } from "react";
 import Table from "../../components/Table";
 import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
-import API from "../../services/AxiosService";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { v4 as uuid } from "uuid";
-import { toast } from "react-toastify";
-import { getHeaders } from "../../services/AuthService";
 import Button from "../../components/Button";
+import {
+  getLeaguesAsync,
+  deleteLeagueByIdAsync,
+} from "../../services/LeagueService";
+import Background from "../../components/Background";
+import Modal from "../../components/Modal";
 
 export default function League() {
   const navigate = useNavigate();
   const [leagues, setLeagues] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [pageCount, setPageCount] = useState(1);
+  const [selectedLeague, setSelectedLeague] = useState(null);
 
   const pageLength = 3;
 
@@ -23,37 +26,34 @@ export default function League() {
     fetchLeaguesAsync();
   }, [pageNumber]);
 
+  const handleConfirmDelete = () => {
+    deleteLeagueAsync(selectedLeague.id);
+    setSelectedLeague(null);
+  };
+
+  const handleCancelDelete = () => {
+    setSelectedLeague(null);
+  };
+
   async function fetchLeaguesAsync() {
-    try {
-      await API.get(`/league?pageSize=${pageLength}&pageNumber=${pageNumber}`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setLeagues(response.data.items);
-        setPageCount(Math.ceil(response.data.totalCount / pageLength));
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    const { items, totalCount } = await getLeaguesAsync(
+      navigate,
+      pageLength,
+      pageNumber
+    );
+    setLeagues(items);
+    setPageCount(Math.ceil(totalCount / pageLength));
   }
 
   async function deleteLeagueAsync(id) {
-    try {
-      await API.delete(`/league/toggle/${id}`, {
-        headers: getHeaders(),
-      }).then(() => {
-        fetchLeaguesAsync();
-        toast.success("Liga obrisana");
-      });
-    } catch (e) {
-      toast.error("Liga nije obrisana");
-      console.log(e);
-    }
+    await deleteLeagueByIdAsync(id, navigate);
+    fetchLeaguesAsync();
   }
 
   function renderData() {
     return leagues.map((league) => {
       return (
-        <tr key={uuid()}>
+        <tr key={league.id}>
           <td>{league.name}</td>
           <td>{league.sport.name}</td>
           <td>{league.country.name}</td>
@@ -68,11 +68,7 @@ export default function League() {
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => {
-                if (
-                  window.confirm("Jeste li sigurani da želite izbrisati ligu?")
-                ) {
-                  deleteLeagueAsync(league.id);
-                }
+                setSelectedLeague(league);
               }}
               icon={faTrash}
             />
@@ -87,18 +83,21 @@ export default function League() {
   };
 
   return (
-    <div>
+    <Background>
       <Navbar />
+      <Table tableHeaders={["Ime", "Sport", "Država"]} renderData={renderData}>
+        <Modal
+          selectedItem={selectedLeague}
+          handleCancelDelete={handleCancelDelete}
+          handleConfirmDelete={handleConfirmDelete}
+        />
+      </Table>
       <Button
+        text="Dodaj"
         handleOnClick={() => navigate("/league/create")}
-        text="Dodaj ligu"
-        color={"info"}
-      />
-      <Table
-        tableHeaders={["Ime", "Adresa", "Država"]}
-        renderData={renderData}
+        margin="my-3"
       />
       <Pagination pageCount={pageCount} changePage={changePage} />
-    </div>
+    </Background>
   );
 }

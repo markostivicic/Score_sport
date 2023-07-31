@@ -2,20 +2,23 @@ import React, { useEffect, useState } from "react";
 import Table from "../../components/Table";
 import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
-import API from "../../services/AxiosService";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { v4 as uuid } from "uuid";
-import { toast } from "react-toastify";
-import { getHeaders } from "../../services/AuthService";
+import {
+  getCountrysAsync,
+  deleteCountryByIdAsync,
+} from "../../services/CountryService";
 import Button from "../../components/Button";
+import Background from "../../components/Background";
+import Modal from "../../components/Modal";
 
 export default function Country() {
   const navigate = useNavigate();
   const [countrys, setCountrys] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [pageCount, setPageCount] = useState(1);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   const pageLength = 3;
 
@@ -23,40 +26,34 @@ export default function Country() {
     fetchCountrysAsync();
   }, [pageNumber]);
 
+  const handleConfirmDelete = () => {
+    deleteCountryAsync(selectedCountry.id);
+    setSelectedCountry(null);
+  };
+
+  const handleCancelDelete = () => {
+    setSelectedCountry(null);
+  };
+
   async function fetchCountrysAsync() {
-    try {
-      await API.get(
-        `/country?pageSize=${pageLength}&pageNumber=${pageNumber}`,
-        {
-          headers: getHeaders(),
-        }
-      ).then((response) => {
-        setCountrys(response.data.items);
-        setPageCount(Math.ceil(response.data.totalCount / pageLength));
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    const { items, totalCount } = await getCountrysAsync(
+      navigate,
+      pageLength,
+      pageNumber
+    );
+    setCountrys(items);
+    setPageCount(Math.ceil(totalCount / pageLength));
   }
 
   async function deleteCountryAsync(id) {
-    try {
-      await API.delete(`/country/toggle/${id}`, {
-        headers: getHeaders(),
-      }).then(() => {
-        fetchCountrysAsync();
-        toast.success("Država obrisana");
-      });
-    } catch (e) {
-      toast.error("Država nije obrisana");
-      console.log(e);
-    }
+    await deleteCountryByIdAsync(id, navigate);
+    fetchCountrysAsync();
   }
 
   function renderData() {
     return countrys.map((country) => {
       return (
-        <tr key={uuid()}>
+        <tr key={country.id}>
           <td>{country.name}</td>
           <td>
             <FontAwesomeIcon
@@ -69,13 +66,7 @@ export default function Country() {
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => {
-                if (
-                  window.confirm(
-                    "Jeste li sigurani da želite izbrisati državu?"
-                  )
-                ) {
-                  deleteCountryAsync(country.id);
-                }
+                setSelectedCountry(country);
               }}
               icon={faTrash}
             />
@@ -90,15 +81,21 @@ export default function Country() {
   };
 
   return (
-    <div>
+    <Background>
       <Navbar />
+      <Table tableHeaders={["Ime"]} renderData={renderData}>
+        <Modal
+          selectedItem={selectedCountry}
+          handleCancelDelete={handleCancelDelete}
+          handleConfirmDelete={handleConfirmDelete}
+        />
+      </Table>
       <Button
+        text="Dodaj"
         handleOnClick={() => navigate("/country/create")}
-        text="Dodaj državu"
-        color={"info"}
+        margin="my-3"
       />
-      <Table tableHeaders={["Name"]} renderData={renderData} />
       <Pagination pageCount={pageCount} changePage={changePage} />
-    </div>
+    </Background>
   );
 }

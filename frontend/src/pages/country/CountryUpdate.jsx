@@ -4,10 +4,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Form from "../../components/Form";
 import Input from "../../components/Input";
-import API from "../../services/AxiosService";
-import { toast } from "react-toastify";
-import { v4 as uuid } from "uuid";
-import { getHeaders } from "../../services/AuthService";
+import Background from "../../components/Background";
+import FormContainer from "../../components/FormContainer";
+import {
+  getCountryByIdAsync,
+  updateCountryByIdAsync,
+} from "../../services/CountryService";
 
 export default function CountryUpdate() {
   const navigate = useNavigate();
@@ -18,19 +20,12 @@ export default function CountryUpdate() {
     if (id === "") {
       navigate("/country");
     }
-    getCountryByIdAsync();
+    getCountryAsync();
   }, []);
 
-  async function getCountryByIdAsync() {
-    try {
-      await API.get(`/country/${id}`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setSelectedCountry(response.data);
-      });
-    } catch (e) {
-      console.log(e);
-    }
+  async function getCountryAsync() {
+    const data = await getCountryByIdAsync(id, navigate);
+    setSelectedCountry(data);
   }
 
   async function updateCountryAsync(e) {
@@ -41,35 +36,23 @@ export default function CountryUpdate() {
       name: countryName,
     };
 
-    try {
-      await API.put(`/country/${id}`, countryToUpdate, {
-        headers: getHeaders(),
-      }).then(() => {
-        toast.success("Država azurirana");
-        navigate("/country");
-      });
-    } catch (e) {
-      toast.error("Država nije azurirana");
-      console.log(e);
-    }
+    await updateCountryByIdAsync(id, countryToUpdate);
+    navigate("/country");
   }
 
   return (
-    <div>
+    <Background>
       <Navbar />
-      <Form
-        formElements={[
+      <FormContainer>
+        <Form handleOnSubmit={updateCountryAsync}>
           <Input
-            key={uuid()}
             id="countryUpdateName"
             type="text"
             labelText="Name"
             defaultValue={selectedCountry?.name}
-          />,
-        ]}
-        handleOnSubmit={updateCountryAsync}
-        className="width-400"
-      />
-    </div>
+          />
+        </Form>
+      </FormContainer>
+    </Background>
   );
 }

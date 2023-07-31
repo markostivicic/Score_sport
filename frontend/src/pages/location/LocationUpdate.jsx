@@ -4,11 +4,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Form from "../../components/Form";
 import Input from "../../components/Input";
-import API from "../../services/AxiosService";
-import { toast } from "react-toastify";
-import { v4 as uuid } from "uuid";
-import { getHeaders } from "../../services/AuthService";
 import Select from "../../components/Select";
+import Background from "../../components/Background";
+import FormContainer from "../../components/FormContainer";
+import {
+  getLocationByIdAsync,
+  updateLocationByIdAsync,
+} from "../../services/LocationService";
+import { getCountrysAsync } from "../../services/CountryService";
 
 export default function LocationUpdate() {
   const navigate = useNavigate();
@@ -20,35 +23,15 @@ export default function LocationUpdate() {
     if (id === "") {
       navigate("/location");
     }
-    getLocationByIdAsync();
-  }, []);
-  useEffect(() => {
+    getLocationAsync();
     fetchCountrysAsync();
   }, []);
 
-  async function getLocationByIdAsync() {
-    try {
-      await API.get(`/location/${id}`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setSelectedLocation(response.data);
-      });
-    } catch (e) {
-      console.log(e);
-    }
+  async function getLocationAsync() {
+    const data = await getLocationByIdAsync(id, navigate);
+    setSelectedLocation(data);
   }
-  async function fetchCountrysAsync() {
-    try {
-      await API.get(`/country`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setCountrys(response.data.items);
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-  console.log(selectedLocation);
+
   async function updateLocationAsync(e) {
     e.preventDefault();
 
@@ -61,48 +44,39 @@ export default function LocationUpdate() {
       countryId: locationCountry,
     };
 
-    try {
-      await API.put(`/location/${id}`, locationToUpdate, {
-        headers: getHeaders(),
-      }).then(() => {
-        toast.success("Lokacija azurirana");
-        navigate("/location");
-      });
-    } catch (e) {
-      toast.error("Lokacija nije azurirana");
-      console.log(e);
-    }
+    await updateLocationByIdAsync(id, locationToUpdate);
+    navigate("/location");
+  }
+
+  async function fetchCountrysAsync() {
+    const { items } = await getCountrysAsync(navigate, 100, 0);
+    setCountrys(items);
   }
 
   return (
-    <div>
+    <Background>
       <Navbar />
-      <Form
-        formElements={[
+      <FormContainer>
+        <Form handleOnSubmit={updateLocationAsync}>
           <Input
-            key={uuid()}
             id="locationUpdateName"
             type="text"
             labelText="Ime"
             defaultValue={selectedLocation?.name}
-          />,
+          />
           <Input
-            key={uuid()}
             id="locationUpdateAddress"
             type="text"
             labelText="Adresa"
             defaultValue={selectedLocation?.address}
-          />,
+          />
           <Select
-            key={uuid()}
             id="locationUpdateCountry"
             options={countrys}
             labelText="Država"
-          />,
-        ]}
-        handleOnSubmit={updateLocationAsync}
-        className="width-400"
-      />
-    </div>
+          />
+        </Form>
+      </FormContainer>
+    </Background>
   );
 }
