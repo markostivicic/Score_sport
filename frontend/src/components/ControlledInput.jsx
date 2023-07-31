@@ -5,6 +5,7 @@ export default function ControlledInput({
   id,
   type,
   isRequired,
+  isDisabled,
   labelText,
   value,
   onChange,
@@ -18,6 +19,7 @@ export default function ControlledInput({
         type={type}
         value={value}
         onChange={onChange}
+        disabled={isDisabled || false}
         required={isRequired || true}
         className="form-control"
       />
