@@ -17,7 +17,8 @@ namespace ResultApp.Repository
         public async Task<PageList<Country>> GetAllAsync(Sorting sorting, Paging paging)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand($"SELECT *, COUNT(*) OVER() as TotalCount FROM \"Country\" WHERE \"IsActive\" = TRUE ORDER BY \"{sorting.OrderBy}\" {sorting.SortOrder} LIMIT @PageSize OFFSET @Offset", connection);
+            string orderBy = sorting.OrderBy ?? "\"Sport\".\"Id\"";
+            var command = new NpgsqlCommand($"SELECT *, COUNT(*) OVER() as TotalCount FROM \"Country\" WHERE \"IsActive\" = TRUE ORDER BY {orderBy} {sorting.SortOrder} LIMIT @PageSize OFFSET @Offset", connection);
             command.Parameters.AddWithValue("@PageSize", paging.PageSize);
             command.Parameters.AddWithValue("@Offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);
 

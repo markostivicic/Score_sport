@@ -5,11 +5,14 @@ import Pagination from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { deleteMatchByIdAsync, getMatchesAsync } from "../../services/MatchService";
+import { deleteMatchByIdAsync, getMatchesWithFiltersAsync } from "../../services/MatchService";
 import Background from "../../components/Background";
 import Modal from "../../components/Modal";
 import Button from "../../components/Button";
 import PageLengthSelect from "../../components/PageLengthSelect";
+import SwitchFilter from "../../components/filters/SwitchFilter";
+import SelectFilter from "../../components/filters/SelectFilter";
+import Filter from "../../components/filters/Filter";
 
 export default function Match() {
   const navigate = useNavigate();
@@ -18,14 +21,18 @@ export default function Match() {
   const [pageCount, setPageCount] = useState(1);
   const [pageLength, setPageLength] = useState(5);
   const [selectedMatch, setSelectedMatch] = useState(null)
+  const [selectedOrderByFilter, setSlectedOrderByFilter] = useState(`\"Match\".\"Time\"`)
+  const [selectedFinishedFilter, setSelectedFinishedFilter] = useState("null")
+  const [activeFilter, setActiveFilter] = useState(true)
+  const [sortOrderFilter, setSortOrderFilter] = useState(true)
 
   useEffect(() => {
     fetchMatchesAsync();
-  }, [pageNumber, pageLength]);
+  }, [pageNumber, pageLength, selectedFinishedFilter, activeFilter, selectedOrderByFilter, sortOrderFilter]);
 
 
   async function fetchMatchesAsync() {
-    const { items, totalCount } = await getMatchesAsync(navigate, pageLength, pageNumber)
+    const { items, totalCount } = await getMatchesWithFiltersAsync(navigate, pageLength, pageNumber, sortOrderFilter ? "asc" : "desc", selectedOrderByFilter, selectedFinishedFilter, activeFilter)
     if (items.length === 0 && pageNumber > 0) {
       setPageNumber(pageNumber - 1);
       return;
@@ -93,10 +100,52 @@ export default function Match() {
     setSelectedMatch(null);
   };
 
+  const orderFilterOptions = [
+    { value: "\"Match\".\"Time\"", text: "Vrijeme" },
+    { value: "\"Location\".\"Name\"", text: "Lokacija" },
+    { value: "clubHome.\"Name\"", text: "Domaćin" },
+    { value: "clubAway.\"Name\"", text: "Gost" },
+  ];
+
+  const finishedFilterOptions = [
+    { value: "null", text: "Sve" },
+    { value: "true", text: "Završene" },
+    { value: "false", text: "Nisu završene" },
+  ];
+
   return (
     <Background>
       <Navbar />
-      <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
+      <Filter>
+        <SelectFilter
+          id="orderFilter"
+          options={orderFilterOptions}
+          value={selectedOrderByFilter}
+          onChange={(e) => setSlectedOrderByFilter(e.target.value)}
+          labelText="Poredaj po:"
+        />
+        <SwitchFilter
+          id="sortOrderFilter"
+          text="Rastući redoslijed"
+          value={sortOrderFilter}
+          onChange={(e) => setSortOrderFilter(!sortOrderFilter)}
+        />
+        <SelectFilter
+          id="finishedFilter"
+          options={finishedFilterOptions}
+          value={selectedFinishedFilter}
+          onChange={(e) => setSelectedFinishedFilter(e.target.value)}
+          labelText="Utakmice:"
+        />
+        <SwitchFilter
+          id="activeFilter"
+          text="Prikaži izbrisane"
+          value={!activeFilter}
+          onChange={(e) => setActiveFilter(!activeFilter)}
+        />
+        <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
+      </Filter>
+
       <Table tableHeaders={["Vrijeme", "Domaćin", "2Rezultat", "Gost", "Lokacija"]} renderData={renderData}>
         <Modal
           selectedItem={selectedMatch}
@@ -104,13 +153,13 @@ export default function Match() {
           handleConfirmDelete={handleConfirmDelete}
         />
       </Table>
+
       <Button
         text="Dodaj"
         handleOnClick={() => navigate("/match/create")}
         margin="my-3"
       />
       <Pagination pageCount={pageCount} changePage={changePage} />
-
     </Background>
   );
 }

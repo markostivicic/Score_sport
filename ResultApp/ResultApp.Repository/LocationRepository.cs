@@ -37,7 +37,8 @@ namespace ResultApp.Repository
                 command.Parameters.AddWithValue("@Address", "%" + locationFilter.Address.ToLower() + "%");
             }
 
-            sb.Append($" ORDER BY \"Location\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
+            string orderBy = sorting.OrderBy ?? "\"Location\".\"Id\"";
+            sb.Append($" ORDER BY {orderBy} {sorting.SortOrder}");
             sb.Append(" LIMIT @pageSize OFFSET @offset");
             command.CommandText = sb.ToString();
             List<Location> locations = new List<Location>();

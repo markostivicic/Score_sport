@@ -68,10 +68,12 @@ namespace ResultApp.Repository
 
             if (playerFilter.ClubId != null)
             {
-                queryBuilder.Append("AND \"ClubId\" = @ClubId");
+                queryBuilder.Append("AND \"ClubId\" = @ClubId ");
                 command.Parameters.AddWithValue("@ClubId", playerFilter.ClubId);
             }
-            queryBuilder.Append($" ORDER BY \"Player\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
+
+            string orderBy = sorting.OrderBy ?? "\"Player\".\"Id\"";
+            queryBuilder.Append($"ORDER BY {orderBy} {sorting.SortOrder}");
             queryBuilder.Append(" LIMIT @pageSize OFFSET @offset");
             command.Parameters.AddWithValue("@pageSize", paging.PageSize);
             command.Parameters.AddWithValue("@offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);

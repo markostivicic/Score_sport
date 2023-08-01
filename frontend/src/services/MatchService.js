@@ -14,6 +14,26 @@ export async function getMatchesAsync(navigate, pageLength, pageNumber) {
   }
 }
 
+export async function getMatchesWithFiltersAsync(
+  navigate,
+  pageLength,
+  pageNumber,
+  sortOrder,
+  orderBy,
+  isFinished,
+  isActive
+) {
+  try {
+    const response = await API.get(
+      `/match?pageSize=${pageLength}&pageNumber=${pageNumber}&sortOrder=${sortOrder}&orderBy=${orderBy}&isActive=${isActive}&isFinished=${isFinished}`,
+      { headers: getHeaders() }
+    )
+    return response.data
+  } catch (error) {
+    redirectToLoginIfNeeded(navigate, error, toast)
+  }
+}
+
 export async function getMatchesFilteredByLeagueAndDateAsync(
   navigate,
   pageLength,

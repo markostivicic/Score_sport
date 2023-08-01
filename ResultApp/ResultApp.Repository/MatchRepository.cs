@@ -57,7 +57,8 @@ namespace ResultApp.Repository
                 command.Parameters.AddWithValue("@SportId", matchFilter.SportId);
             }
 
-            queryBuilder.Append($"ORDER BY \"Match\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
+            string orderBy = sorting.OrderBy ?? "\"Match\".\"Id\"";
+            queryBuilder.Append($"ORDER BY {orderBy} {sorting.SortOrder}");
             queryBuilder.Append(" LIMIT @PageSize OFFSET @Offset");
             command.Parameters.AddWithValue("@PageSize", paging.PageSize);
             command.Parameters.AddWithValue("@Offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);
