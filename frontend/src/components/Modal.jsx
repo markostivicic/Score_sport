@@ -4,6 +4,7 @@ export default function Modal({
   selectedItem,
   handleCancelDelete,
   handleConfirmDelete,
+  isComment,
 }) {
   if (!selectedItem) return null;
 
@@ -12,7 +13,12 @@ export default function Modal({
       <div className="modal-dialog modal-dialog-centered" role="document">
         <div className="modal-content">
           <div className="modal-body">
-            <p>Jeste li sigurni da želite obrisati {selectedItem.name}?</p>
+            <p>
+              {isComment
+                ? "Jeste li sigurni da želite obrisati komentar?"
+                : `Jeste li sigurni da želite obrisati ${selectedItem.name}?`}
+              ?
+            </p>
           </div>
           <div className="modal-footer">
             <button

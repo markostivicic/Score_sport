@@ -34,9 +34,9 @@ namespace ResultApp.WebApi.Controllers
             List<CommentToReturnDto> commentViews = new List<CommentToReturnDto>();
             foreach (var comment in comments.Items)
             {
-                commentViews.Add(new CommentToReturnDto(comment.Id, comment.Text, comment.MatchId, comment.CreatedByUserId, new UserToReturnDto(comment.CreatedByUserId, comment.User.UserName)));
+                commentViews.Add(new CommentToReturnDto(comment.Id, comment.Text, comment.MatchId, comment.CreatedByUserId, new UserToReturnDto(comment.CreatedByUserId, comment.User.UserName), comment.DateCreated));
             }
-            return Request.CreateResponse(HttpStatusCode.OK, commentViews);
+            return Request.CreateResponse(HttpStatusCode.OK, new PageList<CommentToReturnDto>(commentViews,comments.TotalCount));
         }
 
         [Authorize(Roles = "User,Admin")]
@@ -49,7 +49,7 @@ namespace ResultApp.WebApi.Controllers
                 return Request.CreateResponse(HttpStatusCode.NotFound, "Comment with that ID was not found!");
             }
 
-            return Request.CreateResponse(HttpStatusCode.OK, new CommentToReturnDto(comment.Id, comment.Text, comment.MatchId, comment.CreatedByUserId, new UserToReturnDto(comment.CreatedByUserId, comment.User.UserName)));
+            return Request.CreateResponse(HttpStatusCode.OK, new CommentToReturnDto(comment.Id, comment.Text, comment.MatchId, comment.CreatedByUserId, new UserToReturnDto(comment.CreatedByUserId, comment.User.UserName), comment.DateCreated));
         }
 
         [Authorize(Roles = "User,Admin")]

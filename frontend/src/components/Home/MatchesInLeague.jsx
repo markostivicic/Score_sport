@@ -3,25 +3,41 @@ import { useNavigate } from "react-router-dom";
 import Match from "./Match";
 import { useResultContext } from "../../context/ResultContext";
 import { getMatchesFilteredByLeagueAndDateAsync } from "../../services/MatchService";
+import { getFavouriteClubsAsync } from "../../services/FavouriteClubService";
 
 export default function MatchesInLeague({ league }) {
   const [matches, setMatches] = useState([]);
   const navigate = useNavigate();
-  const { selectedDate } = useResultContext();
+  const { selectedDate, currentSport } = useResultContext();
 
   useEffect(() => {
     async function getMatchesAsync() {
-      const { items } = await getMatchesFilteredByLeagueAndDateAsync(
+      const favouriteClubs = await getFavouriteClubsAsync(navigate, 500, 0);
+      let { items } = await getMatchesFilteredByLeagueAndDateAsync(
         navigate,
         100,
         0,
         league.id,
         selectedDate
       );
+
+      if (currentSport.name !== "Favoriti") {
+        setMatches(items);
+        return;
+      }
+
+      items = items.filter((match) =>
+        favouriteClubs.items.some(
+          (favouriteClub) =>
+            match.clubHome.id === favouriteClub.clubId ||
+            match.clubAway.id === favouriteClub.clubId
+        )
+      );
       setMatches(items);
     }
+
     getMatchesAsync();
-  }, [selectedDate]);
+  }, [selectedDate, currentSport?.id]);
 
   if (matches.length === 0) return null;
 

@@ -64,7 +64,9 @@ namespace ResultApp.Repository
                             User user = new User();
                             user.Id = userId;
                             user.UserName = (string)reader["UserName"];
-                            comments.Add(new Comment(id, text, matchId, userId, user));
+                            Comment comment = new Comment(id, text, matchId, userId, user);
+                            comment.DateCreated = (DateTime)reader["DateCreated"];
+                            comments.Add(comment);
                             totalCount = reader.GetInt32(reader.GetOrdinal("TotalCount"));
                         }
                     }
