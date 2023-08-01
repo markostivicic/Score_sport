@@ -5,6 +5,7 @@ export default function Modal({
   handleCancelDelete,
   handleConfirmDelete,
   isComment,
+  activeFilter,
 }) {
   if (!selectedItem) return null;
 
@@ -16,8 +17,9 @@ export default function Modal({
             <p>
               {isComment
                 ? "Jeste li sigurni da želite obrisati komentar?"
-                : `Jeste li sigurni da želite obrisati ${selectedItem.name}?`}
-              ?
+                : `Jeste li sigurni da želite ${
+                    activeFilter ? "obrisati" : "vratiti"
+                  } ${selectedItem.name}?`}
             </p>
           </div>
           <div className="modal-footer">

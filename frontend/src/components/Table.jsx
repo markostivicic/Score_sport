@@ -4,7 +4,7 @@ export default function Table({
   tableHeaders,
   renderData,
   skipEditAndDeleteHeaders,
-  children, 
+  children,
   isActive,
 }) {
   return (
@@ -14,16 +14,24 @@ export default function Table({
           <thead>
             <tr>
               {tableHeaders.map((header) => {
-                const colSpan = parseInt(header.substring(0, 1)) || 1;
-                const headerText = colSpan !== 1 ? header.substring(1) : header;
+                const colSpan = parseInt(header.name.substring(0, 1)) || 1;
+                const headerText =
+                  colSpan !== 1 ? header.name.substring(1) : header.name;
                 return (
-                  <th key={header} colSpan={colSpan}>
+                  <th
+                    className="cursor-pointer"
+                    key={header.name}
+                    onClick={header.handleOnClick}
+                    colSpan={colSpan}
+                  >
                     {headerText}
                   </th>
                 );
               })}
-              {skipEditAndDeleteHeaders || {isActive ? <th>Izmijeni</th> : null}}
-              {skipEditAndDeleteHeaders || <th>{isActive ? "Izbriši" : "Vrati"}</th>
+              {skipEditAndDeleteHeaders || isActive ? <th>Izmijeni</th> : null}
+              {skipEditAndDeleteHeaders || (
+                <th> {isActive ? "Izbriši" : "Vrati"}</th>
+              )}
             </tr>
           </thead>
           <tbody>{renderData()}</tbody>
