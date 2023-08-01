@@ -273,6 +273,7 @@
     <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\CountryController.cs" />
     <Compile Include="Controllers\FavouriteClubController.cs" />
+    <Compile Include="Controllers\FavouriteMatchController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MatchController.cs" />
     <Compile Include="Controllers\LeagueController.cs" />
@@ -291,6 +292,8 @@
     <Compile Include="Models\Country\CountryToReturnDto.cs" />
     <Compile Include="Models\FavouriteClub\FavouriteClubToCreateAndUpdate.cs" />
     <Compile Include="Models\FavouriteClub\FavouriteClubToReturnDto.cs" />
+    <Compile Include="Models\FavouriteMatch\FavouriteMatchToCreateAndUpdate.cs" />
+    <Compile Include="Models\FavouriteMatch\FavouriteMatchToReturnDto.cs" />
     <Compile Include="Models\Match\MatchToUpdateDto.cs" />
     <Compile Include="Models\Match\MatchToCreateDto.cs" />
     <Compile Include="Models\Match\MatchToReturnDto.cs" />

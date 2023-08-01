@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FavouriteClubFilter.cs" />
+    <Compile Include="FavouriteMatchFilter.cs" />
     <Compile Include="MatchFilter.cs" />
     <Compile Include="PageList.cs" />
     <Compile Include="LocationFilter.cs" />

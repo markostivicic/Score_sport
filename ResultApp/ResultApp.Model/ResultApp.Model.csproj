@@ -122,6 +122,7 @@
     <Compile Include="Country.cs" />
     <Compile Include="FavouriteClub.cs" />
     <Compile Include="Auth\IdentityModels\ApplicationDbContext.cs" />
+    <Compile Include="FavouriteMatch.cs" />
     <Compile Include="League.cs" />
     <Compile Include="Location.cs" />
     <Compile Include="Match.cs" />
