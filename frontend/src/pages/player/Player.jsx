@@ -9,44 +9,50 @@ import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { v4 as uuid } from "uuid";
 import { toast } from "react-toastify";
 import { getHeaders } from "../../services/AuthService";
+import {
+  getPlayersAsync,
+  deletePlayerAsync,
+  deletePlayerByIdAsync,
+} from "../../services/PlayerService";
+import Button from "../../components/Button";
+import Background from "../../components/Background";
+import Modal from "../../components/Modal";
 
-export default function Club() {
+export default function Player() {
   const navigate = useNavigate();
   const [players, setPlayers] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [pageCount, setPageCount] = useState(1);
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
 
   const pageLength = 3;
 
   useEffect(() => {
     fetchPlayersAsync();
   }, [pageNumber]);
-  console.log(players);
+
   async function fetchPlayersAsync() {
-    try {
-      await API.get(`/player?pageSize=${pageLength}&pageNumber=${pageNumber}`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setPlayers(response.data.items);
-        setPageCount(Math.ceil(response.data.totalCount / pageLength));
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    const { items, totalCount } = await getPlayersAsync(
+      navigate,
+      pageLength,
+      pageNumber
+    );
+    setPlayers(items);
+    setPageCount(Math.ceil(totalCount / pageLength));
   }
 
+  const handleConfirmDelete = () => {
+    deletePlayerAsync(selectedPlayer.id);
+    setSelectedPlayer(null);
+  };
+
+  const handleCancelDelete = () => {
+    setSelectedPlayer(null);
+  };
+
   async function deletePlayerAsync(id) {
-    try {
-      await API.delete(`/player/toggle/${id}`, {
-        headers: getHeaders(),
-      }).then(() => {
-        fetchPlayersAsync();
-        toast.success("Igrač obrisan");
-      });
-    } catch (e) {
-      toast.error("Igrač nije obrisan");
-      console.log(e);
-    }
+    await deletePlayerByIdAsync(id, navigate);
+    fetchPlayersAsync();
   }
 
   function renderData() {
@@ -72,11 +78,7 @@ export default function Club() {
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => {
-                if (
-                  window.confirm("Jeste li sigurni da želite izbrisati igrača?")
-                ) {
-                  deletePlayerAsync(player.id);
-                }
+                setSelectedPlayer(player);
               }}
               icon={faTrash}
             />
@@ -90,7 +92,7 @@ export default function Club() {
     setPageNumber(selected + 1);
   };
 
-  return (
+  /* return (
     <div>
       <Navbar />
       <Table
@@ -106,5 +108,34 @@ export default function Club() {
       />
       <Pagination pageCount={pageCount} changePage={changePage} />
     </div>
+  ); */
+
+  return (
+    <Background>
+      <Navbar />
+      <Table
+        tableHeaders={[
+          "Ime",
+          "Prezime",
+          "Slika",
+          "Datum rođenja",
+          "Klub",
+          "Nacionalnost",
+        ]}
+        renderData={renderData}
+      >
+        <Modal
+          selectedItem={selectedPlayer}
+          handleCancelDelete={handleCancelDelete}
+          handleConfirmDelete={handleConfirmDelete}
+        />
+      </Table>
+      <Button
+        text="Dodaj"
+        handleOnClick={() => navigate("/player/create")}
+        margin="my-3"
+      />
+      <Pagination pageCount={pageCount} changePage={changePage} />
+    </Background>
   );
 }

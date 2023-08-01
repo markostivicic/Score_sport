@@ -76,3 +76,13 @@
   .max-height-full{
     max-height: 100%;
   }
+
+  .clublogo{
+    width: 25px;
+    height: 30px;
+  }
+
+  .playerlogo{
+    width: 25px;
+    height: 30px;
+  }

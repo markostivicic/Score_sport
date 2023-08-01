@@ -4,11 +4,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Form from "../../components/Form";
 import Input from "../../components/Input";
-import API from "../../services/AxiosService";
-import { toast } from "react-toastify";
-import { v4 as uuid } from "uuid";
 import Select from "../../components/Select";
-import { getHeaders } from "../../services/AuthService";
+import { getClubsAsync } from "../../services/ClubService";
+import { getCountrysAsync } from "../../services/CountryService";
+import {
+  getPlayerByIdAsync,
+  updatePlayerByIdAsync,
+} from "../../services/PlayerService";
+import Background from "../../components/Background";
+import FormContainer from "../../components/FormContainer";
 
 export default function ClubUpdate() {
   const navigate = useNavigate();
@@ -23,7 +27,7 @@ export default function ClubUpdate() {
     if (id === "") {
       navigate("/player");
     }
-    getPlayerByIdAsync();
+    getPlayerAsync();
   }, []);
 
   useEffect(() => {
@@ -31,51 +35,19 @@ export default function ClubUpdate() {
     fetchCountriesAsync();
   }, []);
 
-  async function getPlayerByIdAsync() {
-    try {
-      await API.get(`/player/${id}`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setSelectedPlayer(response.data);
-      });
-    } catch (e) {
-      console.log(e);
-    }
+  async function getPlayerAsync() {
+    const items = await getPlayerByIdAsync(id, navigate);
+    setSelectedPlayer(items);
   }
+
   async function fetchClubsAsync() {
-    try {
-      await API.get(`/club`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        const clubsFromDatabase = response.data.items;
-        setClubs(clubsFromDatabase);
-        setSelectedClub(
-          clubsFromDatabase.length > 0
-            ? clubsFromDatabase[0].id
-            : navigate("/player")
-        );
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    const { items } = await getClubsAsync(id, navigate);
+    setClubs(items);
   }
 
   async function fetchCountriesAsync() {
-    try {
-      await API.get(`/country`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        const countriesFromDatabase = response.data.items;
-        setCountry(countriesFromDatabase);
-        setSelectedCountry(
-          countriesFromDatabase.length > 0
-            ? countriesFromDatabase[0].id
-            : navigate("/player")
-        );
-      });
-    } catch (e) {
-      console.log(e);
-    }
+    const { items } = await getCountrysAsync(id, navigate);
+    setCountry(items);
   }
 
   async function updatePlayerAsync(e) {
@@ -96,71 +68,55 @@ export default function ClubUpdate() {
       countryId: playerCountry,
     };
 
-    try {
-      await API.put(`/player/${id}`, playerToUpdate, {
-        headers: getHeaders(),
-      }).then(() => {
-        toast.success("Igrač ažuriran");
-        navigate("/player");
-      });
-    } catch (e) {
-      toast.error("Igrač nije ažuriran");
-      console.log(e);
-    }
+    await updatePlayerByIdAsync(id, playerToUpdate, navigate);
+    navigate("/player");
   }
 
   return (
-    <div>
+    <Background>
       <Navbar />
-      <Form
-        formElements={[
+      <FormContainer>
+        <Form handleOnSubmit={updatePlayerAsync}>
           <Input
-            key={uuid()}
             id="playerCreateFirstName"
             type="text"
             labelText="Ime"
             defaultValue={selectedPlayer?.firstName}
-          />,
+          />
           <Input
-            key={uuid()}
             id="playerCreateLastName"
             type="text"
             labelText="Prezime"
             defaultValue={selectedPlayer?.lastName}
-          />,
+          />
           <Input
-            key={uuid()}
             id="playerCreateImage"
             type="url"
             labelText="Slika"
             defaultValue={selectedPlayer?.image}
-          />,
+          />
           <Input
-            key={uuid()}
             id="playerCreateDoB"
-            type="date"
+            type="datetime-local"
             labelText="Datum rođenja"
-          />,
+            defaultValue={selectedPlayer?.doB}
+          />
           <Select
-            key={uuid()}
             id="playerCreateClub"
             options={clubs}
             value={selectedClub}
             onChange={(e) => setSelectedClub(e.target.value)}
             labelText="Klub"
-          />,
+          />
           <Select
-            key={uuid()}
             id="playerCreateCountry"
             options={countries}
             value={selectedCountry}
             onChange={(e) => setSelectedCountry(e.target.value)}
             labelText="Nacionalnost"
-          />,
-        ]}
-        handleOnSubmit={updatePlayerAsync}
-        className="width-400"
-      />
-    </div>
+          />
+        </Form>
+      </FormContainer>
+    </Background>
   );
 }
