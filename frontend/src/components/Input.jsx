@@ -5,6 +5,7 @@ export default function Input({
   id,
   type,
   isRequired,
+  isDisabled,
   labelText,
   defaultValue,
   wrapperClassName
@@ -16,8 +17,9 @@ export default function Input({
         id={id}
         name={id}
         type={type}
+        disabled={isDisabled || false}
         required={isRequired || true}
-        defaultValue={defaultValue || ""}
+        defaultValue={defaultValue || null}
         className="form-control"
       />
     </div>

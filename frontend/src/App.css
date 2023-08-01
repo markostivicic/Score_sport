@@ -1,88 +1,89 @@
 .paginationBttns {
-    width: 98%;
-    height: 40px;
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    margin-top: 25px;
-    margin-bottom: 25px;
-  }
-  
-  .paginationBttns a {
-    padding: 10px;
-    margin: 8px;
-    border-radius: 5px;
-    border: 1px solid #2b2eff;
-    color: #2b2eff;
-    cursor: pointer;
-  }
-  
-  .paginationBttns a:hover {
-    color: white;
-    background-color: #8183e2;
-  }
-  
-  .paginationActive a {
-    color: white;
-    background-color: #8183e2;
-  }
-  
-  .paginationDisabled a {
-    color: red !important;
-    background-color: transparent !important;
-  }
+  width: 98%;
+  height: 40px;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
 
-  .width-400{
-    width: 400px;
-  }
+.paginationBttns a {
+  padding: 10px;
+  margin: 8px;
+  border-radius: 5px;
+  border: 1px solid #2b2eff;
+  color: #2b2eff;
+  cursor: pointer;
+}
 
-  td,th{
-    text-align: center !important;
-  }
+.paginationBttns a:hover {
+  color: white;
+  background-color: #8183e2;
+}
 
-  .cursor-pointer{
-    cursor: pointer;
-  }
+.paginationActive a {
+  color: white;
+  background-color: #8183e2;
+}
 
-  .logo{
-    width: 150px;
-    aspect-ratio: 16/9;
-  }
+.paginationDisabled a {
+  color: red !important;
+  background-color: transparent !important;
+}
 
-  caption{
-    caption-side: top;
-  }
+.width-400 {
+  width: 400px;
+}
 
-  .modal{
-    display: block !important;
-  }
+td,
+th {
+  text-align: center !important;
+}
 
-  .club-logo{
-    width: 150px;
-    aspect-ratio: 1/1;
-  }
-  .resize-none{
-    resize: none;
-  }
+.cursor-pointer {
+  cursor: pointer;
+}
 
-  .white-space-initial{
-    word-wrap: break-word;
-  }
+.logo {
+  width: 150px;
+  aspect-ratio: 16/9;
+}
 
-  .max-width{
-    max-width: 370px;
-  }
+caption {
+  caption-side: top;
+}
 
-  .max-height-full{
-    max-height: 100%;
-  }
+.modal {
+  display: block !important;
+}
 
-  .clublogo{
-    width: 25px;
-    height: 30px;
-  }
+.club-logo {
+  width: 150px;
+  aspect-ratio: 1/1;
+}
+.resize-none {
+  resize: none;
+}
 
-  .playerlogo{
-    width: 25px;
-    height: 30px;
-  }
+.white-space-initial {
+  word-wrap: break-word;
+}
+
+.max-width {
+  max-width: 370px;
+}
+
+.max-height-full {
+  max-height: 100%;
+}
+
+.clublogo {
+  width: 25px;
+  height: 30px;
+}
+
+.playerlogo {
+  width: 25px;
+  height: 30px;
+}

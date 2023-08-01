@@ -26,7 +26,8 @@ namespace ResultApp.Repository
                 command.Parameters.AddWithValue("@Name", "%" + sportFilter.Name.ToLower() + "%");
             }
 
-            sb.Append($" ORDER BY \"{sorting.OrderBy}\" {sorting.SortOrder}");
+            string orderBy = sorting.OrderBy ?? "\"Sport\".\"Id\"";
+            sb.Append($" ORDER BY {orderBy} {sorting.SortOrder}");
             sb.Append(" LIMIT @pageSize OFFSET @offset");
             command.CommandText = sb.ToString();
             List<Sport> sports = new List<Sport>();
