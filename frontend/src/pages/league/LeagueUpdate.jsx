@@ -11,14 +11,14 @@ import {
   getLeagueByIdAsync,
   updateLeagueByIdAsync,
 } from "../../services/LeagueService";
-import { getCountrysAsync } from "../../services/CountryService";
+import { getCountriesAsync } from "../../services/CountryService";
 import { getSportsAsync } from "../../services/SportService";
 
 export default function LeagueUpdate() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedLeague, setSelectedLeague] = useState();
-  const [countrys, setCountrys] = useState([]);
+  const [countries, setCountries] = useState([]);
   const [sports, setSports] = useState([]);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function LeagueUpdate() {
     }
     getLeagueAsync();
     fetchSportsAsync();
-    fetchCountrysAsync();
+    fetchCountriesAsync();
   }, []);
 
   async function getLeagueAsync() {
@@ -51,9 +51,9 @@ export default function LeagueUpdate() {
     navigate("/league");
   }
 
-  async function fetchCountrysAsync() {
-    const { items } = await getCountrysAsync(navigate, 100, 0);
-    setCountrys(items);
+  async function fetchCountriesAsync() {
+    const { items } = await getCountriesAsync(navigate, 100, 0);
+    setCountries(items);
   }
   async function fetchSportsAsync() {
     const { items } = await getSportsAsync(navigate, 100, 0);
@@ -74,7 +74,7 @@ export default function LeagueUpdate() {
           <Select id="leagueUpdateSport" options={sports} labelText="Sport" />
           <Select
             id="leagueUpdateCountry"
-            options={countrys}
+            options={countries}
             labelText="Država"
           />
         </Form>

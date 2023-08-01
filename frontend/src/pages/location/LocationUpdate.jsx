@@ -11,20 +11,20 @@ import {
   getLocationByIdAsync,
   updateLocationByIdAsync,
 } from "../../services/LocationService";
-import { getCountrysAsync } from "../../services/CountryService";
+import { getCountriesAsync } from "../../services/CountryService";
 
 export default function LocationUpdate() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedLocation, setSelectedLocation] = useState();
-  const [countrys, setCountrys] = useState([]);
+  const [countries, setCountries] = useState([]);
 
   useEffect(() => {
     if (id === "") {
       navigate("/location");
     }
     getLocationAsync();
-    fetchCountrysAsync();
+    fetchCountriesAsync();
   }, []);
 
   async function getLocationAsync() {
@@ -48,9 +48,9 @@ export default function LocationUpdate() {
     navigate("/location");
   }
 
-  async function fetchCountrysAsync() {
-    const { items } = await getCountrysAsync(navigate, 100, 0);
-    setCountrys(items);
+  async function fetchCountriesAsync() {
+    const { items } = await getCountriesAsync(navigate, 100, 0);
+    setCountries(items);
   }
 
   return (
@@ -72,7 +72,7 @@ export default function LocationUpdate() {
           />
           <Select
             id="locationUpdateCountry"
-            options={countrys}
+            options={countries}
             labelText="Država"
           />
         </Form>

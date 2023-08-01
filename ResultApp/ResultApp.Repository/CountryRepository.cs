@@ -14,13 +14,26 @@ namespace ResultApp.Repository
     {
         private string connStr = Environment.GetEnvironmentVariable("connStr", EnvironmentVariableTarget.User);
 
-        public async Task<PageList<Country>> GetAllAsync(Sorting sorting, Paging paging)
+        public async Task<PageList<Country>> GetAllAsync(Sorting sorting, Paging paging, CountryFilter countryFilter)
         {
             var connection = new NpgsqlConnection(connStr);
+            var command = new NpgsqlCommand();
+            command.Connection = connection;
+            StringBuilder sb = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"Country\" WHERE \"IsActive\" = @IsActive");
+            command.Parameters.AddWithValue("@IsActive", countryFilter.IsActive);
+
+            if (!string.IsNullOrEmpty(countryFilter.Name))
+            {
+                sb.Append(" AND LOWER(\"Name\") LIKE @Name");
+                command.Parameters.AddWithValue("@Name", "%" + countryFilter.Name.ToLower() + "%");
+            }
+
             string orderBy = sorting.OrderBy ?? "\"Country\".\"Id\"";
-            var command = new NpgsqlCommand($"SELECT *, COUNT(*) OVER() as TotalCount FROM \"Country\" WHERE \"IsActive\" = TRUE ORDER BY {orderBy} {sorting.SortOrder} LIMIT @PageSize OFFSET @Offset", connection);
-            command.Parameters.AddWithValue("@PageSize", paging.PageSize);
-            command.Parameters.AddWithValue("@Offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);
+            sb.Append($" ORDER BY {orderBy} {sorting.SortOrder}");
+            sb.Append(" LIMIT @pageSize OFFSET @offset");
+            command.Parameters.AddWithValue("@pageSize", paging.PageSize);
+            command.Parameters.AddWithValue("@offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);
+            command.CommandText = sb.ToString();
 
             List<Country> countries = new List<Country>();
             int totalCount = 0;

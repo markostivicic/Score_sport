@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Table({ tableHeaders, renderData, children }) {
+export default function Table({ tableHeaders, renderData, children, isActive }) {
   return (
     <>
       <div className="table-responsive">
@@ -12,8 +12,8 @@ export default function Table({ tableHeaders, renderData, children }) {
                 const headerText = colSpan !== 1 ? header.substring(1) : header;
                 return <th key={header} colSpan={colSpan}>{headerText}</th>;
               })}
-              <th>Izmijeni</th>
-              <th>Obriši</th>
+              {isActive ? <th>Izmijeni</th> : null}
+              <th>{isActive ? "Izbriši" : "Vrati"}</th>
             </tr>
           </thead>
           <tbody>{renderData()}</tbody>

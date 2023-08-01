@@ -36,7 +36,8 @@ namespace ResultApp.Repository
             queryBuilder.Append("AND \"FavouriteClub\".\"CreatedByUserId\" = @UserId ");
             command.Parameters.AddWithValue("@UserId", userId);
 
-            queryBuilder.Append($"ORDER BY \"FavouriteClub\".\"{sorting.OrderBy}\" {sorting.SortOrder} ");
+            string orderBy = sorting.OrderBy ?? "\"FavouriteClub\".\"Id\"";
+            queryBuilder.Append($"ORDER BY {orderBy} {sorting.SortOrder}");
             queryBuilder.Append(" LIMIT @pageSize OFFSET @offset");
             command.Parameters.AddWithValue("@pageSize", paging.PageSize);
             command.Parameters.AddWithValue("@offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);

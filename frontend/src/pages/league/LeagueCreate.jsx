@@ -7,12 +7,12 @@ import { createNewLeagueAsync } from "../../services/LeagueService";
 import FormContainer from "../../components/FormContainer";
 import Background from "../../components/Background";
 import Select from "../../components/Select";
-import { getCountrysAsync } from "../../services/CountryService";
+import { getCountriesAsync } from "../../services/CountryService";
 import { getSportsAsync } from "../../services/SportService";
 
 export default function LeagueCreate() {
   const navigate = useNavigate();
-  const [countrys, setCountrys] = useState([]);
+  const [countries, setCountries] = useState([]);
   const [sports, setSports] = useState([]);
 
   async function createLeagueAsync(e) {
@@ -32,12 +32,12 @@ export default function LeagueCreate() {
 
   useEffect(() => {
     fetchSportsAsync();
-    fetchCountrysAsync();
+    fetchCountriesAsync();
   }, []);
 
-  async function fetchCountrysAsync() {
-    const { items } = await getCountrysAsync(navigate, 100, 0);
-    setCountrys(items);
+  async function fetchCountriesAsync() {
+    const { items } = await getCountriesAsync(navigate, 100, 0);
+    setCountries(items);
   }
   async function fetchSportsAsync() {
     const { items } = await getSportsAsync(navigate, 100, 0);
@@ -52,7 +52,7 @@ export default function LeagueCreate() {
           <Select id="leagueCreateSport" options={sports} labelText="Sport" />
           <Select
             id="leagueCreateCountry"
-            options={countrys}
+            options={countries}
             labelText="Država"
           />
         </Form>

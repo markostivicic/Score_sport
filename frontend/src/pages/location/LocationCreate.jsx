@@ -7,11 +7,11 @@ import { createNewLocationAsync } from "../../services/LocationService";
 import FormContainer from "../../components/FormContainer";
 import Background from "../../components/Background";
 import Select from "../../components/Select";
-import { getCountrysAsync } from "../../services/CountryService";
+import { getCountriesAsync } from "../../services/CountryService";
 
 export default function LocationCreate() {
   const navigate = useNavigate();
-  const [countrys, setCountrys] = useState([]);
+  const [countries, setCountries] = useState([]);
 
   async function createLocationAsync(e) {
     e.preventDefault();
@@ -29,11 +29,11 @@ export default function LocationCreate() {
   }
 
   useEffect(() => {
-    async function fetchCountrysAsync() {
-      const { items } = await getCountrysAsync(navigate, 100, 0);
-      setCountrys(items);
+    async function fetchCountriesAsync() {
+      const { items } = await getCountriesAsync(navigate, 100, 0);
+      setCountries(items);
     }
-    fetchCountrysAsync();
+    fetchCountriesAsync();
   }, []);
 
   return (
@@ -45,7 +45,7 @@ export default function LocationCreate() {
           <Input id="locationCreateAddress" type="text" labelText="Adresa" />
           <Select
             id="locationCreateCountry"
-            options={countrys}
+            options={countries}
             labelText="Država"
           />
         </Form>

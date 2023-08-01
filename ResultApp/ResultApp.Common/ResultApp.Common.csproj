@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CountryFilter.cs" />
     <Compile Include="FavouriteClubFilter.cs" />
     <Compile Include="FavouriteMatchFilter.cs" />
     <Compile Include="MatchFilter.cs" />

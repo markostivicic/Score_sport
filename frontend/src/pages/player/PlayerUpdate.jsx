@@ -6,7 +6,7 @@ import Form from "../../components/Form";
 import Input from "../../components/Input";
 import Select from "../../components/Select";
 import { getClubsAsync } from "../../services/ClubService";
-import { getCountrysAsync } from "../../services/CountryService";
+import { getCountriesAsync } from "../../services/CountryService";
 import {
   getPlayerByIdAsync,
   updatePlayerByIdAsync,
@@ -46,7 +46,7 @@ export default function ClubUpdate() {
   }
 
   async function fetchCountriesAsync() {
-    const { items } = await getCountrysAsync(id, navigate);
+    const { items } = await getCountriesAsync(id, navigate);
     setCountry(items);
   }
 

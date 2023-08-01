@@ -5,7 +5,7 @@ import Input from "../../components/Input";
 import Select from "../../components/Select";
 import Background from "../../components/Background";
 import FormContainer from "../../components/FormContainer";
-import { getCountrysAsync } from "../../services/CountryService";
+import { getCountriesAsync } from "../../services/CountryService";
 import { getClubsAsync } from "../../services/ClubService";
 import { createNewPlayerAsync } from "../../services/PlayerService";
 
@@ -48,7 +48,7 @@ export default function ClubCreate() {
     setClubs(items);
   }
   async function fetchCountriesAsync() {
-    const { items } = await getCountrysAsync(navigate, 100, 0);
+    const { items } = await getCountriesAsync(navigate, 100, 0);
     setCountry(items);
   }
 

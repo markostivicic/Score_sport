@@ -4,7 +4,7 @@ import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faTrash, faUndoAlt } from "@fortawesome/free-solid-svg-icons";
 import { deleteMatchByIdAsync, getMatchesWithFiltersAsync } from "../../services/MatchService";
 import Background from "../../components/Background";
 import Modal from "../../components/Modal";
@@ -56,20 +56,20 @@ export default function Match() {
           <td>{match.awayScore}</td>
           <td>{match.clubAway.name}</td>
           <td>{match.location.name}</td>
-          <td>
+          {activeFilter ? (<td>
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => navigate(`/match/update/${match.id}`)}
               icon={faPenToSquare}
             />
-          </td>
+          </td>) : null}
           <td>
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => {
                 setSelectedMatch(match)
               }}
-              icon={faTrash}
+              icon={activeFilter ? faTrash : faUndoAlt}
             />
           </td>
         </tr>
@@ -146,7 +146,7 @@ export default function Match() {
         <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
       </Filter>
 
-      <Table tableHeaders={["Vrijeme", "Domaćin", "2Rezultat", "Gost", "Lokacija"]} renderData={renderData}>
+      <Table tableHeaders={["Vrijeme", "Domaćin", "2Rezultat", "Gost", "Lokacija"]} renderData={renderData} isActive={activeFilter}>
         <Modal
           selectedItem={selectedMatch}
           handleCancelDelete={handleCancelDelete}

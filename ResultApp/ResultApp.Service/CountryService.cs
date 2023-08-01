@@ -18,9 +18,9 @@ namespace ResultApp.Service
         {
             _countryRepository = countryRepository;
         }
-        public async Task<PageList<Country>> GetAllAsync(Sorting sorting, Paging paging)
+        public async Task<PageList<Country>> GetAllAsync(Sorting sorting, Paging paging, CountryFilter countryFilter)
         {
-            return await _countryRepository.GetAllAsync(sorting, paging);
+            return await _countryRepository.GetAllAsync(sorting, paging, countryFilter);
         }
 
         public async Task<Country> GetByIdAsync(Guid id)
