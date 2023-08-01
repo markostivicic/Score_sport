@@ -37,7 +37,7 @@ namespace ResultApp.WebApi.Controllers
             return new LocationToReturnDto(location.Id, location.Name, location.Address, location.CountryId);
         }
 
-        [Authorize(Roles = "User,Admin")]
+        //[Authorize(Roles = "User,Admin")]
         [HttpGet]
         public async Task<HttpResponseMessage> GetAllClubsAsync([FromUri] Sorting sorting = null, [FromUri] Paging paging = null, [FromUri] ClubFilter clubFilter = null)
         {
@@ -50,7 +50,7 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new PageList<ClubToReturnDto>(clubViews, clubs.TotalCount));
         }
 
-        [Authorize(Roles = "User,Admin")]
+        //[Authorize(Roles = "User,Admin")]
         [HttpGet]
         public async Task<HttpResponseMessage> GetClubByIdAsync(Guid id)
         {
@@ -63,7 +63,7 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, new ClubToReturnDto(club.Id, club.Name, club.Logo, club.LeagueId, club.LocationId, MapLeagueToLeagueToReturnDto(club.League), MapLocationToLocationToReturnDto(club.Location)));
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<HttpResponseMessage> InsertClubAsync([FromBody] ClubToCreateAndUpdateDto club)
         {
@@ -83,7 +83,7 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Club was not inserted!");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut]
         public async Task<HttpResponseMessage> UpdateClubAsync(Guid id, [FromBody] ClubToCreateAndUpdateDto club)
         {
@@ -137,7 +137,7 @@ namespace ResultApp.WebApi.Controllers
             return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Club was not updated!");
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("api/club/toggle/{id}")]
         public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)

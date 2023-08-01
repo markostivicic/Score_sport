@@ -22,6 +22,16 @@ namespace ResultApp.Model
         public Club Club { get; set; }
         public Country Country { get; set; }
 
+        public Player(Guid id, string firstName, string lastName, string image, DateTime doB, Guid clubId, Guid countryId)
+        {
+            Id = id;
+            FirstName = firstName;
+            LastName = lastName;
+            DoB = doB;
+            Image = image;
+            ClubId = clubId;
+            CountryId = countryId;
+        }
         public Player(Guid id, string firstName, string lastName, string image, DateTime doB, Guid clubId, Guid countryId, Club club, Country country)
         {
             Id = id;
