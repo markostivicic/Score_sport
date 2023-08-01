@@ -38,13 +38,15 @@ namespace ResultApp.Model
             ClubAway = clubAway;
         }
 
-        public Match(Guid id, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId, string createdByUserId) : base(createdByUserId)
+        public Match(Guid id, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId, string createdByUserId, int? homeScore, int? awayScore) : base(createdByUserId)
         {
             Id = id;
             Time = time;
             LocationId = locationId;
             ClubHomeId = clubHomeId;
             ClubAwayId = clubAwayId;
+            HomeScore = homeScore;
+            AwayScore = awayScore;
         }
 
         public Match(Guid id, int? homeScore, int? awayScore, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId,

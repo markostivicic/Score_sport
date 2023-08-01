@@ -2,57 +2,47 @@ import React, { useEffect, useState } from "react";
 import Table from "../../components/Table";
 import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
-import API from "../../services/AxiosService";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { v4 as uuid } from "uuid";
-import { toast } from "react-toastify";
-import { getHeaders } from "../../services/AuthService";
+import { deleteMatchByIdAsync, getMatchesAsync } from "../../services/MatchService";
+import Background from "../../components/Background";
+import Modal from "../../components/Modal";
+import Button from "../../components/Button";
+import PageLengthSelect from "../../components/PageLengthSelect";
 
 export default function Match() {
   const navigate = useNavigate();
   const [matches, setMatches] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [pageCount, setPageCount] = useState(1);
-
-  const pageLength = 3;
+  const [pageLength, setPageLength] = useState(5);
+  const [selectedMatch, setSelectedMatch] = useState(null)
 
   useEffect(() => {
     fetchMatchesAsync();
-  }, [pageNumber]);
+  }, [pageNumber, pageLength]);
+
 
   async function fetchMatchesAsync() {
-    try {
-      await API.get(`/match?pageSize=${pageLength}&pageNumber=${pageNumber}&isFinished=${false}`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setMatches(response.data.items);
-        setPageCount(Math.ceil(response.data.totalCount / pageLength));
-      });
-    } catch (e) {
-      console.log(e);
+    const { items, totalCount } = await getMatchesAsync(navigate, pageLength, pageNumber)
+    if (items.length === 0 && pageNumber > 0) {
+      setPageNumber(pageNumber - 1);
+      return;
     }
+    setMatches(items);
+    setPageCount(Math.ceil(totalCount / pageLength));
   }
 
   async function deleteMatchAsync(id) {
-    try {
-      await API.delete(`/match/toggle/${id}`, {
-        headers: getHeaders(),
-      }).then(() => {
-        fetchMatchesAsync();
-        toast.success("Utakmica izbrisana");
-      });
-    } catch (e) {
-      toast.error("Utakmica nije izbrisana");
-      console.log(e);
-    }
+    await deleteMatchByIdAsync(id, navigate)
+    fetchMatchesAsync();
   }
 
   function renderData() {
     return matches.map((match) => {
       return (
-        <tr key={uuid()}>
+        <tr key={match.id}>
           <td>{extractDate(match.time)}</td>
           <td>{match.clubHome.name}</td>
           <td>{match.homeScore}</td>
@@ -70,11 +60,7 @@ export default function Match() {
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => {
-                if (
-                  window.confirm("Jeste li sigurni da želite izbrisati utakmicu?")
-                ) {
-                  deleteMatchAsync(match.id);
-                }
+                setSelectedMatch(match)
               }}
               icon={faTrash}
             />
@@ -98,12 +84,34 @@ export default function Match() {
     setPageNumber(selected + 1);
   };
 
+  const handleConfirmDelete = () => {
+    deleteMatchAsync(selectedMatch.id);
+    setSelectedMatch(null);
+  };
+
+  const handleCancelDelete = () => {
+    setSelectedMatch(null);
+  };
+
   return (
-    <div>
+    <Background>
       <Navbar />
-      <Table tableHeaders={["Vrijeme", "Domaćin", "Rezultat", "Rezultat", "Gost", "Lokacija"]} renderData={renderData} />
+      <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
+      <Table tableHeaders={["Vrijeme", "Domaćin", "2Rezultat", "Gost", "Lokacija"]} renderData={renderData}>
+        <Modal
+          selectedItem={selectedMatch}
+          handleCancelDelete={handleCancelDelete}
+          handleConfirmDelete={handleConfirmDelete}
+        />
+      </Table>
+      <Button
+        text="Dodaj"
+        handleOnClick={() => navigate("/match/create")}
+        margin="my-3"
+      />
       <Pagination pageCount={pageCount} changePage={changePage} />
-    </div>
+
+    </Background>
   );
 }
 

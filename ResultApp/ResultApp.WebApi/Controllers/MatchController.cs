@@ -89,7 +89,7 @@ namespace ResultApp.WebApi.Controllers
             try
             {
                 Match mappedMatch = new Match(Guid.NewGuid(), match.Time,
-                match.LocationId, match.ClubHomeId, match.ClubAwayId, User.Identity.GetUserId());
+                match.LocationId, match.ClubHomeId, match.ClubAwayId, User.Identity.GetUserId(), match.HomeScore, match.AwayScore);
                 Match newMatch = await _matchService.CreateAsync(mappedMatch);
                 if (newMatch != null)
                 {

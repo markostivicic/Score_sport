@@ -157,12 +157,14 @@ namespace ResultApp.Repository
         public async Task<Match> CreateAsync(Match match)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("INSERT INTO \"Match\" (\"Id\", \"Time\", \"LocationId\", \"ClubHomeId\", \"ClubAwayId\", \"CreatedByUserId\")" +
-                " VALUES (@id, @time, @locationId, @clubHomeId, @clubAwayId, @createdByUserId)", connection);
+            var command = new NpgsqlCommand("INSERT INTO \"Match\" (\"Id\", \"HomeScore\", \"AwayScore\", \"Time\", \"LocationId\", \"ClubHomeId\", \"ClubAwayId\", \"CreatedByUserId\")" +
+                " VALUES (@id, @homeScore, @awayScore, @time, @locationId, @clubHomeId, @clubAwayId, @createdByUserId)", connection);
             using (connection)
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@id", match.Id);
+                command.Parameters.AddWithValue("@homeScore", match.HomeScore != null ? (object)match.HomeScore : DBNull.Value);
+                command.Parameters.AddWithValue("@awayScore", match.AwayScore != null ? (object)match.AwayScore : DBNull.Value);
                 command.Parameters.AddWithValue("@time", match.Time);
                 command.Parameters.AddWithValue("@locationId", match.LocationId);
                 command.Parameters.AddWithValue("@clubHomeId", match.ClubHomeId);

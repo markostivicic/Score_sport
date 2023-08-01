@@ -8,10 +8,12 @@ export default function Table({ tableHeaders, renderData, children }) {
           <thead>
             <tr>
               {tableHeaders.map((header) => {
-                return <th key={header}>{header}</th>;
+                const colSpan = parseInt(header.substring(0, 1)) || 1;
+                const headerText = colSpan !== 1 ? header.substring(1) : header;
+                return <th key={header} colSpan={colSpan}>{headerText}</th>;
               })}
-              <th>Edit</th>
-              <th>Delete</th>
+              <th>Izmijeni</th>
+              <th>Obriši</th>
             </tr>
           </thead>
           <tbody>{renderData()}</tbody>

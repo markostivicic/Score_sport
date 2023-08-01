@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
-import API from "../../services/AxiosService";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
-import { getHeaders } from "../../services/AuthService";
 import MatchUpdateForm from "../../components/MatchUpdateForm"
+import { getMatchByIdAsync, updateMatchByIdAsync } from "../../services/MatchService"
+import Background from "../../components/Background";
+import FormContainer from "../../components/FormContainer";
 
 export default function MatchUpdate() {
   const navigate = useNavigate();
@@ -15,19 +15,13 @@ export default function MatchUpdate() {
     if (id === "") {
       navigate("/match");
     }
-    getMatchByIdAsync();
+    getMatchAsync();
   }, []);
 
-  async function getMatchByIdAsync() {
-    try {
-      await API.get(`/match/${id}`, {
-        headers: getHeaders(),
-      }).then((response) => {
-        setSelectedMatch(response.data);
-      });
-    } catch (e) {
-      console.log(e);
-    }
+
+  async function getMatchAsync() {
+    const data = await getMatchByIdAsync(id, navigate);
+    setSelectedMatch(data);
   }
 
   async function updateMatchAsync(e) {
@@ -48,23 +42,16 @@ export default function MatchUpdate() {
       awayScore: matchAwayScore,
     };
 
-    try {
-      await API.put(`/match/${id}`, matchToUpdate, {
-        headers: getHeaders(),
-      }).then(() => {
-        toast.success("Utakmica azurirana");
-        navigate("/match");
-      });
-    } catch (e) {
-      toast.error("Utakmica nije azurirana");
-      console.log(e);
-    }
+    await updateMatchByIdAsync(id, matchToUpdate);
+    navigate("/match");
   }
 
   return (
-    <div>
+    <Background>
       <Navbar />
-      <MatchUpdateForm selectedMatch={selectedMatch} onSubmit={updateMatchAsync} />
-    </div>
+      <FormContainer>
+        <MatchUpdateForm selectedMatch={selectedMatch} onSubmit={updateMatchAsync} />
+      </FormContainer>
+    </Background>
   )
 }

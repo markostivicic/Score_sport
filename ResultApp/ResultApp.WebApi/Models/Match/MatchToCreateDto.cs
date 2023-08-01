@@ -11,5 +11,7 @@ namespace ResultApp.WebApi.Models.Match
         public Guid LocationId { get; set; }
         public Guid ClubHomeId { get; set; }
         public Guid ClubAwayId { get; set; }
+        public int? HomeScore { get; set; }
+        public int? AwayScore { get; set; }
     }
 }
