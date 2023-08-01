@@ -14,6 +14,24 @@ export async function getClubsAsync(navigate, pageLength, pageNumber) {
   }
 }
 
+export async function getClubsWithFiltersAsync(
+  navigate,
+  pageLength,
+  pageNumber,
+  isActive,
+  searchFilter
+) {
+  try {
+    const response = await API.get(
+      `/club?pageSize=${pageLength}&pageNumber=${pageNumber}&isActive=${isActive}&name=${searchFilter}`,
+      { headers: getHeaders() }
+    )
+    return response.data
+  } catch (error) {
+    redirectToLoginIfNeeded(navigate, error, toast)
+  }
+}
+
 export async function getClubsFilteredByLeagueAsync(
   navigate,
   pageLength,

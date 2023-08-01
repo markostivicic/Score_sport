@@ -4,31 +4,38 @@ import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faTrash, faUndoAlt } from "@fortawesome/free-solid-svg-icons";
 import { v4 as uuid } from "uuid";
-import { getClubsAsync, deleteClubByIdAsync } from "../../services/ClubService";
+import { getClubsWithFiltersAsync, deleteClubByIdAsync } from "../../services/ClubService";
 import Button from "../../components/Button";
 import Background from "../../components/Background";
 import Modal from "../../components/Modal";
+import Filter from "../../components/filters/Filter";
+import InputFilter from "../../components/filters/InputFilter";
+import SwitchFilter from "../../components/filters/SwitchFilter";
+import PageLengthSelect from "../../components/PageLengthSelect";
 
 export default function Club() {
   const navigate = useNavigate();
   const [clubs, setClubs] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [pageCount, setPageCount] = useState(1);
+  const [pageLength, setPageLength] = useState(5);
   const [selectedClub, setSelectedClub] = useState(null);
-
-  const pageLength = 3;
+  const [activeFilter, setActiveFilter] = useState(true)
+  const [searchFilter, setSearchFilter] = useState("")
 
   useEffect(() => {
     fetchClubsAsync();
-  }, [pageNumber]);
+  }, [pageNumber, pageLength, activeFilter, searchFilter]);
 
   async function fetchClubsAsync() {
-    const { items, totalCount } = await getClubsAsync(
+    const { items, totalCount } = await getClubsWithFiltersAsync(
       navigate,
       pageLength,
-      pageNumber
+      pageNumber,
+      activeFilter,
+      searchFilter
     );
     setClubs(items);
     setPageCount(Math.ceil(totalCount / pageLength));
@@ -57,20 +64,20 @@ export default function Club() {
           </td>
           <td>{club.league.name}</td>
           <td>{club.location.name}</td>
-          <td>
+          {activeFilter ? (<td>
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => navigate(`/club/update/${club.id}`)}
               icon={faPenToSquare}
             />
-          </td>
+          </td>) : null}
           <td>
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => {
                 setSelectedClub(club);
               }}
-              icon={faTrash}
+              icon={activeFilter ? faTrash : faUndoAlt}
             />
           </td>
         </tr>
@@ -85,9 +92,27 @@ export default function Club() {
   return (
     <Background>
       <Navbar />
+
+      <Filter>
+        <InputFilter
+          id="searchFilter"
+          type="text"
+          value={searchFilter}
+          onChange={(e) => setSearchFilter(e.target.value)}
+          labelText="Pretraži:" />
+        <SwitchFilter
+          id="activeFilter"
+          text="Prikaži izbrisane"
+          value={!activeFilter}
+          onChange={(e) => setActiveFilter(!activeFilter)}
+        />
+        <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
+      </Filter>
+
       <Table
         tableHeaders={["Ime", "Logo", "Liga", "Lokacija"]}
         renderData={renderData}
+        isActive={activeFilter}
       >
         <Modal
           selectedItem={selectedClub}
@@ -95,6 +120,7 @@ export default function Club() {
           handleConfirmDelete={handleConfirmDelete}
         />
       </Table>
+
       <Button
         text="Dodaj"
         handleOnClick={() => navigate("/club/create")}

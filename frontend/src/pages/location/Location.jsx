@@ -4,27 +4,32 @@ import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faTrash, faUndoAlt } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/Button";
 import {
-  getLocationsAsync,
+  getLocationsWithFiltersAsync,
   deleteLocationByIdAsync,
 } from "../../services/LocationService";
 import Background from "../../components/Background";
 import Modal from "../../components/Modal";
+import Filter from "../../components/filters/Filter";
+import InputFilter from "../../components/filters/InputFilter";
+import SwitchFilter from "../../components/filters/SwitchFilter";
+import PageLengthSelect from "../../components/PageLengthSelect";
 
 export default function Location() {
   const navigate = useNavigate();
   const [locations, setLocations] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [pageCount, setPageCount] = useState(1);
+  const [pageLength, setPageLength] = useState(5);
   const [selectedLocation, setSelectedLocation] = useState(null);
-
-  const pageLength = 3;
+  const [activeFilter, setActiveFilter] = useState(true)
+  const [searchFilter, setSearchFilter] = useState("")
 
   useEffect(() => {
     fetchLocationsAsync();
-  }, [pageNumber]);
+  }, [pageNumber, pageLength, activeFilter, searchFilter]);
 
   const handleConfirmDelete = () => {
     deleteLocationAsync(selectedLocation.id);
@@ -36,10 +41,12 @@ export default function Location() {
   };
 
   async function fetchLocationsAsync() {
-    const { items, totalCount } = await getLocationsAsync(
+    const { items, totalCount } = await getLocationsWithFiltersAsync(
       navigate,
       pageLength,
-      pageNumber
+      pageNumber,
+      activeFilter,
+      searchFilter
     );
     setLocations(items);
     setPageCount(Math.ceil(totalCount / pageLength));
@@ -57,20 +64,20 @@ export default function Location() {
           <td>{location.name}</td>
           <td>{location.address}</td>
           <td>{location.country.name}</td>
-          <td>
+          {activeFilter ? (<td>
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => navigate(`/location/update/${location.id}`)}
               icon={faPenToSquare}
             />
-          </td>
+          </td>) : null}
           <td>
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => {
                 setSelectedLocation(location);
               }}
-              icon={faTrash}
+              icon={activeFilter ? faTrash : faUndoAlt}
             />
           </td>
         </tr>
@@ -85,7 +92,23 @@ export default function Location() {
   return (
     <Background>
       <Navbar />
-      <Table tableHeaders={["Ime", "Adresa", "Država"]} renderData={renderData}>
+      <Filter>
+        <InputFilter
+          id="searchFilter"
+          type="text"
+          value={searchFilter}
+          onChange={(e) => setSearchFilter(e.target.value)}
+          labelText="Pretraži:" />
+        <SwitchFilter
+          id="activeFilter"
+          text="Prikaži izbrisane"
+          value={!activeFilter}
+          onChange={(e) => setActiveFilter(!activeFilter)}
+        />
+        <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
+      </Filter>
+
+      <Table tableHeaders={["Ime", "Adresa", "Država"]} renderData={renderData} isActive={activeFilter}>
         <Modal
           selectedItem={selectedLocation}
           handleCancelDelete={handleCancelDelete}

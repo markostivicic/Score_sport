@@ -26,14 +26,20 @@ namespace ResultApp.Repository
                 sb.Append(" AND \"CountryId\" = @CountryId");
                 command.Parameters.AddWithValue("@CountryId", locationFilter.CountryId);
             }
-            if (!string.IsNullOrEmpty(locationFilter.Name))
+            if (!string.IsNullOrEmpty(locationFilter.Name) && string.IsNullOrEmpty(locationFilter.Address))
             {
-                sb.Append(" AND LOWER(\"Name\") LIKE @Name");
+                sb.Append(" AND LOWER(\"Location\".\"Name\") LIKE @Name");
                 command.Parameters.AddWithValue("@Name", "%" + locationFilter.Name.ToLower() + "%");
             }
-            if (!string.IsNullOrEmpty(locationFilter.Address))
+            if (!string.IsNullOrEmpty(locationFilter.Address) && string.IsNullOrEmpty(locationFilter.Name))
             {
-                sb.Append(" AND LOWER(\"Address\") LIKE @Address");
+                sb.Append(" AND LOWER(\"Location\".\"Address\") LIKE @Address");
+                command.Parameters.AddWithValue("@Address", "%" + locationFilter.Address.ToLower() + "%");
+            }
+            if(!string.IsNullOrEmpty(locationFilter.Address) && !string.IsNullOrEmpty(locationFilter.Name))
+            {
+                sb.Append(" AND LOWER(\"Location\".\"Name\") LIKE @Name OR LOWER(\"Location\".\"Address\") LIKE @Address");
+                command.Parameters.AddWithValue("@Name", "%" + locationFilter.Name.ToLower() + "%");
                 command.Parameters.AddWithValue("@Address", "%" + locationFilter.Address.ToLower() + "%");
             }
 
