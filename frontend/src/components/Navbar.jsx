@@ -1,12 +1,13 @@
 import React from "react";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "./Button";
 import { useResultContext } from "../context/ResultContext";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
-  const { authenticatedUser, setAuthenticatedUser } = useResultContext();
+  const { authenticatedUser, setAuthenticatedUser, setIsSideNavActive } =
+    useResultContext();
 
   const navigate = useNavigate();
 
@@ -15,9 +16,20 @@ export default function Navbar() {
     localStorage.removeItem("token");
     navigate("/login", { replace: true });
   }
+
+  const path = useLocation().pathname;
+  const renderHamburger = path !== "/";
+
   return (
     <nav className="navbar navbar-expand-md bg-dark">
       <div className="container">
+        {renderHamburger && (
+          <FontAwesomeIcon
+            onClick={() => setIsSideNavActive((prev) => !prev)}
+            className="hamburger text-secondary"
+            icon={faBars}
+          />
+        )}
         <a href="#" className="navbar-brand">
           <img
             className="logo"
@@ -30,7 +42,14 @@ export default function Navbar() {
           <span className="mx-2">
             <strong>{authenticatedUser?.username || ""}</strong>
           </span>
-          <Button text="Logout" handleOnClick={handleLogout} />
+          {authenticatedUser?.role === "Admin" && path === "/" && (
+            <Button
+              text="Uređivanje"
+              handleOnClick={() => navigate("/sport")}
+              margin="mx-2"
+            />
+          )}
+          <Button text="Odjava" handleOnClick={handleLogout} />
         </div>
       </div>
     </nav>

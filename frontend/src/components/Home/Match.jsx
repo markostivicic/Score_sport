@@ -10,10 +10,20 @@ export default function Match({ match }) {
       onClick={() => navigate(`/single-match/${match.id}`)}
     >
       <td>{extractHoursAndMinutes(match.time)}</td>
-      <td>{match.clubHome.name}</td>
-      <td>{match.clubAway.name}</td>
+      <td>
+        <div className="d-flex justify-content-center gap-2">
+          <img className="clublogo" src={match.clubHome.logo} alt="logo" />
+          <span>{match.clubHome.name}</span>
+        </div>
+      </td>
       <td>
         {match.homeScore !== null && `${match.homeScore} : ${match.awayScore}`}
+      </td>
+      <td>
+        <div className="d-flex justify-content-center gap-2">
+          <span>{match.clubAway.name}</span>
+          <img className="clublogo" src={match.clubAway.logo} alt="logo" />
+        </div>
       </td>
     </tr>
   );

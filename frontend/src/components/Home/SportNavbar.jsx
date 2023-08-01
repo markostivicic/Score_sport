@@ -7,7 +7,7 @@ import { useResultContext } from "../../context/ResultContext";
 import ControlledInput from "../ControlledInput";
 
 export default function SportNavbar() {
-  const [sports, setSports] = useState([]);
+  const [sports, setSports] = useState([{ id: "unique", name: "Favoriti" }]);
   const { currentSport, setCurrentSport, selectedDate, setSelectedDate } =
     useResultContext();
 
@@ -16,8 +16,7 @@ export default function SportNavbar() {
   useEffect(() => {
     async function getAllSportsAsync() {
       const { items } = await getSportsAsync(navigate, 100, 0);
-      setSports(items);
-      items.length > 0 && setCurrentSport(items[0]);
+      setSports([...sports, ...items]);
     }
     getAllSportsAsync();
   }, []);

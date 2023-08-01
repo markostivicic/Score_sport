@@ -36,7 +36,7 @@ namespace ResultApp.WebApi.Controllers
             {
                 commentViews.Add(new CommentToReturnDto(comment.Id, comment.Text, comment.MatchId, comment.CreatedByUserId, new UserToReturnDto(comment.CreatedByUserId, comment.User.UserName), comment.DateCreated));
             }
-            return Request.CreateResponse(HttpStatusCode.OK, commentViews);
+            return Request.CreateResponse(HttpStatusCode.OK, new PageList<CommentToReturnDto>(commentViews,comments.TotalCount));
         }
 
         [Authorize(Roles = "User,Admin")]

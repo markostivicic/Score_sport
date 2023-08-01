@@ -68,7 +68,7 @@ export default function Login() {
           Pogrešno korisničko ime ili lozinka
         </p>
       )}
-      <p role="link" className="my-4" onClick={() => navigate("/register")}>
+      <p role="button" className="my-4" onClick={() => navigate("/register")}>
         Kreiraj novi profil
       </p>
     </div>

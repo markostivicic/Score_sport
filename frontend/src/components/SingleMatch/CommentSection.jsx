@@ -9,28 +9,36 @@ import {
 import { useNavigate } from "react-router-dom";
 import Comment from "./Comment";
 import Modal from "../Modal";
+import Pagination from "../Pagination";
 
 export default function CommentSection({ matchId }) {
   const [isFormActive, setIsFormActive] = useState(false);
   const [comments, setComments] = useState([]);
-
   const [selectedCommentId, setSelectedCommentId] = useState(null);
+  const [pageNumber, setPageNumber] = useState(0);
+  const commentsPerPage = 3;
+  const [pageCount, setPageCount] = useState(1);
 
   const navigate = useNavigate();
 
   async function getAllCommentsAsync() {
-    const commentsFromDatabase = await getCommentsAsync(
+    const { items, totalCount } = await getCommentsAsync(
       navigate,
-      100,
-      0,
+      commentsPerPage,
+      pageNumber,
       matchId
     );
-    setComments(commentsFromDatabase);
+    setComments(items);
+    setPageCount(Math.ceil(totalCount / commentsPerPage));
   }
 
   useEffect(() => {
     getAllCommentsAsync();
-  }, []);
+  }, [pageNumber]);
+
+  const changePage = ({ selected }) => {
+    setPageNumber(selected + 1);
+  };
 
   async function handleOnSubmit(e) {
     e.preventDefault();
@@ -81,6 +89,7 @@ export default function CommentSection({ matchId }) {
             );
           })}
         </div>
+        <Pagination pageCount={pageCount} changePage={changePage} />
       </div>
       <Modal
         selectedItem={selectedCommentId}
