@@ -4,9 +4,15 @@ import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash, faUndoAlt } from "@fortawesome/free-solid-svg-icons";
-import { v4 as uuid } from "uuid";
-import { getClubsWithFiltersAsync, deleteClubByIdAsync } from "../../services/ClubService";
+import {
+  faPenToSquare,
+  faTrash,
+  faUndoAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  getClubsWithFiltersAsync,
+  deleteClubByIdAsync,
+} from "../../services/ClubService";
 import Button from "../../components/Button";
 import Background from "../../components/Background";
 import Modal from "../../components/Modal";
@@ -22,8 +28,8 @@ export default function Club() {
   const [pageCount, setPageCount] = useState(1);
   const [pageLength, setPageLength] = useState(5);
   const [selectedClub, setSelectedClub] = useState(null);
-  const [activeFilter, setActiveFilter] = useState(true)
-  const [searchFilter, setSearchFilter] = useState("")
+  const [activeFilter, setActiveFilter] = useState(true);
+  const [searchFilter, setSearchFilter] = useState("");
 
   useEffect(() => {
     fetchClubsAsync();
@@ -57,20 +63,22 @@ export default function Club() {
   function renderData() {
     return clubs.map((club) => {
       return (
-        <tr key={uuid()}>
+        <tr key={club.id}>
           <td>{club.name}</td>
           <td>
             <img src={club.logo} className="clublogo" alt="logo" />
           </td>
           <td>{club.league.name}</td>
           <td>{club.location.name}</td>
-          {activeFilter ? (<td>
-            <FontAwesomeIcon
-              className="cursor-pointer"
-              onClick={() => navigate(`/club/update/${club.id}`)}
-              icon={faPenToSquare}
-            />
-          </td>) : null}
+          {activeFilter ? (
+            <td>
+              <FontAwesomeIcon
+                className="cursor-pointer"
+                onClick={() => navigate(`/club/update/${club.id}`)}
+                icon={faPenToSquare}
+              />
+            </td>
+          ) : null}
           <td>
             <FontAwesomeIcon
               className="cursor-pointer"
@@ -99,14 +107,19 @@ export default function Club() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:" />
+          labelText="Pretraži:"
+        />
         <SwitchFilter
           id="activeFilter"
           text="Prikaži izbrisane"
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
-        <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
+        <PageLengthSelect
+          id="pageLength"
+          value={pageLength}
+          onChange={(e) => setPageLength(e.target.value)}
+        />
       </Filter>
 
       <Table

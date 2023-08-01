@@ -4,8 +4,11 @@ import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash, faUndoAlt } from "@fortawesome/free-solid-svg-icons";
-import { v4 as uuid } from "uuid";
+import {
+  faPenToSquare,
+  faTrash,
+  faUndoAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   getPlayersWithFiltersAsync,
   deletePlayerByIdAsync,
@@ -25,8 +28,8 @@ export default function Player() {
   const [pageCount, setPageCount] = useState(1);
   const [pageLength, setPageLength] = useState(5);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const [activeFilter, setActiveFilter] = useState(true)
-  const [searchFilter, setSearchFilter] = useState("")
+  const [activeFilter, setActiveFilter] = useState(true);
+  const [searchFilter, setSearchFilter] = useState("");
 
   useEffect(() => {
     fetchPlayersAsync();
@@ -61,7 +64,7 @@ export default function Player() {
   function renderData() {
     return players.map((player) => {
       return (
-        <tr key={uuid()}>
+        <tr key={player.id}>
           <td>{player.firstName}</td>
           <td>{player.lastName}</td>
           <td>
@@ -70,13 +73,15 @@ export default function Player() {
           <td>{player.doB}</td>
           <td>{player.club.name}</td>
           <td>{player.country.name}</td>
-          {activeFilter ? (<td>
-            <FontAwesomeIcon
-              className="cursor-pointer"
-              onClick={() => navigate(`/player/update/${player.id}`)}
-              icon={faPenToSquare}
-            />
-          </td>) : null}
+          {activeFilter ? (
+            <td>
+              <FontAwesomeIcon
+                className="cursor-pointer"
+                onClick={() => navigate(`/player/update/${player.id}`)}
+                icon={faPenToSquare}
+              />
+            </td>
+          ) : null}
           <td>
             <FontAwesomeIcon
               className="cursor-pointer"
@@ -95,7 +100,6 @@ export default function Player() {
     setPageNumber(selected + 1);
   };
 
-
   return (
     <Background>
       <Navbar />
@@ -106,14 +110,19 @@ export default function Player() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:" />
+          labelText="Pretraži:"
+        />
         <SwitchFilter
           id="activeFilter"
           text="Prikaži izbrisane"
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
-        <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
+        <PageLengthSelect
+          id="pageLength"
+          value={pageLength}
+          onChange={(e) => setPageLength(e.target.value)}
+        />
       </Filter>
 
       <Table
@@ -131,7 +140,8 @@ export default function Player() {
         <Modal
           selectedItem={selectedPlayer}
           handleCancelDelete={handleCancelDelete}
-          handleConfirmDelete={handleConfirmDelete} />
+          handleConfirmDelete={handleConfirmDelete}
+        />
       </Table>
       <Button
         text="Dodaj"

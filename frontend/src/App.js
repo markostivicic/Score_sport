@@ -39,6 +39,7 @@ import ClubUpdate from "./pages/club/ClubUpdate";
 import Player from "./pages/player/Player";
 import PlayerCreate from "./pages/player/PlayerCreate";
 import PlayerUpdate from "./pages/player/PlayerUpdate";
+import SingleLeague from "./pages/SingleLeague";
 function App() {
   const navigate = useNavigate();
   const { authenticatedUser, setAuthenticatedUser } = useResultContext();
@@ -96,6 +97,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/single-match/:id" element={<SingleMatch />} />
         <Route path="/single-club/:id" element={<SingleClub />} />
+        <Route path="/single-league/:id" element={<SingleLeague />} />
         <Route path="*" element={<Navigate to={"/"} />} />
       </Routes>
       <ToastContainer />

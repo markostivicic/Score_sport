@@ -44,7 +44,10 @@ export default function MatchesInLeague({ league }) {
   return (
     <div className="container my-5">
       <table className="table table-borderless table-hover">
-        <caption className="text-primary">
+        <caption
+          onClick={() => navigate(`/single-league/${league.id}`)}
+          className="text-primary cursor-pointer"
+        >
           <strong>{league.name}</strong>
         </caption>
         <tbody>

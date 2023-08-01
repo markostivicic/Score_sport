@@ -1,9 +1,9 @@
 import React from "react";
-import { faBars, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faGear, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "./Button";
 import { useResultContext } from "../context/ResultContext";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useMatch, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const { authenticatedUser, setAuthenticatedUser, setIsSideNavActive } =
@@ -18,7 +18,10 @@ export default function Navbar() {
   }
 
   const path = useLocation().pathname;
-  const renderHamburger = path !== "/";
+  const isRouteSingleLeague = useMatch({
+    path: "/single-league/:id",
+  });
+  const renderHamburger = path !== "/" && !isRouteSingleLeague;
 
   return (
     <nav className="navbar navbar-expand-md bg-dark">
@@ -30,26 +33,26 @@ export default function Navbar() {
             icon={faBars}
           />
         )}
-        <a href="#" className="navbar-brand">
+        <a href="/" className="navbar-brand">
           <img
             className="logo"
             src={require("../assets/logo.png")}
             alt="logo"
           />
         </a>
-        <div className="ms-auto text-secondary mt-2 lg:mt-0">
+        <div className="ms-auto text-secondary mt-2 lg:mt-0 nav-text">
           <FontAwesomeIcon className="mx-1" icon={faUser} />
           <span className="mx-2">
             <strong>{authenticatedUser?.username || ""}</strong>
           </span>
           {authenticatedUser?.role === "Admin" && path === "/" && (
-            <Button
-              text="Uređivanje"
-              handleOnClick={() => navigate("/sport")}
-              margin="mx-2"
+            <FontAwesomeIcon
+              icon={faGear}
+              className="mx-2 cursor-pointer nav-text"
+              onClick={() => navigate("/sport")}
             />
           )}
-          <Button text="Odjava" handleOnClick={handleLogout} />
+          <Button text="Odjava" margin="mx-2" handleOnClick={handleLogout} />
         </div>
       </div>
     </nav>

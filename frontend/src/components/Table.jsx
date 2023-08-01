@@ -1,6 +1,12 @@
 import React from "react";
 
-export default function Table({ tableHeaders, renderData, children, isActive }) {
+export default function Table({
+  tableHeaders,
+  renderData,
+  skipEditAndDeleteHeaders,
+  children, 
+  isActive,
+}) {
   return (
     <>
       <div className="table-responsive">
@@ -10,10 +16,14 @@ export default function Table({ tableHeaders, renderData, children, isActive }) 
               {tableHeaders.map((header) => {
                 const colSpan = parseInt(header.substring(0, 1)) || 1;
                 const headerText = colSpan !== 1 ? header.substring(1) : header;
-                return <th key={header} colSpan={colSpan}>{headerText}</th>;
+                return (
+                  <th key={header} colSpan={colSpan}>
+                    {headerText}
+                  </th>
+                );
               })}
-              {isActive ? <th>Izmijeni</th> : null}
-              <th>{isActive ? "Izbriši" : "Vrati"}</th>
+              {skipEditAndDeleteHeaders || {isActive ? <th>Izmijeni</th> : null}}
+              {skipEditAndDeleteHeaders || <th>{isActive ? "Izbriši" : "Vrati"}</th>
             </tr>
           </thead>
           <tbody>{renderData()}</tbody>
