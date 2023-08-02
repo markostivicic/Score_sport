@@ -38,7 +38,7 @@ namespace ResultApp.Repository
             }
             if(!string.IsNullOrEmpty(locationFilter.Address) && !string.IsNullOrEmpty(locationFilter.Name))
             {
-                sb.Append(" AND LOWER(\"Location\".\"Name\") LIKE @Name OR LOWER(\"Location\".\"Address\") LIKE @Address");
+                sb.Append(" AND (LOWER(\"Location\".\"Name\") LIKE @Name OR LOWER(\"Location\".\"Address\") LIKE @Address )");
                 command.Parameters.AddWithValue("@Name", "%" + locationFilter.Name.ToLower() + "%");
                 command.Parameters.AddWithValue("@Address", "%" + locationFilter.Address.ToLower() + "%");
             }

@@ -38,7 +38,7 @@ namespace ResultApp.Repository
             }
             if (matchFilter.ClubId != null)
             {
-                queryBuilder.Append("AND \"ClubHomeId\" = @ClubId OR \"ClubAwayId\" = @ClubId ");
+                queryBuilder.Append("AND (\"ClubHomeId\" = @ClubId OR \"ClubAwayId\" = @ClubId ) ");
                 command.Parameters.AddWithValue("@ClubId", matchFilter.ClubId);
             }
             if (matchFilter.Time != null)

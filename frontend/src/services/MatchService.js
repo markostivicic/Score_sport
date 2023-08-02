@@ -34,6 +34,42 @@ export async function getMatchesWithFiltersAsync(
   }
 }
 
+export async function getMatchesFilteredByLeagueAndFinishedAsync(
+  navigate,
+  pageLength,
+  pageNumber,
+  leagueId,
+  isFinished
+) {
+  try {
+    const response = await API.get(
+      `/match?pageSize=${pageLength}&pageNumber=${pageNumber}&leagueId=${leagueId}&isFinished=${isFinished}`,
+      { headers: getHeaders() }
+    )
+    return response.data
+  } catch (error) {
+    redirectToLoginIfNeeded(navigate, error, toast)
+  }
+}
+
+export async function getMatchesFilteredByClubAndFinishedAsync(
+  navigate,
+  pageLength,
+  pageNumber,
+  clubId,
+  isFinished
+) {
+  try {
+    const response = await API.get(
+      `/match?pageSize=${pageLength}&pageNumber=${pageNumber}&clubId=${clubId}&isFinished=${isFinished}`,
+      { headers: getHeaders() }
+    )
+    return response.data
+  } catch (error) {
+    redirectToLoginIfNeeded(navigate, error, toast)
+  }
+}
+
 export async function getMatchesFilteredByLeagueAndDateAsync(
   navigate,
   pageLength,

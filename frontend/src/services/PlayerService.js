@@ -34,6 +34,23 @@ export async function getPlayersWithFiltersAsync(
   }
 }
 
+export async function getPlayersFilteredByClubAsync(
+  navigate,
+  pageLength,
+  pageNumber,
+  clubId
+) {
+  try {
+    const response = await API.get(
+      `/player?pageSize=${pageLength}&pageNumber=${pageNumber}&clubId=${clubId}`,
+      { headers: getHeaders() }
+    )
+    return response.data
+  } catch (error) {
+    redirectToLoginIfNeeded(navigate, error, toast)
+  }
+}
+
 export async function getPlayerByIdAsync(id, navigate) {
   try {
     const response = await API.get(`/player/${id}`, { headers: getHeaders() });
