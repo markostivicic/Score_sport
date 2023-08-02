@@ -20,6 +20,7 @@ import PageLengthSelect from "../../components/PageLengthSelect";
 import SwitchFilter from "../../components/filters/SwitchFilter";
 import SelectFilter from "../../components/filters/SelectFilter";
 import Filter from "../../components/filters/Filter";
+import { extractDateAndTime } from "../../services/DateTimeService";
 
 export default function Match() {
   const navigate = useNavigate();
@@ -71,7 +72,7 @@ export default function Match() {
     return matches.map((match) => {
       return (
         <tr key={match.id}>
-          <td>{extractDate(match.time)}</td>
+          <td>{extractDateAndTime(match.time)}</td>
           <td>{match.clubHome.name}</td>
           <td>{match.homeScore}</td>
           <td>{match.awayScore}</td>
@@ -98,18 +99,6 @@ export default function Match() {
         </tr>
       );
     });
-  }
-
-  function extractDate(fullDate) {
-    const date = new Date(fullDate);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    return `${day}.${month}.${year}. ${
-      hours.toString() + ":" + minutes.toString().padStart(2, "0")
-    }`;
   }
 
   const changePage = ({ selected }) => {
