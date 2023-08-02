@@ -71,27 +71,41 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/sport" element={<Sport />} />
-        <Route path="/sport/create" element={<SportCreate />} />
-        <Route path="/sport/update/:id" element={<SportUpdate />} />
-        <Route path="/club" element={<Club />} />
-        <Route path="/club/create" element={<ClubCreate />} />
-        <Route path="/club/update/:id" element={<ClubUpdate />} />
-        <Route path="/player" element={<Player />} />
-        <Route path="/player/create" element={<PlayerCreate />} />
-        <Route path="/player/update/:id" element={<PlayerUpdate />} />
-        <Route path="/country" element={<Country />} />
-        <Route path="/country/create" element={<CountryCreate />} />
-        <Route path="/country/update/:id" element={<CountryUpdate />} />
-        <Route path="/location" element={<Location />} />
-        <Route path="/location/create" element={<LocationCreate />} />
-        <Route path="/location/update/:id" element={<LocationUpdate />} />
-        <Route path="/league" element={<League />} />
-        <Route path="/league/create" element={<LeagueCreate />} />
-        <Route path="/league/update/:id" element={<LeagueUpdate />} />
-        <Route path="/match" element={<Match />} />
-        <Route path="/match/create" element={<MatchCreate />} />
-        <Route path="/match/update/:id" element={<MatchUpdate />} />
+        <Route path="/sport">
+          <Route index={true} element={<Sport />} />
+          <Route path="create" element={<SportCreate />} />
+          <Route path="update/:id" element={<SportUpdate />} />
+        </Route>
+        <Route path="/club">
+          <Route index={true} element={<Club />} />
+          <Route path="/club/create" element={<ClubCreate />} />
+          <Route path="/club/update/:id" element={<ClubUpdate />} />
+        </Route>
+        <Route path="/player">
+          <Route index={true} element={<Player />} />
+          <Route path="/player/create" element={<PlayerCreate />} />
+          <Route path="/player/update/:id" element={<PlayerUpdate />} />
+        </Route>
+        <Route path="/country">
+          <Route index={true} element={<Country />} />
+          <Route path="/country/create" element={<CountryCreate />} />
+          <Route path="/country/update/:id" element={<CountryUpdate />} />
+        </Route>
+        <Route path="/location">
+          <Route index={true} element={<Location />} />
+          <Route path="/location/create" element={<LocationCreate />} />
+          <Route path="/location/update/:id" element={<LocationUpdate />} />
+        </Route>
+        <Route path="/league">
+          <Route index={true} element={<League />} />
+          <Route path="/league/create" element={<LeagueCreate />} />
+          <Route path="/league/update/:id" element={<LeagueUpdate />} />
+        </Route>
+        <Route path="/match">
+          <Route index={true} element={<Match />} />
+          <Route path="/match/create" element={<MatchCreate />} />
+          <Route path="/match/update/:id" element={<MatchUpdate />} />
+        </Route>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
