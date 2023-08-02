@@ -40,19 +40,21 @@ export default function Navbar() {
             alt="logo"
           />
         </a>
-        <div className="ms-auto text-secondary mt-2 lg:mt-0 nav-text">
-          <FontAwesomeIcon className="mx-1" icon={faUser} />
-          <span className="mx-2">
-            <strong>{authenticatedUser?.username || ""}</strong>
-          </span>
+        <div className="ms-auto text-secondary mt-2 lg:mt-0 nav-text d-flex align-items-center gap-3">
+          <div className="d-flex gap-2 align-items-center">
+            <FontAwesomeIcon icon={faUser} />
+            <span>
+              <strong>{authenticatedUser?.username || ""}</strong>
+            </span>
+          </div>
           {authenticatedUser?.role === "Admin" && path === "/" && (
             <FontAwesomeIcon
               icon={faGear}
-              className="mx-2 cursor-pointer nav-text"
+              className="cursor-pointer nav-text"
               onClick={() => navigate("/sport")}
             />
           )}
-          <Button text="Odjava" margin="mx-2" handleOnClick={handleLogout} />
+          <Button text="Odjava" handleOnClick={handleLogout} />
         </div>
       </div>
     </nav>

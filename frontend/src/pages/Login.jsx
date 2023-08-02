@@ -5,6 +5,7 @@ import { useResultContext } from "../context/ResultContext";
 import { useEffect } from "react";
 import Form from "../components/Form";
 import Input from "../components/Input";
+import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -55,12 +56,16 @@ export default function Login() {
           type="text"
           wrapperClassName="my-2"
           labelText="Korisničko ime"
+          isInputGroup
+          icon={faUser}
         />
         <Input
           id="password"
           type="password"
           labelText="Lozinka"
           wrapperClassName="my-4"
+          isInputGroup
+          icon={faLock}
         />
       </Form>
       {isWrongPassword && (

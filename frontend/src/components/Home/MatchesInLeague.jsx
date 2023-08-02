@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Match from "./Match";
 import { useResultContext } from "../../context/ResultContext";
 import { getMatchesFilteredByLeagueAndDateAsync } from "../../services/MatchService";
+import { getFavouriteMatchsAsync } from "../../services/FavouriteMatchService";
 import { getFavouriteClubsAsync } from "../../services/FavouriteClubService";
 
 export default function MatchesInLeague({ league }) {
@@ -13,6 +14,7 @@ export default function MatchesInLeague({ league }) {
   useEffect(() => {
     async function getMatchesAsync() {
       const favouriteClubs = await getFavouriteClubsAsync(navigate, 500, 0);
+      const favouriteMatches = await getFavouriteMatchsAsync(navigate, 500, 0);
       let { items } = await getMatchesFilteredByLeagueAndDateAsync(
         navigate,
         100,
@@ -26,12 +28,16 @@ export default function MatchesInLeague({ league }) {
         return;
       }
 
-      items = items.filter((match) =>
-        favouriteClubs.items.some(
-          (favouriteClub) =>
-            match.clubHome.id === favouriteClub.clubId ||
-            match.clubAway.id === favouriteClub.clubId
-        )
+      items = items.filter(
+        (match) =>
+          favouriteClubs.items.some(
+            (favouriteClub) =>
+              match.clubHome.id === favouriteClub.clubId ||
+              match.clubAway.id === favouriteClub.clubId
+          ) ||
+          favouriteMatches.items.some(
+            (favouriteMatch) => favouriteMatch.matchId === match.id
+          )
       );
       setMatches(items);
     }
