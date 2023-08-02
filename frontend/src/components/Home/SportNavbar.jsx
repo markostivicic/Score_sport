@@ -5,8 +5,10 @@ import { getSportsAsync } from "../../services/SportService";
 import { useNavigate } from "react-router-dom";
 import { useResultContext } from "../../context/ResultContext";
 import ControlledInput from "../ControlledInput";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
-export default function SportNavbar() {
+export default function SportNavbar({ showSearchModal }) {
   const [sports, setSports] = useState([{ id: "unique", name: "Favoriti" }]);
   const { currentSport, setCurrentSport, selectedDate, setSelectedDate } =
     useResultContext();
@@ -25,14 +27,20 @@ export default function SportNavbar() {
     <nav className="navbar navbar-expand-md">
       <div className="container">
         <ul className="navbar-nav">
+          <li className="nav-item">
+            <span
+              onClick={showSearchModal}
+              className={`nav-link cursor-pointer`}>
+              <FontAwesomeIcon icon={faSearch} />
+            </span>
+          </li>
           {sports?.map((sport) => {
             return (
               <li className="nav-item" key={sport.id}>
                 <span
                   onClick={() => setCurrentSport(sport)}
-                  className={`nav-link cursor-pointer ${
-                    currentSport?.id === sport.id && "active"
-                  }`}
+                  className={`nav-link cursor-pointer ${currentSport?.id === sport.id && "active"
+                    }`}
                 >
                   {sport.name}
                 </span>

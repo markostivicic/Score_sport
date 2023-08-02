@@ -19,6 +19,10 @@ export default function SingleLeague() {
   const [pageNumber, setPageNumber] = useState(0);
   const [pageCount, setPageCount] = useState(1);
   const [pageLength, setPageLength] = useState(5);
+  const [matchOrderBy, setMatchOrderBy] = useState(`\"Match\".\"Time\"`);
+  const [matchSortOrder, setMatchSortOrder] = useState("asc");
+  const [clubSortOrder, setClubSortOrder] = useState("asc");
+  const [clubOrderBy, setClubOrderBy] = useState(`\"Club\".\"Name\"`);
 
   const navigate = useNavigate();
 
@@ -32,10 +36,10 @@ export default function SingleLeague() {
     else if (currentLeagueTab === "schedule") {
       fetchMatchesByFinishedAsync(false);
     }
-  }, [currentLeagueTab, pageNumber, pageLength]);
+  }, [currentLeagueTab, pageNumber, pageLength, clubOrderBy, clubSortOrder, matchOrderBy, matchSortOrder]);
 
   async function fetchClubsAsync() {
-    const { items, totalCount } = await getClubsFilteredByLeagueAsync(navigate, pageLength, pageNumber + 1, id);
+    const { items, totalCount } = await getClubsFilteredByLeagueAsync(navigate, pageLength, pageNumber + 1, id, clubOrderBy, clubSortOrder);
     if (items.length === 0 && pageNumber > 0) {
       setPageNumber(pageNumber - 1);
       return;
@@ -45,7 +49,7 @@ export default function SingleLeague() {
   }
 
   async function fetchMatchesByFinishedAsync(isFinished) {
-    const { items, totalCount } = await getMatchesFilteredByLeagueAndFinishedAsync(navigate, pageLength, pageNumber + 1, id, isFinished);
+    const { items, totalCount } = await getMatchesFilteredByLeagueAndFinishedAsync(navigate, pageLength, pageNumber + 1, id, isFinished, matchOrderBy, matchSortOrder);
     if (items.length === 0 && pageNumber > 0) {
       setPageNumber(pageNumber - 1);
       return;
@@ -88,13 +92,52 @@ export default function SingleLeague() {
     setPageNumber(selected);
   };
 
+  function handleClubSort(newSelectedOrder) {
+    if (newSelectedOrder !== clubOrderBy) {
+      setClubOrderBy(newSelectedOrder);
+      setClubSortOrder("asc");
+      return;
+    }
+    clubSortOrder === "asc" ? setClubSortOrder("desc") : setClubSortOrder("asc");
+  }
+
+  function handleMatchSort(newSelectedOrder) {
+    if (newSelectedOrder !== matchOrderBy) {
+      setMatchOrderBy(newSelectedOrder);
+      setMatchSortOrder("asc");
+      return;
+    }
+    matchSortOrder === "asc" ? setMatchSortOrder("desc") : setMatchSortOrder("asc");
+  }
+
+  const clubTableHeaders = [
+    { name: "Ime", handleOnClick: () => handleClubSort(`\"Club\".\"Name\"`) },
+    { name: "Logo" },
+    { name: "Liga", handleOnClick: () => handleClubSort(`\"League\".\"Name\"`) },
+    {
+      name: "Lokacija",
+      handleOnClick: () => handleClubSort(`\"Location\".\"Name\"`),
+    },
+  ];
+
+  const matchTableHeaders = [
+    { name: "Vrijeme", handleOnClick: () => handleMatchSort(`\"Match\".\"Time\"`) },
+    { name: "Domaćin", handleOnClick: () => handleMatchSort(`clubHome.\"Name\"`) },
+    { name: "2Rezultat" },
+    { name: "Gost", handleOnClick: () => handleMatchSort(`clubAway.\"Name\"`) },
+    {
+      name: "Lokacija",
+      handleOnClick: () => handleMatchSort(`\"Location\".\"Name\"`),
+    },
+  ];
+
   return (
     <div>
       <Navbar />
       <LeagueNavbar pageLength={pageLength} onChangePageLength={(e) => setPageLength(e.target.value)} />
       <Table
         skipEditAndDeleteHeaders
-        tableHeaders={["Ime", "Logo", "Liga", "Lokacija"]}
+        tableHeaders={currentLeagueTab === "clubs" ? clubTableHeaders : matchTableHeaders}
         renderData={currentLeagueTab === "clubs" ? renderClubs : renderMatches}
       />
       <ReactPaginate

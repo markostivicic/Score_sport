@@ -39,11 +39,13 @@ export async function getMatchesFilteredByLeagueAndFinishedAsync(
   pageLength,
   pageNumber,
   leagueId,
-  isFinished
+  isFinished,
+  orderBy,
+  sortOrder
 ) {
   try {
     const response = await API.get(
-      `/match?pageSize=${pageLength}&pageNumber=${pageNumber}&leagueId=${leagueId}&isFinished=${isFinished}`,
+      `/match?pageSize=${pageLength}&pageNumber=${pageNumber}&leagueId=${leagueId}&isFinished=${isFinished}&orderBy=${orderBy}&sortOrder=${sortOrder}`,
       { headers: getHeaders() }
     )
     return response.data
@@ -57,11 +59,13 @@ export async function getMatchesFilteredByClubAndFinishedAsync(
   pageLength,
   pageNumber,
   clubId,
-  isFinished
+  isFinished,
+  orderBy,
+  sortOrder
 ) {
   try {
     const response = await API.get(
-      `/match?pageSize=${pageLength}&pageNumber=${pageNumber}&clubId=${clubId}&isFinished=${isFinished}`,
+      `/match?pageSize=${pageLength}&pageNumber=${pageNumber}&clubId=${clubId}&isFinished=${isFinished}&orderBy=${orderBy}&sortOrder=${sortOrder}`,
       { headers: getHeaders() }
     )
     return response.data

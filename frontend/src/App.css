@@ -75,36 +75,40 @@ caption {
 }
 
 .max-height-full {
-  max-height: 100%;}
+  max-height: 100%;
+}
 
+.hamburger {
+  width: 100px;
+  aspect-ratio: 1/1;
+  cursor: pointer;
+  font-size: 2rem;
+}
+.small-logo {
+  width: 120px;
+  aspect-ratio: 16/9;
+}
 
-  .hamburger{
-    width: 100px;
-    aspect-ratio: 1/1;
-    cursor: pointer;
-    font-size: 2rem;
-  }
-  .small-logo{
-    width: 120px;
-    aspect-ratio: 16/9;
-  }
-
-  .clublogo{
-    width: 25px;
-    aspect-ratio: 1/1;
-  }
+.clublogo {
+  width: 25px;
+  aspect-ratio: 1/1;
+}
 
 .playerlogo {
   width: 25px;
   height: 30px;
 }
 
-.nav-text{
+.nav-text {
   font-size: 1.25rem;
 }
 
-.b-image{
+.b-image {
   background-image: url("./assets/logo_background.png");
   background-size: cover;
   background-position: center;
+}
+
+.h-600 {
+  height: 600px !important;
 }

@@ -38,7 +38,7 @@ export default function Table({
                   </th>
                 );
               })}
-              {skipEditAndDeleteHeaders || isActive ? <th>Izmijeni</th> : null}
+              {skipEditAndDeleteHeaders || (isActive ? <th>Izmijeni</th> : null)}
               {skipEditAndDeleteHeaders || (
                 <th> {isActive ? "Izbriši" : "Vrati"}</th>
               )}
