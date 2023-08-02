@@ -10,11 +10,15 @@ import {
   getSportByIdAsync,
   updateSportByIdAsync,
 } from "../../services/SportService";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function SportUpdate() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedSport, setSelectedSport] = useState();
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     if (id === "") {
@@ -48,7 +52,7 @@ export default function SportUpdate() {
           <Input
             id="sportUpdateName"
             type="text"
-            labelText="Name"
+            labelText={langParsed.strName}
             defaultValue={selectedSport?.name}
           />
         </Form>

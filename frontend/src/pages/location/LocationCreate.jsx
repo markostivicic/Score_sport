@@ -8,10 +8,14 @@ import FormContainer from "../../components/FormContainer";
 import Background from "../../components/Background";
 import Select from "../../components/Select";
 import { getCountriesAsync } from "../../services/CountryService";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function LocationCreate() {
   const navigate = useNavigate();
   const [countries, setCountries] = useState([]);
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   async function createLocationAsync(e) {
     e.preventDefault();
@@ -41,12 +45,20 @@ export default function LocationCreate() {
       <Navbar />
       <FormContainer>
         <Form handleOnSubmit={createLocationAsync}>
-          <Input id="locationCreateName" type="text" labelText="Ime" />
-          <Input id="locationCreateAddress" type="text" labelText="Adresa" />
+          <Input
+            id="locationCreateName"
+            type="text"
+            labelText={langParsed.strName}
+          />
+          <Input
+            id="locationCreateAddress"
+            type="text"
+            labelText={langParsed.strAddress}
+          />
           <Select
             id="locationCreateCountry"
             options={countries}
-            labelText="Država"
+            labelText={langParsed.strCountry}
           />
         </Form>
       </FormContainer>

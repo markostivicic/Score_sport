@@ -4,12 +4,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "./Button";
 import { useResultContext } from "../context/ResultContext";
 import { useLocation, useMatch, useNavigate } from "react-router-dom";
+import Select from "./Select";
+import { stringEn, stringHr } from "../services/TranslateService";
 
 export default function Navbar() {
-  const { authenticatedUser, setAuthenticatedUser, setIsSideNavActive } =
-    useResultContext();
-
+  const {
+    authenticatedUser,
+    setAuthenticatedUser,
+    setIsSideNavActive,
+    setLang,
+    lang,
+  } = useResultContext();
   const navigate = useNavigate();
+  const langParsed = JSON.parse(lang);
 
   function handleLogout() {
     setAuthenticatedUser(null);
@@ -54,7 +61,11 @@ export default function Navbar() {
               onClick={() => navigate("/sport")}
             />
           )}
-          <Button text="Odjava" handleOnClick={handleLogout} />
+          <select defaultValue={lang} onChange={(e) => setLang(e.target.value)}>
+            <option value={JSON.stringify(stringHr)}>HR</option>
+            <option value={JSON.stringify(stringEn)}>EN</option>
+          </select>
+          <Button margin="mx-2" text={langParsed.strLogout} handleOnClick={handleLogout} />
         </div>
       </div>
     </nav>

@@ -6,9 +6,13 @@ import Input from "../../components/Input";
 import { createNewCountryAsync } from "../../services/CountryService";
 import FormContainer from "../../components/FormContainer";
 import Background from "../../components/Background";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function CountryCreate() {
   const navigate = useNavigate();
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   async function createCountryAsync(e) {
     e.preventDefault();
@@ -26,7 +30,11 @@ export default function CountryCreate() {
       <Navbar />
       <FormContainer>
         <Form handleOnSubmit={createCountryAsync}>
-          <Input id="countryCreateName" type="text" labelText="Name" />
+          <Input
+            id="countryCreateName"
+            type="text"
+            labelText={langParsed.strName}
+          />
         </Form>
       </FormContainer>
     </Background>

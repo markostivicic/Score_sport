@@ -20,6 +20,7 @@ import Filter from "../../components/filters/Filter";
 import InputFilter from "../../components/filters/InputFilter";
 import SwitchFilter from "../../components/filters/SwitchFilter";
 import PageLengthSelect from "../../components/PageLengthSelect";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function Player() {
   const navigate = useNavigate();
@@ -31,7 +32,10 @@ export default function Player() {
   const [activeFilter, setActiveFilter] = useState(true);
   const [searchFilter, setSearchFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState(`\"Player\".\"LastName\"`);
+    const [orderBy, setOrderBy] = useState(`\"Player\".\"LastName\"`);
+    const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     fetchPlayersAsync();
@@ -124,7 +128,7 @@ export default function Player() {
     },
     { name: "Slika" },
     {
-      name: "Datum rođenja",
+      name: "Datum ro�enja",
       handleOnClick: () => handleSort(`\"Player\".\"DoB\"`),
     },
     {
@@ -147,11 +151,11 @@ export default function Player() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:"
+          labelText={langParsed.strSearch}
         />
         <SwitchFilter
           id="activeFilter"
-          text="Prikaži izbrisane"
+          text={langParsed.strShowDeleted}
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
@@ -174,7 +178,7 @@ export default function Player() {
         />
       </Table>
       <Button
-        text="Dodaj"
+        text={langParsed.strAdd}
         handleOnClick={() => navigate("/player/create")}
         margin="my-3"
       />

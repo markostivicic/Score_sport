@@ -1,6 +1,7 @@
 import { faSort } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { useResultContext } from "../context/ResultContext";
 
 export default function Table({
   tableHeaders,
@@ -9,6 +10,9 @@ export default function Table({
   children,
   isActive,
 }) {
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
   return (
     <>
       <div className="table-responsive">
@@ -38,9 +42,9 @@ export default function Table({
                   </th>
                 );
               })}
-              {skipEditAndDeleteHeaders || (isActive ? <th>Izmijeni</th> : null)}
+                          {skipEditAndDeleteHeaders || (isActive ? <th>{langParsed.strChange}</th> : null)}
               {skipEditAndDeleteHeaders || (
-                <th> {isActive ? "Izbriši" : "Vrati"}</th>
+                              <th> {isActive ? langParsed.strDelete : langParsed.strReturn}</th>
               )}
             </tr>
           </thead>

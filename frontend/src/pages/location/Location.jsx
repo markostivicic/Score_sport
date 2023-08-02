@@ -20,6 +20,7 @@ import Filter from "../../components/filters/Filter";
 import InputFilter from "../../components/filters/InputFilter";
 import SwitchFilter from "../../components/filters/SwitchFilter";
 import PageLengthSelect from "../../components/PageLengthSelect";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function Location() {
   const navigate = useNavigate();
@@ -31,7 +32,10 @@ export default function Location() {
   const [activeFilter, setActiveFilter] = useState(true);
   const [searchFilter, setSearchFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState(`\"Location\".\"Name\"`);
+    const [orderBy, setOrderBy] = useState(`\"Location\".\"Name\"`);
+    const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     fetchLocationsAsync();
@@ -114,7 +118,7 @@ export default function Location() {
       name: "Adresa",
       handleOnClick: () => handleSort(`\"Location\".\"Address\"`),
     },
-    { name: "Država", handleOnClick: () => handleSort(`\"Country\".\"Name\"`) },
+    { name: "Dr�ava", handleOnClick: () => handleSort(`\"Country\".\"Name\"`) },
   ];
 
   return (
@@ -126,11 +130,11 @@ export default function Location() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:"
+          labelText={langParsed.strSearch}
         />
         <SwitchFilter
           id="activeFilter"
-          text="Prikaži izbrisane"
+          text={langParsed.strShowDeleted}
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
@@ -153,7 +157,7 @@ export default function Location() {
         />
       </Table>
       <Button
-        text="Dodaj"
+        text={langParsed.strAdd}
         handleOnClick={() => navigate("/location/create")}
         margin="my-3"
       />

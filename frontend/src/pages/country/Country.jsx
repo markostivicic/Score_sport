@@ -21,6 +21,7 @@ import InputFilter from "../../components/filters/InputFilter";
 import SelectFilter from "../../components/filters/SelectFilter";
 import SwitchFilter from "../../components/filters/SwitchFilter";
 import PageLengthSelect from "../../components/PageLengthSelect";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function Country() {
   const navigate = useNavigate();
@@ -32,7 +33,10 @@ export default function Country() {
   const [activeFilter, setActiveFilter] = useState(true);
   const [sortOrder, setSortOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState(`\"Country\".\"Name\"`);
-  const [searchFilter, setSearchFilter] = useState("");
+    const [searchFilter, setSearchFilter] = useState("");
+    const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     fetchCountriesAsync();
@@ -128,11 +132,11 @@ export default function Country() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:"
+                  labelText={langParsed.strSearch}
         />
         <SwitchFilter
           id="activeFilter"
-          text="Prikaži izbrisane"
+          text={langParsed.strShowDeleted}
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
@@ -156,7 +160,7 @@ export default function Country() {
       </Table>
 
       <Button
-        text="Dodaj"
+        text={langParsed.strAdd}
         handleOnClick={() => navigate("/country/create")}
         margin="my-3"
       />

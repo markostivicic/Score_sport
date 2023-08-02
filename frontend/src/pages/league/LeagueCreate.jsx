@@ -9,11 +9,15 @@ import Background from "../../components/Background";
 import Select from "../../components/Select";
 import { getCountriesAsync } from "../../services/CountryService";
 import { getSportsAsync } from "../../services/SportService";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function LeagueCreate() {
   const navigate = useNavigate();
   const [countries, setCountries] = useState([]);
   const [sports, setSports] = useState([]);
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   async function createLeagueAsync(e) {
     e.preventDefault();
@@ -48,12 +52,20 @@ export default function LeagueCreate() {
       <Navbar />
       <FormContainer>
         <Form handleOnSubmit={createLeagueAsync}>
-          <Input id="leagueCreateName" type="text" labelText="Ime" />
-          <Select id="leagueCreateSport" options={sports} labelText="Sport" />
+          <Input
+            id="leagueCreateName"
+            type="text"
+            labelText={langParsed.strName}
+          />
+          <Select
+            id="leagueCreateSport"
+            options={sports}
+            labelText={langParsed.strSport}
+          />
           <Select
             id="leagueCreateCountry"
             options={countries}
-            labelText="Država"
+            labelText={langParsed.strCountry}
           />
         </Form>
       </FormContainer>

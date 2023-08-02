@@ -10,7 +10,9 @@ import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 export default function Login() {
   const navigate = useNavigate();
   const [isWrongPassword, setIsWrongPassword] = useState(false);
-  const { setAuthenticatedUser } = useResultContext();
+  const { setAuthenticatedUser, lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     setAuthenticatedUser(null);
@@ -50,19 +52,22 @@ export default function Login() {
 
   return (
     <div className="d-flex justify-content-center flex-column align-items-center vw-100 vh-100">
-      <Form handleOnSubmit={handleOnSubmitAsync} buttonText="Prijava">
+      <Form
+        handleOnSubmit={handleOnSubmitAsync}
+        buttonText={langParsed.strLogin}
+      >
         <Input
           id="username"
           type="text"
           wrapperClassName="my-2"
-          labelText="Korisničko ime"
+                  labelText={langParsed.strUserName}
           isInputGroup
           icon={faUser}
         />
         <Input
           id="password"
           type="password"
-          labelText="Lozinka"
+          labelText={langParsed.strPassword}
           wrapperClassName="my-4"
           isInputGroup
           icon={faLock}
@@ -70,11 +75,11 @@ export default function Login() {
       </Form>
       {isWrongPassword && (
         <p className="text-danger text-center my-3">
-          Pogrešno korisničko ime ili lozinka
+          {langParsed.strWrongInput}
         </p>
       )}
       <p role="button" className="my-4" onClick={() => navigate("/register")}>
-        Kreiraj novi profil
+        {langParsed.strCreateProfile}
       </p>
     </div>
   );
