@@ -32,8 +32,8 @@ export default function Location() {
   const [activeFilter, setActiveFilter] = useState(true);
   const [searchFilter, setSearchFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
-    const [orderBy, setOrderBy] = useState(`\"Location\".\"Name\"`);
-    const { lang } = useResultContext();
+  const [orderBy, setOrderBy] = useState(`\"Location\".\"Name\"`);
+  const { lang } = useResultContext();
 
   const langParsed = JSON.parse(lang);
 
@@ -113,12 +113,18 @@ export default function Location() {
   }
 
   const tableHeaders = [
-    { name: "Ime", handleOnClick: () => handleSort(`\"Location\".\"Name\"`) },
     {
-      name: "Adresa",
+      name: langParsed.strName,
+      handleOnClick: () => handleSort(`\"Location\".\"Name\"`),
+    },
+    {
+      name: langParsed.strAddress,
       handleOnClick: () => handleSort(`\"Location\".\"Address\"`),
     },
-    { name: "Država", handleOnClick: () => handleSort(`\"Country\".\"Name\"`) },
+    {
+      name: langParsed.strCountry,
+      handleOnClick: () => handleSort(`\"Country\".\"Name\"`),
+    },
   ];
 
   return (

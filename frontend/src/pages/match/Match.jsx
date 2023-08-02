@@ -33,8 +33,8 @@ export default function Match() {
   const [orderBy, setOrderBy] = useState(`\"Match\".\"Time\"`);
   const [selectedFinishedFilter, setSelectedFinishedFilter] = useState("null");
   const [activeFilter, setActiveFilter] = useState(true);
-    const [sortOrder, setSortOrder] = useState("asc");
-    const { lang } = useResultContext();
+  const [sortOrder, setSortOrder] = useState("asc");
+  const { lang } = useResultContext();
 
   const langParsed = JSON.parse(lang);
 
@@ -132,12 +132,21 @@ export default function Match() {
   ];
 
   const tableHeaders = [
-    { name: "Vrijeme", handleOnClick: () => handleSort(`\"Match\".\"Time\"`) },
-    { name: "Domaæin", handleOnClick: () => handleSort(`clubHome.\"Name\"`) },
-    { name: "2Rezultat" },
-    { name: "Gost", handleOnClick: () => handleSort(`clubAway.\"Name\"`) },
     {
-      name: "Lokacija",
+      name: langParsed.strTime,
+      handleOnClick: () => handleSort(`\"Match\".\"Time\"`),
+    },
+    {
+      name: langParsed.strHome,
+      handleOnClick: () => handleSort(`clubHome.\"Name\"`),
+    },
+    { name: langParsed.strScore },
+    {
+      name: langParsed.strAway,
+      handleOnClick: () => handleSort(`clubAway.\"Name\"`),
+    },
+    {
+      name: langParsed.strLocation,
       handleOnClick: () => handleSort(`\"Location\".\"Name\"`),
     },
   ];

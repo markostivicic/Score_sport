@@ -33,8 +33,8 @@ export default function Sport() {
   const [sortOrderFilter, setSortOrderFilter] = useState("asc");
   const [selectedOrderByFilter, setSlectedOrderByFilter] =
     useState(`\"Sport\".\"Name\"`);
-    const [searchFilter, setSearchFilter] = useState("");
-    const { lang } = useResultContext();
+  const [searchFilter, setSearchFilter] = useState("");
+  const { lang } = useResultContext();
 
   const langParsed = JSON.parse(lang);
 
@@ -126,7 +126,7 @@ export default function Sport() {
 
   const tableHeaders = [
     {
-      name: "Ime",
+      name: langParsed.strName,
       handleOnClick: () => {
         handleSort(`\"Sport\".\"Name\"`);
       },
@@ -143,7 +143,7 @@ export default function Sport() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-                  labelText={langParsed.strSearch}
+          labelText={langParsed.strSearch}
         />
         <SwitchFilter
           id="activeFilter"

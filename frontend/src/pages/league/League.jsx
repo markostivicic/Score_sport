@@ -32,8 +32,8 @@ export default function League() {
   const [activeFilter, setActiveFilter] = useState(true);
   const [searchFilter, setSearchFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
-    const [orderBy, setOrderBy] = useState(`\"League\".\"Name\"`);
-    const { lang } = useResultContext();
+  const [orderBy, setOrderBy] = useState(`\"League\".\"Name\"`);
+  const { lang } = useResultContext();
 
   const langParsed = JSON.parse(lang);
 
@@ -113,10 +113,16 @@ export default function League() {
   };
 
   const tableHeaders = [
-    { name: "Ime", handleOnClick: () => handleSort(`\"League\".\"Name\"`) },
-    { name: "Sport", handleOnClick: () => handleSort(`\"Sport\".\"Name\"`) },
     {
-      name: "Država",
+      name: langParsed.strName,
+      handleOnClick: () => handleSort(`\"League\".\"Name\"`),
+    },
+    {
+      name: langParsed.strSport,
+      handleOnClick: () => handleSort(`\"Sport\".\"Name\"`),
+    },
+    {
+      name: langParsed.strCountry,
       handleOnClick: () => handleSort(`\"Country\".\"Name\"`),
     },
   ];

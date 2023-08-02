@@ -32,8 +32,8 @@ export default function Player() {
   const [activeFilter, setActiveFilter] = useState(true);
   const [searchFilter, setSearchFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
-    const [orderBy, setOrderBy] = useState(`\"Player\".\"LastName\"`);
-    const { lang } = useResultContext();
+  const [orderBy, setOrderBy] = useState(`\"Player\".\"LastName\"`);
+  const { lang } = useResultContext();
 
   const langParsed = JSON.parse(lang);
 
@@ -119,24 +119,24 @@ export default function Player() {
 
   const tableHeaders = [
     {
-      name: "Ime",
+      name: langParsed.strFirstName,
       handleOnClick: () => handleSort(`\"Player\".\"FirstName\"`),
     },
     {
-      name: "Prezime",
+      name: langParsed.strLastName,
       handleOnClick: () => handleSort(`\"Player\".\"LastName\"`),
     },
-    { name: "Slika" },
+    { name: langParsed.strImage },
     {
-      name: "Datum roðenja",
+      name: langParsed.strBirthDate,
       handleOnClick: () => handleSort(`\"Player\".\"DoB\"`),
     },
     {
-      name: "Klub",
+      name: langParsed.strClub,
       handleOnClick: () => handleSort(`\"Club\".\"Name\"`),
     },
     {
-      name: "Nacionalnost",
+      name: langParsed.strNationality,
       handleOnClick: () => handleSort(`\"Country\".\"Name\"`),
     },
   ];

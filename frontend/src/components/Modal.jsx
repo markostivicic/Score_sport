@@ -19,9 +19,9 @@ export default function Modal({
           <div className="modal-body">
             <p>
               {isComment
-                ? "Jeste li sigurni da želite obrisati komentar?"
-                : `Jeste li sigurni da želite ${
-                    activeFilter ? "obrisati" : "vratiti"
+                ? langParsed.strCommentDeleteConfirmation
+                : langParsed.strDeleteConfirmation`${
+                    activeFilter ? langParsed.strDelete : langParsed.strReturn
                   } ${selectedItem.name}?`}
             </p>
           </div>
