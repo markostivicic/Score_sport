@@ -24,6 +24,7 @@ export const stringEn = {
   strImage: "Image",
   strBirthDate: "Birth Date",
   strClub: "Club",
+  strClubs: "Clubs",
   strNationality: "Nationality",
   strLogin: "Login",
   strUserName: "Username",
@@ -62,7 +63,10 @@ export const stringEn = {
   strSuccessfulyDeleted: "Successfully deleted!",
   strAlreadyTaken: " is already taken.",
   strPlayer: "Player",
+  strPlayers: "Players",
   strChange: "Edit",
+  strScores: "Scores",
+  strSchedule: "Schedule",
 };
 
 export const stringHr = {
@@ -91,6 +95,7 @@ export const stringHr = {
   strImage: "Slika",
   strBirthDate: "Datum rođenja",
   strClub: "Klub",
+  strClubs: "Klubovi",
   strNationality: "Nacionalnost",
   strLogin: "Prijava",
   strUserName: "Korisničko ime",
@@ -129,5 +134,8 @@ export const stringHr = {
   strSuccessfulyDeleted: "Uspješno obrisano!",
   strAlreadyTaken: " je zauzeto.",
   strPlayer: "Igrač",
+  strPlayers: "Igrači",
   strChange: "Izmijeni",
+  strScores: "Rezultati",
+  strSchedule: "Raspored",
 };

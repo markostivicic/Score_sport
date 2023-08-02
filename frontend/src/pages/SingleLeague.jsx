@@ -13,7 +13,7 @@ import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 export default function SingleLeague() {
   const { id } = useParams();
-  const { currentLeagueTab } = useResultContext();
+  const { currentLeagueTab, lang } = useResultContext();
   const [clubs, setClubs] = useState([]);
   const [matches, setMatches] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
@@ -23,23 +23,36 @@ export default function SingleLeague() {
   const [matchSortOrder, setMatchSortOrder] = useState("asc");
   const [clubSortOrder, setClubSortOrder] = useState("asc");
   const [clubOrderBy, setClubOrderBy] = useState(`\"Club\".\"Name\"`);
-
+  const langParsed = JSON.parse(lang);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (currentLeagueTab === "clubs") {
       fetchClubsAsync();
-    }
-    else if (currentLeagueTab === "results") {
+    } else if (currentLeagueTab === "results") {
       fetchMatchesByFinishedAsync(true);
-    }
-    else if (currentLeagueTab === "schedule") {
+    } else if (currentLeagueTab === "schedule") {
       fetchMatchesByFinishedAsync(false);
     }
-  }, [currentLeagueTab, pageNumber, pageLength, clubOrderBy, clubSortOrder, matchOrderBy, matchSortOrder]);
+  }, [
+    currentLeagueTab,
+    pageNumber,
+    pageLength,
+    clubOrderBy,
+    clubSortOrder,
+    matchOrderBy,
+    matchSortOrder,
+  ]);
 
   async function fetchClubsAsync() {
-    const { items, totalCount } = await getClubsFilteredByLeagueAsync(navigate, pageLength, pageNumber + 1, id, clubOrderBy, clubSortOrder);
+    const { items, totalCount } = await getClubsFilteredByLeagueAsync(
+      navigate,
+      pageLength,
+      pageNumber + 1,
+      id,
+      clubOrderBy,
+      clubSortOrder
+    );
     if (items.length === 0 && pageNumber > 0) {
       setPageNumber(pageNumber - 1);
       return;
@@ -49,7 +62,16 @@ export default function SingleLeague() {
   }
 
   async function fetchMatchesByFinishedAsync(isFinished) {
-    const { items, totalCount } = await getMatchesFilteredByLeagueAndFinishedAsync(navigate, pageLength, pageNumber + 1, id, isFinished, matchOrderBy, matchSortOrder);
+    const { items, totalCount } =
+      await getMatchesFilteredByLeagueAndFinishedAsync(
+        navigate,
+        pageLength,
+        pageNumber + 1,
+        id,
+        isFinished,
+        matchOrderBy,
+        matchSortOrder
+      );
     if (items.length === 0 && pageNumber > 0) {
       setPageNumber(pageNumber - 1);
       return;
@@ -61,7 +83,11 @@ export default function SingleLeague() {
   function renderClubs() {
     return clubs.map((club) => {
       return (
-        <tr key={club.id} onClick={() => navigate(`/single-club/${club.id}`)}>
+        <tr
+          className="cursor-pointer"
+          key={club.id}
+          onClick={() => navigate(`/single-club/${club.id}`)}
+        >
           <td>{club.name}</td>
           <td>
             <img src={club.logo} className="clublogo" alt="logo" />
@@ -76,7 +102,11 @@ export default function SingleLeague() {
   function renderMatches() {
     return matches.map((match) => {
       return (
-        <tr key={match.id} onClick={() => navigate(`/single-match/${match.id}`)}>
+        <tr
+          className="cursor-pointer"
+          key={match.id}
+          onClick={() => navigate(`/single-match/${match.id}`)}
+        >
           <td>{extractDateAndTime(match.time)}</td>
           <td>{match.clubHome.name}</td>
           <td>{match.homeScore}</td>
@@ -98,7 +128,9 @@ export default function SingleLeague() {
       setClubSortOrder("asc");
       return;
     }
-    clubSortOrder === "asc" ? setClubSortOrder("desc") : setClubSortOrder("asc");
+    clubSortOrder === "asc"
+      ? setClubSortOrder("desc")
+      : setClubSortOrder("asc");
   }
 
   function handleMatchSort(newSelectedOrder) {
@@ -107,13 +139,18 @@ export default function SingleLeague() {
       setMatchSortOrder("asc");
       return;
     }
-    matchSortOrder === "asc" ? setMatchSortOrder("desc") : setMatchSortOrder("asc");
+    matchSortOrder === "asc"
+      ? setMatchSortOrder("desc")
+      : setMatchSortOrder("asc");
   }
 
   const clubTableHeaders = [
     { name: "Ime", handleOnClick: () => handleClubSort(`\"Club\".\"Name\"`) },
     { name: "Logo" },
-    { name: "Liga", handleOnClick: () => handleClubSort(`\"League\".\"Name\"`) },
+    {
+      name: "Liga",
+      handleOnClick: () => handleClubSort(`\"League\".\"Name\"`),
+    },
     {
       name: "Lokacija",
       handleOnClick: () => handleClubSort(`\"Location\".\"Name\"`),
@@ -121,12 +158,21 @@ export default function SingleLeague() {
   ];
 
   const matchTableHeaders = [
-    { name: "Vrijeme", handleOnClick: () => handleMatchSort(`\"Match\".\"Time\"`) },
-    { name: "Domaćin", handleOnClick: () => handleMatchSort(`clubHome.\"Name\"`) },
-    { name: "2Rezultat" },
-    { name: "Gost", handleOnClick: () => handleMatchSort(`clubAway.\"Name\"`) },
     {
-      name: "Lokacija",
+      name: langParsed.strTime,
+      handleOnClick: () => handleMatchSort(`\"Match\".\"Time\"`),
+    },
+    {
+      name: langParsed.strHome,
+      handleOnClick: () => handleMatchSort(`clubHome.\"Name\"`),
+    },
+    { name: langParsed.strScore },
+    {
+      name: langParsed.strAway,
+      handleOnClick: () => handleMatchSort(`clubAway.\"Name\"`),
+    },
+    {
+      name: langParsed.strLocation,
       handleOnClick: () => handleMatchSort(`\"Location\".\"Name\"`),
     },
   ];
@@ -134,10 +180,15 @@ export default function SingleLeague() {
   return (
     <div>
       <Navbar />
-      <LeagueNavbar pageLength={pageLength} onChangePageLength={(e) => setPageLength(e.target.value)} />
+      <LeagueNavbar
+        pageLength={pageLength}
+        onChangePageLength={(e) => setPageLength(e.target.value)}
+      />
       <Table
         skipEditAndDeleteHeaders
-        tableHeaders={currentLeagueTab === "clubs" ? clubTableHeaders : matchTableHeaders}
+        tableHeaders={
+          currentLeagueTab === "clubs" ? clubTableHeaders : matchTableHeaders
+        }
         renderData={currentLeagueTab === "clubs" ? renderClubs : renderMatches}
       />
       <ReactPaginate
