@@ -2,10 +2,14 @@ import { getHeaders, redirectToLoginIfNeeded } from "./AuthService";
 import API from "./AxiosService";
 import { toast } from "react-toastify";
 
-export async function getFavouriteClubsAsync(navigate, pageLength, pageNumber) {
+export async function getFavouriteMatchsAsync(
+  navigate,
+  pageLength,
+  pageNumber
+) {
   try {
     const response = await API.get(
-      `/favouriteClub?pageSize=${pageLength}&pageNumber=${pageNumber}&isActive=true`,
+      `/favouriteMatch?pageSize=${pageLength}&pageNumber=${pageNumber}&isActive=true`,
       { headers: getHeaders() }
     );
     return response.data;
@@ -14,14 +18,14 @@ export async function getFavouriteClubsAsync(navigate, pageLength, pageNumber) {
   }
 }
 
-export async function getFavouriteClubByClubIdAsync(
+export async function getFavouriteMatchByMatchIdAsync(
   navigate,
-  clubId,
+  matchId,
   isActive
 ) {
   try {
     const response = await API.get(
-      `/favouriteClub?pageSize=100&pageNumber=0&clubId=${clubId}${
+      `/favouriteMatch?pageSize=100&pageNumber=0&matchId=${matchId}${
         isActive !== undefined && `&isActive=${isActive}`
       }`,
       { headers: getHeaders() }
@@ -32,27 +36,27 @@ export async function getFavouriteClubByClubIdAsync(
   }
 }
 
-export async function changeFavouriteClubStatusAsync(
+export async function changeFavouriteMatchStatusAsync(
   navigate,
   newStatus,
-  clubId
+  matchId
 ) {
   try {
-    const favouriteClub = await getFavouriteClubByClubIdAsync(
+    const favouriteMatch = await getFavouriteMatchByMatchIdAsync(
       navigate,
-      clubId,
+      matchId,
       null
     );
     if (
-      (newStatus === false && favouriteClub) ||
-      (newStatus === true && favouriteClub)
+      (newStatus === false && favouriteMatch) ||
+      (newStatus === true && favouriteMatch)
     ) {
-      await deleteFavouriteClubByIdAsync(favouriteClub.id, navigate);
+      await deleteFavouriteMatchByIdAsync(favouriteMatch.id, navigate);
       return;
     }
 
-    if (newStatus === true && !favouriteClub) {
-      await createNewFavouriteClubAsync({ clubId }, navigate);
+    if (newStatus === true && !favouriteMatch) {
+      await createNewFavouriteMatchAsync({ matchId }, navigate);
       return;
     }
 
@@ -62,21 +66,23 @@ export async function changeFavouriteClubStatusAsync(
   }
 }
 
-export async function createNewFavouriteClubAsync(favouriteClub, navigate) {
+export async function createNewFavouriteMatchAsync(favouriteMatch, navigate) {
   try {
-    await API.post("/favouriteClub", favouriteClub, { headers: getHeaders() });
+    await API.post("/favouriteMatch", favouriteMatch, {
+      headers: getHeaders(),
+    });
   } catch (error) {
     redirectToLoginIfNeeded(navigate, error, toast);
   }
 }
 
-export async function updateFavouriteClubByIdAsync(
+export async function updateFavouriteMatchByIdAsync(
   id,
-  favouriteClub,
+  favouriteMatch,
   navigate
 ) {
   try {
-    await API.put(`/favouriteClub/${id}`, favouriteClub, {
+    await API.put(`/favouriteMatch/${id}`, favouriteMatch, {
       headers: getHeaders(),
     });
     toast.success("Uspješno ažurirano!");
@@ -85,9 +91,9 @@ export async function updateFavouriteClubByIdAsync(
   }
 }
 
-export async function deleteFavouriteClubByIdAsync(id, navigate) {
+export async function deleteFavouriteMatchByIdAsync(id, navigate) {
   try {
-    await API.delete(`/favouriteClub/toggle/${id}`, { headers: getHeaders() });
+    await API.delete(`/favouriteMatch/toggle/${id}`, { headers: getHeaders() });
   } catch (error) {
     redirectToLoginIfNeeded(navigate, error, toast);
   }

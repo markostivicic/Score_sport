@@ -24,8 +24,12 @@ namespace ResultApp.Repository
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
             int totalCount = 0;
-            StringBuilder queryBuilder = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"FavouriteMatch\" INNER JOIN \"Match\" ON \"FavouriteMatch\".\"MatchId\" = \"Match\".\"Id\" WHERE \"FavouriteMatch\".\"IsActive\" = @IsActive ");
-            command.Parameters.AddWithValue("@IsActive", favouriteMatchFilter.IsActive);
+            StringBuilder queryBuilder = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"FavouriteMatch\" INNER JOIN \"Match\" ON \"FavouriteMatch\".\"MatchId\" = \"Match\".\"Id\" WHERE 1=1 ");
+            if (favouriteMatchFilter.IsActive != null)
+            {
+                queryBuilder.Append(" AND \"FavouriteMatch\".\"IsActive\" = @IsActive ");
+                command.Parameters.AddWithValue("@IsActive", favouriteMatchFilter.IsActive);
+            }
 
             if (favouriteMatchFilter.MatchId != null)
             {
