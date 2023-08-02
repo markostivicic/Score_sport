@@ -61,11 +61,15 @@ export default function Navbar() {
               onClick={() => navigate("/sport")}
             />
           )}
-          <select defaultValue={lang} onChange={(e) => setLang(e.target.value)}>
+          <select
+            className="form-control"
+            defaultValue={lang}
+            onChange={(e) => setLang(e.target.value)}
+          >
             <option value={JSON.stringify(stringHr)}>HR</option>
             <option value={JSON.stringify(stringEn)}>EN</option>
           </select>
-          <Button margin="mx-2" text={langParsed.strLogout} handleOnClick={handleLogout} />
+          <Button text={langParsed.strLogout} handleOnClick={handleLogout} />
         </div>
       </div>
     </nav>
