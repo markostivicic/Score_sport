@@ -1,6 +1,14 @@
+import { faSort } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
-export default function Table({ tableHeaders, renderData, children, isActive }) {
+export default function Table({
+  tableHeaders,
+  renderData,
+  skipEditAndDeleteHeaders,
+  children,
+  isActive,
+}) {
   return (
     <>
       <div className="table-responsive">
@@ -8,12 +16,32 @@ export default function Table({ tableHeaders, renderData, children, isActive }) 
           <thead>
             <tr>
               {tableHeaders.map((header) => {
-                const colSpan = parseInt(header.substring(0, 1)) || 1;
-                const headerText = colSpan !== 1 ? header.substring(1) : header;
-                return <th key={header} colSpan={colSpan}>{headerText}</th>;
+                const colSpan = parseInt(header.name.substring(0, 1)) || 1;
+                const headerText =
+                  colSpan !== 1 ? header.name.substring(1) : header.name;
+                return (
+                  <th
+                    className="cursor-pointer"
+                    key={header.name}
+                    onClick={header.handleOnClick}
+                    colSpan={colSpan}
+                  >
+                    {headerText}{" "}
+                    {header.handleOnClick ? (
+                      <FontAwesomeIcon
+                        className="text-secondary"
+                        icon={faSort}
+                      />
+                    ) : (
+                      ""
+                    )}
+                  </th>
+                );
               })}
-              {isActive ? <th>Izmijeni</th> : null}
-              <th>{isActive ? "Izbriši" : "Vrati"}</th>
+              {skipEditAndDeleteHeaders || isActive ? <th>Izmijeni</th> : null}
+              {skipEditAndDeleteHeaders || (
+                <th> {isActive ? "Izbriši" : "Vrati"}</th>
+              )}
             </tr>
           </thead>
           <tbody>{renderData()}</tbody>

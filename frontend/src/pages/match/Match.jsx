@@ -4,8 +4,15 @@ import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash, faUndoAlt } from "@fortawesome/free-solid-svg-icons";
-import { deleteMatchByIdAsync, getMatchesWithFiltersAsync } from "../../services/MatchService";
+import {
+  faPenToSquare,
+  faTrash,
+  faUndoAlt,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  deleteMatchByIdAsync,
+  getMatchesWithFiltersAsync,
+} from "../../services/MatchService";
 import Background from "../../components/Background";
 import Modal from "../../components/Modal";
 import Button from "../../components/Button";
@@ -20,19 +27,33 @@ export default function Match() {
   const [pageNumber, setPageNumber] = useState(0);
   const [pageCount, setPageCount] = useState(1);
   const [pageLength, setPageLength] = useState(5);
-  const [selectedMatch, setSelectedMatch] = useState(null)
-  const [selectedOrderByFilter, setSlectedOrderByFilter] = useState(`\"Match\".\"Time\"`)
-  const [selectedFinishedFilter, setSelectedFinishedFilter] = useState("null")
-  const [activeFilter, setActiveFilter] = useState(true)
-  const [sortOrderFilter, setSortOrderFilter] = useState(true)
+  const [selectedMatch, setSelectedMatch] = useState(null);
+  const [orderBy, setOrderBy] = useState(`\"Match\".\"Time\"`);
+  const [selectedFinishedFilter, setSelectedFinishedFilter] = useState("null");
+  const [activeFilter, setActiveFilter] = useState(true);
+  const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
     fetchMatchesAsync();
-  }, [pageNumber, pageLength, selectedFinishedFilter, activeFilter, selectedOrderByFilter, sortOrderFilter]);
-
+  }, [
+    pageNumber,
+    pageLength,
+    selectedFinishedFilter,
+    activeFilter,
+    orderBy,
+    sortOrder,
+  ]);
 
   async function fetchMatchesAsync() {
-    const { items, totalCount } = await getMatchesWithFiltersAsync(navigate, pageLength, pageNumber, sortOrderFilter ? "asc" : "desc", selectedOrderByFilter, selectedFinishedFilter, activeFilter)
+    const { items, totalCount } = await getMatchesWithFiltersAsync(
+      navigate,
+      pageLength,
+      pageNumber,
+      sortOrder,
+      orderBy,
+      selectedFinishedFilter,
+      activeFilter
+    );
     if (items.length === 0 && pageNumber > 0) {
       setPageNumber(pageNumber - 1);
       return;
@@ -42,7 +63,7 @@ export default function Match() {
   }
 
   async function deleteMatchAsync(id) {
-    await deleteMatchByIdAsync(id, navigate)
+    await deleteMatchByIdAsync(id, navigate);
     fetchMatchesAsync();
   }
 
@@ -56,18 +77,20 @@ export default function Match() {
           <td>{match.awayScore}</td>
           <td>{match.clubAway.name}</td>
           <td>{match.location.name}</td>
-          {activeFilter ? (<td>
-            <FontAwesomeIcon
-              className="cursor-pointer"
-              onClick={() => navigate(`/match/update/${match.id}`)}
-              icon={faPenToSquare}
-            />
-          </td>) : null}
+          {activeFilter ? (
+            <td>
+              <FontAwesomeIcon
+                className="cursor-pointer"
+                onClick={() => navigate(`/match/update/${match.id}`)}
+                icon={faPenToSquare}
+              />
+            </td>
+          ) : null}
           <td>
             <FontAwesomeIcon
               className="cursor-pointer"
               onClick={() => {
-                setSelectedMatch(match)
+                setSelectedMatch(match);
               }}
               icon={activeFilter ? faTrash : faUndoAlt}
             />
@@ -84,7 +107,9 @@ export default function Match() {
     const year = date.getFullYear();
     const hours = date.getHours();
     const minutes = date.getMinutes();
-    return `${day}.${month}.${year}. ${hours.toString() + ":" + minutes.toString().padStart(2, "0")}`;
+    return `${day}.${month}.${year}. ${
+      hours.toString() + ":" + minutes.toString().padStart(2, "0")
+    }`;
   }
 
   const changePage = ({ selected }) => {
@@ -101,10 +126,10 @@ export default function Match() {
   };
 
   const orderFilterOptions = [
-    { value: "\"Match\".\"Time\"", text: "Vrijeme" },
-    { value: "\"Location\".\"Name\"", text: "Lokacija" },
-    { value: "clubHome.\"Name\"", text: "Domaćin" },
-    { value: "clubAway.\"Name\"", text: "Gost" },
+    { value: '"Match"."Time"', text: "Vrijeme" },
+    { value: '"Location"."Name"', text: "Lokacija" },
+    { value: 'clubHome."Name"', text: "Domaćin" },
+    { value: 'clubAway."Name"', text: "Gost" },
   ];
 
   const finishedFilterOptions = [
@@ -113,23 +138,30 @@ export default function Match() {
     { value: "false", text: "Nisu završene" },
   ];
 
+  const tableHeaders = [
+    { name: "Vrijeme", handleOnClick: () => handleSort(`\"Match\".\"Time\"`) },
+    { name: "Domaćin", handleOnClick: () => handleSort(`clubHome.\"Name\"`) },
+    { name: "2Rezultat" },
+    { name: "Gost", handleOnClick: () => handleSort(`clubAway.\"Name\"`) },
+    {
+      name: "Lokacija",
+      handleOnClick: () => handleSort(`\"Location\".\"Name\"`),
+    },
+  ];
+
+  function handleSort(newSelectedOrder) {
+    if (newSelectedOrder !== orderBy) {
+      setOrderBy(newSelectedOrder);
+      setSortOrder("asc");
+      return;
+    }
+    sortOrder === "asc" ? setSortOrder("desc") : setSortOrder("asc");
+  }
+
   return (
     <Background>
       <Navbar />
       <Filter>
-        <SelectFilter
-          id="orderFilter"
-          options={orderFilterOptions}
-          value={selectedOrderByFilter}
-          onChange={(e) => setSlectedOrderByFilter(e.target.value)}
-          labelText="Poredaj po:"
-        />
-        <SwitchFilter
-          id="sortOrderFilter"
-          text="Rastući redoslijed"
-          value={sortOrderFilter}
-          onChange={(e) => setSortOrderFilter(!sortOrderFilter)}
-        />
         <SelectFilter
           id="finishedFilter"
           options={finishedFilterOptions}
@@ -143,10 +175,18 @@ export default function Match() {
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
-        <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
+        <PageLengthSelect
+          id="pageLength"
+          value={pageLength}
+          onChange={(e) => setPageLength(e.target.value)}
+        />
       </Filter>
 
-      <Table tableHeaders={["Vrijeme", "Domaćin", "2Rezultat", "Gost", "Lokacija"]} renderData={renderData} isActive={activeFilter}>
+      <Table
+        tableHeaders={tableHeaders}
+        renderData={renderData}
+        isActive={activeFilter}
+      >
         <Modal
           selectedItem={selectedMatch}
           handleCancelDelete={handleCancelDelete}
@@ -163,4 +203,3 @@ export default function Match() {
     </Background>
   );
 }
-

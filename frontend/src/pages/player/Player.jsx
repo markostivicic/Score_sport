@@ -4,8 +4,11 @@ import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash, faUndoAlt } from "@fortawesome/free-solid-svg-icons";
-import { v4 as uuid } from "uuid";
+import {
+  faPenToSquare,
+  faTrash,
+  faUndoAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   getPlayersWithFiltersAsync,
   deletePlayerByIdAsync,
@@ -25,12 +28,14 @@ export default function Player() {
   const [pageCount, setPageCount] = useState(1);
   const [pageLength, setPageLength] = useState(5);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
-  const [activeFilter, setActiveFilter] = useState(true)
-  const [searchFilter, setSearchFilter] = useState("")
+  const [activeFilter, setActiveFilter] = useState(true);
+  const [searchFilter, setSearchFilter] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState(`\"Player\".\"LastName\"`);
 
   useEffect(() => {
     fetchPlayersAsync();
-  }, [pageNumber, pageLength, activeFilter, searchFilter]);
+  }, [pageNumber, pageLength, activeFilter, searchFilter, sortOrder, orderBy]);
 
   async function fetchPlayersAsync() {
     const { items, totalCount } = await getPlayersWithFiltersAsync(
@@ -38,7 +43,9 @@ export default function Player() {
       pageLength,
       pageNumber,
       activeFilter,
-      searchFilter
+      searchFilter,
+      orderBy,
+      sortOrder
     );
     setPlayers(items);
     setPageCount(Math.ceil(totalCount / pageLength));
@@ -61,7 +68,7 @@ export default function Player() {
   function renderData() {
     return players.map((player) => {
       return (
-        <tr key={uuid()}>
+        <tr key={player.id}>
           <td>{player.firstName}</td>
           <td>{player.lastName}</td>
           <td>
@@ -70,13 +77,15 @@ export default function Player() {
           <td>{player.doB}</td>
           <td>{player.club.name}</td>
           <td>{player.country.name}</td>
-          {activeFilter ? (<td>
-            <FontAwesomeIcon
-              className="cursor-pointer"
-              onClick={() => navigate(`/player/update/${player.id}`)}
-              icon={faPenToSquare}
-            />
-          </td>) : null}
+          {activeFilter ? (
+            <td>
+              <FontAwesomeIcon
+                className="cursor-pointer"
+                onClick={() => navigate(`/player/update/${player.id}`)}
+                icon={faPenToSquare}
+              />
+            </td>
+          ) : null}
           <td>
             <FontAwesomeIcon
               className="cursor-pointer"
@@ -95,6 +104,38 @@ export default function Player() {
     setPageNumber(selected + 1);
   };
 
+  function handleSort(newSelectedOrder) {
+    if (newSelectedOrder !== orderBy) {
+      setOrderBy(newSelectedOrder);
+      setSortOrder("asc");
+      return;
+    }
+    sortOrder === "asc" ? setSortOrder("desc") : setSortOrder("asc");
+  }
+
+  const tableHeaders = [
+    {
+      name: "Ime",
+      handleOnClick: () => handleSort(`\"Player\".\"FirstName\"`),
+    },
+    {
+      name: "Prezime",
+      handleOnClick: () => handleSort(`\"Player\".\"LastName\"`),
+    },
+    { name: "Slika" },
+    {
+      name: "Datum rođenja",
+      handleOnClick: () => handleSort(`\"Player\".\"DoB\"`),
+    },
+    {
+      name: "Klub",
+      handleOnClick: () => handleSort(`\"Club\".\"Name\"`),
+    },
+    {
+      name: "Nacionalnost",
+      handleOnClick: () => handleSort(`\"Country\".\"Name\"`),
+    },
+  ];
 
   return (
     <Background>
@@ -106,32 +147,31 @@ export default function Player() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:" />
+          labelText="Pretraži:"
+        />
         <SwitchFilter
           id="activeFilter"
           text="Prikaži izbrisane"
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
-        <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
+        <PageLengthSelect
+          id="pageLength"
+          value={pageLength}
+          onChange={(e) => setPageLength(e.target.value)}
+        />
       </Filter>
 
       <Table
-        tableHeaders={[
-          "Ime",
-          "Prezime",
-          "Slika",
-          "Datum rođenja",
-          "Klub",
-          "Nacionalnost",
-        ]}
+        tableHeaders={tableHeaders}
         renderData={renderData}
         isActive={activeFilter}
       >
         <Modal
           selectedItem={selectedPlayer}
           handleCancelDelete={handleCancelDelete}
-          handleConfirmDelete={handleConfirmDelete} />
+          handleConfirmDelete={handleConfirmDelete}
+        />
       </Table>
       <Button
         text="Dodaj"
