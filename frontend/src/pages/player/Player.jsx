@@ -30,10 +30,12 @@ export default function Player() {
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [activeFilter, setActiveFilter] = useState(true);
   const [searchFilter, setSearchFilter] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState(`\"Player\".\"LastName\"`);
 
   useEffect(() => {
     fetchPlayersAsync();
-  }, [pageNumber, pageLength, activeFilter, searchFilter]);
+  }, [pageNumber, pageLength, activeFilter, searchFilter, sortOrder, orderBy]);
 
   async function fetchPlayersAsync() {
     const { items, totalCount } = await getPlayersWithFiltersAsync(
@@ -41,7 +43,9 @@ export default function Player() {
       pageLength,
       pageNumber,
       activeFilter,
-      searchFilter
+      searchFilter,
+      orderBy,
+      sortOrder
     );
     setPlayers(items);
     setPageCount(Math.ceil(totalCount / pageLength));
@@ -100,6 +104,39 @@ export default function Player() {
     setPageNumber(selected + 1);
   };
 
+  function handleSort(newSelectedOrder) {
+    if (newSelectedOrder !== orderBy) {
+      setOrderBy(newSelectedOrder);
+      setSortOrder("asc");
+      return;
+    }
+    sortOrder === "asc" ? setSortOrder("desc") : setSortOrder("asc");
+  }
+
+  const tableHeaders = [
+    {
+      name: "Ime",
+      handleOnClick: () => handleSort(`\"Player\".\"FirstName\"`),
+    },
+    {
+      name: "Prezime",
+      handleOnClick: () => handleSort(`\"Player\".\"LastName\"`),
+    },
+    { name: "Slika" },
+    {
+      name: "Datum rođenja",
+      handleOnClick: () => handleSort(`\"Player\".\"DoB\"`),
+    },
+    {
+      name: "Klub",
+      handleOnClick: () => handleSort(`\"Club\".\"Name\"`),
+    },
+    {
+      name: "Nacionalnost",
+      handleOnClick: () => handleSort(`\"Country\".\"Name\"`),
+    },
+  ];
+
   return (
     <Background>
       <Navbar />
@@ -126,14 +163,7 @@ export default function Player() {
       </Filter>
 
       <Table
-        tableHeaders={[
-          "Ime",
-          "Prezime",
-          "Slika",
-          "Datum rođenja",
-          "Klub",
-          "Nacionalnost",
-        ]}
+        tableHeaders={tableHeaders}
         renderData={renderData}
         isActive={activeFilter}
       >

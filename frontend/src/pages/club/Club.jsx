@@ -30,10 +30,12 @@ export default function Club() {
   const [selectedClub, setSelectedClub] = useState(null);
   const [activeFilter, setActiveFilter] = useState(true);
   const [searchFilter, setSearchFilter] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState(`\"Club\".\"Name\"`);
 
   useEffect(() => {
     fetchClubsAsync();
-  }, [pageNumber, pageLength, activeFilter, searchFilter]);
+  }, [pageNumber, pageLength, activeFilter, searchFilter, sortOrder, orderBy]);
 
   async function fetchClubsAsync() {
     const { items, totalCount } = await getClubsWithFiltersAsync(
@@ -41,7 +43,9 @@ export default function Club() {
       pageLength,
       pageNumber,
       activeFilter,
-      searchFilter
+      searchFilter,
+      orderBy,
+      sortOrder
     );
     setClubs(items);
     setPageCount(Math.ceil(totalCount / pageLength));
@@ -58,6 +62,15 @@ export default function Club() {
   async function deleteClubAsync(id) {
     await deleteClubByIdAsync(id, navigate);
     fetchClubsAsync();
+  }
+
+  function handleSort(newSelectedOrder) {
+    if (newSelectedOrder !== orderBy) {
+      setOrderBy(newSelectedOrder);
+      setSortOrder("asc");
+      return;
+    }
+    sortOrder === "asc" ? setSortOrder("desc") : setSortOrder("asc");
   }
 
   function renderData() {
@@ -97,6 +110,16 @@ export default function Club() {
     setPageNumber(selected + 1);
   };
 
+  const tableHeaders = [
+    { name: "Ime", handleOnClick: () => handleSort(`\"Club\".\"Name\"`) },
+    { name: "Logo" },
+    { name: "Liga", handleOnClick: () => handleSort(`\"League\".\"Name\"`) },
+    {
+      name: "Lokacija",
+      handleOnClick: () => handleSort(`\"Location\".\"Name\"`),
+    },
+  ];
+
   return (
     <Background>
       <Navbar />
@@ -123,7 +146,7 @@ export default function Club() {
       </Filter>
 
       <Table
-        tableHeaders={["Ime", "Logo", "Liga", "Lokacija"]}
+        tableHeaders={tableHeaders}
         renderData={renderData}
         isActive={activeFilter}
       >

@@ -51,7 +51,6 @@ export default function Sport() {
       setSortOrderFilter("asc");
       return;
     }
-
     sortOrderFilter === "asc"
       ? setSortOrderFilter("desc")
       : setSortOrderFilter("asc");

@@ -1,3 +1,5 @@
+import { faSort } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
 export default function Table({
@@ -24,7 +26,15 @@ export default function Table({
                     onClick={header.handleOnClick}
                     colSpan={colSpan}
                   >
-                    {headerText}
+                    {headerText}{" "}
+                    {header.handleOnClick ? (
+                      <FontAwesomeIcon
+                        className="text-secondary"
+                        icon={faSort}
+                      />
+                    ) : (
+                      ""
+                    )}
                   </th>
                 );
               })}

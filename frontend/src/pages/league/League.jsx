@@ -4,7 +4,11 @@ import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash, faUndoAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPenToSquare,
+  faTrash,
+  faUndoAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/Button";
 import {
   getLeaguesWithFiltersAsync,
@@ -24,12 +28,14 @@ export default function League() {
   const [pageCount, setPageCount] = useState(1);
   const [pageLength, setPageLength] = useState(5);
   const [selectedLeague, setSelectedLeague] = useState(null);
-  const [activeFilter, setActiveFilter] = useState(true)
-  const [searchFilter, setSearchFilter] = useState("")
+  const [activeFilter, setActiveFilter] = useState(true);
+  const [searchFilter, setSearchFilter] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState(`\"League\".\"Name\"`);
 
   useEffect(() => {
     fetchLeaguesAsync();
-  }, [pageNumber, pageLength, activeFilter, searchFilter]);
+  }, [pageNumber, pageLength, activeFilter, searchFilter, orderBy, sortOrder]);
 
   const handleConfirmDelete = () => {
     deleteLeagueAsync(selectedLeague.id);
@@ -46,7 +52,9 @@ export default function League() {
       pageLength,
       pageNumber,
       activeFilter,
-      searchFilter
+      searchFilter,
+      orderBy,
+      sortOrder
     );
     setLeagues(items);
     setPageCount(Math.ceil(totalCount / pageLength));
@@ -57,6 +65,15 @@ export default function League() {
     fetchLeaguesAsync();
   }
 
+  function handleSort(newSelectedOrder) {
+    if (newSelectedOrder !== orderBy) {
+      setOrderBy(newSelectedOrder);
+      setSortOrder("asc");
+      return;
+    }
+    sortOrder === "asc" ? setSortOrder("desc") : setSortOrder("asc");
+  }
+
   function renderData() {
     return leagues.map((league) => {
       return (
@@ -64,13 +81,15 @@ export default function League() {
           <td>{league.name}</td>
           <td>{league.sport.name}</td>
           <td>{league.country.name}</td>
-          {activeFilter ? (<td>
-            <FontAwesomeIcon
-              className="cursor-pointer"
-              onClick={() => navigate(`/league/update/${league.id}`)}
-              icon={faPenToSquare}
-            />
-          </td>) : null}
+          {activeFilter ? (
+            <td>
+              <FontAwesomeIcon
+                className="cursor-pointer"
+                onClick={() => navigate(`/league/update/${league.id}`)}
+                icon={faPenToSquare}
+              />
+            </td>
+          ) : null}
           <td>
             <FontAwesomeIcon
               className="cursor-pointer"
@@ -89,6 +108,15 @@ export default function League() {
     setPageNumber(selected + 1);
   };
 
+  const tableHeaders = [
+    { name: "Ime", handleOnClick: () => handleSort(`\"League\".\"Name\"`) },
+    { name: "Sport", handleOnClick: () => handleSort(`\"Sport\".\"Name\"`) },
+    {
+      name: "Država",
+      handleOnClick: () => handleSort(`\"Country\".\"Name\"`),
+    },
+  ];
+
   return (
     <Background>
       <Navbar />
@@ -99,17 +127,26 @@ export default function League() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:" />
+          labelText="Pretraži:"
+        />
         <SwitchFilter
           id="activeFilter"
           text="Prikaži izbrisane"
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
-        <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
+        <PageLengthSelect
+          id="pageLength"
+          value={pageLength}
+          onChange={(e) => setPageLength(e.target.value)}
+        />
       </Filter>
 
-      <Table tableHeaders={["Ime", "Sport", "Država"]} renderData={renderData} isActive={activeFilter}>
+      <Table
+        tableHeaders={tableHeaders}
+        renderData={renderData}
+        isActive={activeFilter}
+      >
         <Modal
           selectedItem={selectedLeague}
           handleCancelDelete={handleCancelDelete}

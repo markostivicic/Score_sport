@@ -4,7 +4,11 @@ import Navbar from "../../components/Navbar";
 import Pagination from "../../components/Pagination";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenToSquare, faTrash, faUndoAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPenToSquare,
+  faTrash,
+  faUndoAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import Button from "../../components/Button";
 import {
   getLocationsWithFiltersAsync,
@@ -24,12 +28,14 @@ export default function Location() {
   const [pageCount, setPageCount] = useState(1);
   const [pageLength, setPageLength] = useState(5);
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [activeFilter, setActiveFilter] = useState(true)
-  const [searchFilter, setSearchFilter] = useState("")
+  const [activeFilter, setActiveFilter] = useState(true);
+  const [searchFilter, setSearchFilter] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [orderBy, setOrderBy] = useState(`\"Location\".\"Name\"`);
 
   useEffect(() => {
     fetchLocationsAsync();
-  }, [pageNumber, pageLength, activeFilter, searchFilter]);
+  }, [pageNumber, pageLength, activeFilter, searchFilter, sortOrder, orderBy]);
 
   const handleConfirmDelete = () => {
     deleteLocationAsync(selectedLocation.id);
@@ -46,7 +52,9 @@ export default function Location() {
       pageLength,
       pageNumber,
       activeFilter,
-      searchFilter
+      searchFilter,
+      orderBy,
+      sortOrder
     );
     setLocations(items);
     setPageCount(Math.ceil(totalCount / pageLength));
@@ -64,13 +72,15 @@ export default function Location() {
           <td>{location.name}</td>
           <td>{location.address}</td>
           <td>{location.country.name}</td>
-          {activeFilter ? (<td>
-            <FontAwesomeIcon
-              className="cursor-pointer"
-              onClick={() => navigate(`/location/update/${location.id}`)}
-              icon={faPenToSquare}
-            />
-          </td>) : null}
+          {activeFilter ? (
+            <td>
+              <FontAwesomeIcon
+                className="cursor-pointer"
+                onClick={() => navigate(`/location/update/${location.id}`)}
+                icon={faPenToSquare}
+              />
+            </td>
+          ) : null}
           <td>
             <FontAwesomeIcon
               className="cursor-pointer"
@@ -89,6 +99,24 @@ export default function Location() {
     setPageNumber(selected + 1);
   };
 
+  function handleSort(newSelectedOrder) {
+    if (newSelectedOrder !== orderBy) {
+      setOrderBy(newSelectedOrder);
+      setSortOrder("asc");
+      return;
+    }
+    sortOrder === "asc" ? setSortOrder("desc") : setSortOrder("asc");
+  }
+
+  const tableHeaders = [
+    { name: "Ime", handleOnClick: () => handleSort(`\"Location\".\"Name\"`) },
+    {
+      name: "Adresa",
+      handleOnClick: () => handleSort(`\"Location\".\"Address\"`),
+    },
+    { name: "Država", handleOnClick: () => handleSort(`\"Country\".\"Name\"`) },
+  ];
+
   return (
     <Background>
       <Navbar />
@@ -98,17 +126,26 @@ export default function Location() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:" />
+          labelText="Pretraži:"
+        />
         <SwitchFilter
           id="activeFilter"
           text="Prikaži izbrisane"
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
-        <PageLengthSelect id="pageLength" value={pageLength} onChange={(e) => setPageLength(e.target.value)} />
+        <PageLengthSelect
+          id="pageLength"
+          value={pageLength}
+          onChange={(e) => setPageLength(e.target.value)}
+        />
       </Filter>
 
-      <Table tableHeaders={["Ime", "Adresa", "Država"]} renderData={renderData} isActive={activeFilter}>
+      <Table
+        tableHeaders={tableHeaders}
+        renderData={renderData}
+        isActive={activeFilter}
+      >
         <Modal
           selectedItem={selectedLocation}
           handleCancelDelete={handleCancelDelete}
