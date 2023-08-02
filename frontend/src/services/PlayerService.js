@@ -23,7 +23,7 @@ export async function getPlayersWithFiltersAsync(
 ) {
   try {
     const response = await API.get(
-      `/player?pageSize=${pageLength}&pageNumber=${pageNumber}&isActive=${isActive}`,
+      `/player?pageSize=${pageLength}&pageNumber=${pageNumber}&isActive=${isActive}&name=${searchFilter}`,
       { headers: getHeaders() }
     )
     return response.data

@@ -71,6 +71,11 @@ namespace ResultApp.Repository
                 queryBuilder.Append("AND \"ClubId\" = @ClubId ");
                 command.Parameters.AddWithValue("@ClubId", playerFilter.ClubId);
             }
+            if (!string.IsNullOrEmpty(playerFilter.Name))
+            {
+                queryBuilder.Append("AND LOWER(\"Player\".\"FirstName\") LIKE @Name OR LOWER(\"Player\".\"LastName\") LIKE @Name ");
+                command.Parameters.AddWithValue("@Name", "%" + playerFilter.Name.ToLower() + "%");
+            }
 
             string orderBy = sorting.OrderBy ?? "\"Player\".\"Id\"";
             queryBuilder.Append($"ORDER BY {orderBy} {sorting.SortOrder}");
