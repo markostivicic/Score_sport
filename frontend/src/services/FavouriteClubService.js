@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 export async function getFavouriteClubsAsync(navigate, pageLength, pageNumber) {
   try {
     const response = await API.get(
-      `/favouriteClub?pageSize=${pageLength}&pageNumber=${pageNumber}`,
+      `/favouriteClub?pageSize=${pageLength}&pageNumber=${pageNumber}&isActive=true`,
       { headers: getHeaders() }
     );
     return response.data;
@@ -14,10 +14,16 @@ export async function getFavouriteClubsAsync(navigate, pageLength, pageNumber) {
   }
 }
 
-export async function getFavouriteClubByClubIdAsync(navigate, clubId) {
+export async function getFavouriteClubByClubIdAsync(
+  navigate,
+  clubId,
+  isActive
+) {
   try {
     const response = await API.get(
-      `/favouriteClub?pageSize=100&pageNumber=0&clubId=${clubId}`,
+      `/favouriteClub?pageSize=100&pageNumber=0&clubId=${clubId}${
+        isActive !== undefined && `&isActive=${isActive}`
+      }`,
       { headers: getHeaders() }
     );
     return response.data.items[0] || null;
@@ -32,12 +38,20 @@ export async function changeFavouriteClubStatusAsync(
   clubId
 ) {
   try {
-    const favouriteClub = await getFavouriteClubByClubIdAsync(navigate, clubId);
-    if (newStatus === false && favouriteClub) {
+    const favouriteClub = await getFavouriteClubByClubIdAsync(
+      navigate,
+      clubId,
+      null
+    );
+    if (
+      (newStatus === false && favouriteClub) ||
+      (newStatus === true && favouriteClub)
+    ) {
       await deleteFavouriteClubByIdAsync(favouriteClub.id, navigate);
       return;
     }
-    if (newStatus === true) {
+
+    if (newStatus === true && !favouriteClub) {
       await createNewFavouriteClubAsync({ clubId }, navigate);
       return;
     }
@@ -51,7 +65,6 @@ export async function changeFavouriteClubStatusAsync(
 export async function createNewFavouriteClubAsync(favouriteClub, navigate) {
   try {
     await API.post("/favouriteClub", favouriteClub, { headers: getHeaders() });
-    toast.success("Uspješno kreirano!");
   } catch (error) {
     redirectToLoginIfNeeded(navigate, error, toast);
   }
@@ -75,7 +88,6 @@ export async function updateFavouriteClubByIdAsync(
 export async function deleteFavouriteClubByIdAsync(id, navigate) {
   try {
     await API.delete(`/favouriteClub/toggle/${id}`, { headers: getHeaders() });
-    toast.success("Uspješno obrisano!");
   } catch (error) {
     redirectToLoginIfNeeded(navigate, error, toast);
   }

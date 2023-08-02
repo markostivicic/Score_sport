@@ -20,7 +20,8 @@ export default function Club({ club }) {
     async function getFavouriteClubAsync() {
       const favouriteClub = await getFavouriteClubByClubIdAsync(
         navigate,
-        club.id
+        club.id,
+        true
       );
       setIsClubFavourite(favouriteClub !== null);
     }
