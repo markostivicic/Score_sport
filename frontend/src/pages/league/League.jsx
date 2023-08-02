@@ -20,6 +20,7 @@ import Filter from "../../components/filters/Filter";
 import InputFilter from "../../components/filters/InputFilter";
 import SwitchFilter from "../../components/filters/SwitchFilter";
 import PageLengthSelect from "../../components/PageLengthSelect";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function League() {
   const navigate = useNavigate();
@@ -32,6 +33,9 @@ export default function League() {
   const [searchFilter, setSearchFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState(`\"League\".\"Name\"`);
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     fetchLeaguesAsync();
@@ -109,10 +113,16 @@ export default function League() {
   };
 
   const tableHeaders = [
-    { name: "Ime", handleOnClick: () => handleSort(`\"League\".\"Name\"`) },
-    { name: "Sport", handleOnClick: () => handleSort(`\"Sport\".\"Name\"`) },
     {
-      name: "Država",
+      name: langParsed.strName,
+      handleOnClick: () => handleSort(`\"League\".\"Name\"`),
+    },
+    {
+      name: langParsed.strSport,
+      handleOnClick: () => handleSort(`\"Sport\".\"Name\"`),
+    },
+    {
+      name: langParsed.strCountry,
       handleOnClick: () => handleSort(`\"Country\".\"Name\"`),
     },
   ];
@@ -127,11 +137,11 @@ export default function League() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:"
+          labelText={langParsed.strSearch}
         />
         <SwitchFilter
           id="activeFilter"
-          text="Prikaži izbrisane"
+          text={langParsed.strShowDeleted}
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
@@ -155,7 +165,7 @@ export default function League() {
       </Table>
 
       <Button
-        text="Dodaj"
+        text={langParsed.strAdd}
         handleOnClick={() => navigate("/league/create")}
         margin="my-3"
       />

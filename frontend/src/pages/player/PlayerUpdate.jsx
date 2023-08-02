@@ -13,6 +13,7 @@ import {
 } from "../../services/PlayerService";
 import Background from "../../components/Background";
 import FormContainer from "../../components/FormContainer";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function ClubUpdate() {
   const navigate = useNavigate();
@@ -22,6 +23,9 @@ export default function ClubUpdate() {
   const [selectedClub, setSelectedClub] = useState("");
   const [countries, setCountry] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState({});
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     if (id === "") {
@@ -80,25 +84,25 @@ export default function ClubUpdate() {
           <Input
             id="playerCreateFirstName"
             type="text"
-            labelText="Ime"
+            labelText={langParsed.strFirstName}
             defaultValue={selectedPlayer?.firstName}
           />
           <Input
             id="playerCreateLastName"
             type="text"
-            labelText="Prezime"
+            labelText={langParsed.strLastName}
             defaultValue={selectedPlayer?.lastName}
           />
           <Input
             id="playerCreateImage"
             type="url"
-            labelText="Slika"
+            labelText={langParsed.strImage}
             defaultValue={selectedPlayer?.image}
           />
           <Input
             id="playerCreateDoB"
             type="datetime-local"
-            labelText="Datum rođenja"
+            labelText={langParsed.strBirthDate}
             defaultValue={selectedPlayer?.doB}
           />
           <Select
@@ -106,14 +110,14 @@ export default function ClubUpdate() {
             options={clubs}
             value={selectedClub}
             onChange={(e) => setSelectedClub(e.target.value)}
-            labelText="Klub"
+            labelText={langParsed.strClub}
           />
           <Select
             id="playerCreateCountry"
             options={countries}
             value={selectedCountry}
             onChange={(e) => setSelectedCountry(e.target.value)}
-            labelText="Nacionalnost"
+            labelText={langParsed.strNationality}
           />
         </Form>
       </FormContainer>

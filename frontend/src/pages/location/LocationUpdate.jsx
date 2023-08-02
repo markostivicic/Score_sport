@@ -12,12 +12,16 @@ import {
   updateLocationByIdAsync,
 } from "../../services/LocationService";
 import { getCountriesAsync } from "../../services/CountryService";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function LocationUpdate() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedLocation, setSelectedLocation] = useState();
   const [countries, setCountries] = useState([]);
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     if (id === "") {
@@ -61,19 +65,19 @@ export default function LocationUpdate() {
           <Input
             id="locationUpdateName"
             type="text"
-            labelText="Ime"
+            labelText={langParsed.strName}
             defaultValue={selectedLocation?.name}
           />
           <Input
             id="locationUpdateAddress"
             type="text"
-            labelText="Adresa"
+            labelText={langParsed.strAddress}
             defaultValue={selectedLocation?.address}
           />
           <Select
             id="locationUpdateCountry"
             options={countries}
-            labelText="Država"
+            labelText={langParsed.strCountry}
           />
         </Form>
       </FormContainer>

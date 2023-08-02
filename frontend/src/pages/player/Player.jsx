@@ -20,6 +20,7 @@ import Filter from "../../components/filters/Filter";
 import InputFilter from "../../components/filters/InputFilter";
 import SwitchFilter from "../../components/filters/SwitchFilter";
 import PageLengthSelect from "../../components/PageLengthSelect";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function Player() {
   const navigate = useNavigate();
@@ -32,6 +33,9 @@ export default function Player() {
   const [searchFilter, setSearchFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState(`\"Player\".\"LastName\"`);
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     fetchPlayersAsync();
@@ -115,24 +119,24 @@ export default function Player() {
 
   const tableHeaders = [
     {
-      name: "Ime",
+      name: langParsed.strFirstName,
       handleOnClick: () => handleSort(`\"Player\".\"FirstName\"`),
     },
     {
-      name: "Prezime",
+      name: langParsed.strLastName,
       handleOnClick: () => handleSort(`\"Player\".\"LastName\"`),
     },
-    { name: "Slika" },
+    { name: langParsed.strImage },
     {
-      name: "Datum rođenja",
+      name: langParsed.strBirthDate,
       handleOnClick: () => handleSort(`\"Player\".\"DoB\"`),
     },
     {
-      name: "Klub",
+      name: langParsed.strClub,
       handleOnClick: () => handleSort(`\"Club\".\"Name\"`),
     },
     {
-      name: "Nacionalnost",
+      name: langParsed.strNationality,
       handleOnClick: () => handleSort(`\"Country\".\"Name\"`),
     },
   ];
@@ -147,11 +151,11 @@ export default function Player() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:"
+          labelText={langParsed.strSearch}
         />
         <SwitchFilter
           id="activeFilter"
-          text="Prikaži izbrisane"
+          text={langParsed.strShowDeleted}
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
@@ -174,7 +178,7 @@ export default function Player() {
         />
       </Table>
       <Button
-        text="Dodaj"
+        text={langParsed.strAdd}
         handleOnClick={() => navigate("/player/create")}
         margin="my-3"
       />

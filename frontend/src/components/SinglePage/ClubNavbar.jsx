@@ -3,7 +3,8 @@ import { useResultContext } from "../../context/ResultContext";
 import PageLengthSelect from "../PageLengthSelect";
 
 export default function ClubNavbar({ pageLength, onChangePageLength }) {
-  const { currentClubTab, setCurrentClubTab } = useResultContext();
+  const { currentClubTab, setCurrentClubTab, lang } = useResultContext();
+  const langParsed = JSON.parse(lang);
 
   return (
     <nav className="navbar navbar-expand-md">
@@ -12,28 +13,41 @@ export default function ClubNavbar({ pageLength, onChangePageLength }) {
           <li className="nav-item">
             <span
               onClick={() => setCurrentClubTab("players")}
-              className={`nav-link cursor-pointer ${currentClubTab === "players" && "active"}`}>
-              Igrači
+              className={`nav-link cursor-pointer ${
+                currentClubTab === "players" && "active"
+              }`}
+            >
+              {langParsed.strPlayers}
             </span>
           </li>
 
           <li className="nav-item">
             <span
               onClick={() => setCurrentClubTab("results")}
-              className={`nav-link cursor-pointer ${currentClubTab === "results" && "active"}`}>
-              Rezultati
+              className={`nav-link cursor-pointer ${
+                currentClubTab === "results" && "active"
+              }`}
+            >
+              {langParsed.strScores}
             </span>
           </li>
 
           <li className="nav-item">
             <span
               onClick={() => setCurrentClubTab("schedule")}
-              className={`nav-link cursor-pointer ${currentClubTab === "schedule" && "active"}`}>
-              Raspored
+              className={`nav-link cursor-pointer ${
+                currentClubTab === "schedule" && "active"
+              }`}
+            >
+              {langParsed.strSchedule}
             </span>
           </li>
         </ul>
-        <PageLengthSelect id="pageLength" value={pageLength} onChange={onChangePageLength} />
+        <PageLengthSelect
+          id="pageLength"
+          value={pageLength}
+          onChange={onChangePageLength}
+        />
       </div>
     </nav>
   );

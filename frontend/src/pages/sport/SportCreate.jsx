@@ -6,9 +6,13 @@ import Input from "../../components/Input";
 import { createNewSportAsync } from "../../services/SportService";
 import FormContainer from "../../components/FormContainer";
 import Background from "../../components/Background";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function SportCreate() {
   const navigate = useNavigate();
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   async function createSportAsync(e) {
     e.preventDefault();
@@ -26,7 +30,11 @@ export default function SportCreate() {
       <Navbar />
       <FormContainer>
         <Form handleOnSubmit={createSportAsync}>
-          <Input id="sportCreateName" type="text" labelText="Name" />
+          <Input
+            id="sportCreateName"
+            type="text"
+            labelText={langParsed.strName}
+          />
         </Form>
       </FormContainer>
     </Background>

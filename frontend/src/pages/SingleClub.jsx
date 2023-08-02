@@ -13,7 +13,7 @@ import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 export default function SingleClub() {
   const { id } = useParams();
-  const { currentClubTab } = useResultContext();
+  const { currentClubTab, lang } = useResultContext();
   const [players, setPlayers] = useState([]);
   const [matches, setMatches] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
@@ -23,23 +23,37 @@ export default function SingleClub() {
   const [matchSortOrder, setMatchSortOrder] = useState("asc");
   const [playerSortOrder, setPlayerSortOrder] = useState("asc");
   const [playerOrderBy, setPlayerOrderBy] = useState(`\"Player\".\"LastName\"`);
+  const langParsed = JSON.parse(lang);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     if (currentClubTab === "players") {
       fetchPlayersAsync();
-    }
-    else if (currentClubTab === "results") {
+    } else if (currentClubTab === "results") {
       fetchMatchesByFinishedAsync(true);
-    }
-    else if (currentClubTab === "schedule") {
+    } else if (currentClubTab === "schedule") {
       fetchMatchesByFinishedAsync(false);
     }
-  }, [currentClubTab, pageNumber, pageLength, playerOrderBy, playerSortOrder, matchOrderBy, matchSortOrder]);
+  }, [
+    currentClubTab,
+    pageNumber,
+    pageLength,
+    playerOrderBy,
+    playerSortOrder,
+    matchOrderBy,
+    matchSortOrder,
+  ]);
 
   async function fetchPlayersAsync() {
-    const { items, totalCount } = await getPlayersFilteredByClubAsync(navigate, pageLength, pageNumber + 1, id, playerOrderBy, playerSortOrder);
+    const { items, totalCount } = await getPlayersFilteredByClubAsync(
+      navigate,
+      pageLength,
+      pageNumber + 1,
+      id,
+      playerOrderBy,
+      playerSortOrder
+    );
     if (items.length === 0 && pageNumber > 0) {
       setPageNumber(pageNumber - 1);
       return;
@@ -49,7 +63,16 @@ export default function SingleClub() {
   }
 
   async function fetchMatchesByFinishedAsync(isFinished) {
-    const { items, totalCount } = await getMatchesFilteredByClubAndFinishedAsync(navigate, pageLength, pageNumber + 1, id, isFinished, matchOrderBy, matchSortOrder);
+    const { items, totalCount } =
+      await getMatchesFilteredByClubAndFinishedAsync(
+        navigate,
+        pageLength,
+        pageNumber + 1,
+        id,
+        isFinished,
+        matchOrderBy,
+        matchSortOrder
+      );
     if (items.length === 0 && pageNumber > 0) {
       setPageNumber(pageNumber - 1);
       return;
@@ -78,7 +101,11 @@ export default function SingleClub() {
   function renderMatches() {
     return matches.map((match) => {
       return (
-        <tr key={match.id} onClick={() => navigate(`/single-match/${match.id}`)}>
+        <tr
+          className="cursor-pointer"
+          key={match.id}
+          onClick={() => navigate(`/single-match/${match.id}`)}
+        >
           <td>{extractDateAndTime(match.time)}</td>
           <td>{match.clubHome.name}</td>
           <td>{match.homeScore}</td>
@@ -100,7 +127,9 @@ export default function SingleClub() {
       setPlayerSortOrder("asc");
       return;
     }
-    playerSortOrder === "asc" ? setPlayerSortOrder("desc") : setPlayerSortOrder("asc");
+    playerSortOrder === "asc"
+      ? setPlayerSortOrder("desc")
+      : setPlayerSortOrder("asc");
   }
 
   function handleMatchSort(newSelectedOrder) {
@@ -109,40 +138,51 @@ export default function SingleClub() {
       setMatchSortOrder("asc");
       return;
     }
-    matchSortOrder === "asc" ? setMatchSortOrder("desc") : setMatchSortOrder("asc");
+    matchSortOrder === "asc"
+      ? setMatchSortOrder("desc")
+      : setMatchSortOrder("asc");
   }
 
   const playerTableHeaders = [
     {
-      name: "Ime",
+      name: langParsed.strFirstName,
       handleOnClick: () => handlePlayerSort(`\"Player\".\"FirstName\"`),
     },
     {
-      name: "Prezime",
+      name: langParsed.strLastName,
       handleOnClick: () => handlePlayerSort(`\"Player\".\"LastName\"`),
     },
-    { name: "Slika" },
+    { name: langParsed.strImage },
     {
-      name: "Datum rođenja",
+      name: langParsed.strBirthDate,
       handleOnClick: () => handlePlayerSort(`\"Player\".\"DoB\"`),
     },
     {
-      name: "Klub",
+      name: langParsed.strClub,
       handleOnClick: () => handlePlayerSort(`\"Club\".\"Name\"`),
     },
     {
-      name: "Nacionalnost",
+      name: langParsed.strNationality,
       handleOnClick: () => handlePlayerSort(`\"Country\".\"Name\"`),
     },
   ];
 
   const matchTableHeaders = [
-    { name: "Vrijeme", handleOnClick: () => handleMatchSort(`\"Match\".\"Time\"`) },
-    { name: "Domaćin", handleOnClick: () => handleMatchSort(`clubHome.\"Name\"`) },
-    { name: "2Rezultat" },
-    { name: "Gost", handleOnClick: () => handleMatchSort(`clubAway.\"Name\"`) },
     {
-      name: "Lokacija",
+      name: langParsed.strTime,
+      handleOnClick: () => handleMatchSort(`\"Match\".\"Time\"`),
+    },
+    {
+      name: langParsed.strHome,
+      handleOnClick: () => handleMatchSort(`clubHome.\"Name\"`),
+    },
+    { name: langParsed.strScore },
+    {
+      name: langParsed.strAway,
+      handleOnClick: () => handleMatchSort(`clubAway.\"Name\"`),
+    },
+    {
+      name: langParsed.strLocation,
       handleOnClick: () => handleMatchSort(`\"Location\".\"Name\"`),
     },
   ];
@@ -150,11 +190,18 @@ export default function SingleClub() {
   return (
     <div>
       <Navbar />
-      <ClubNavbar pageLength={pageLength} onChangePageLength={(e) => setPageLength(e.target.value)} />
+      <ClubNavbar
+        pageLength={pageLength}
+        onChangePageLength={(e) => setPageLength(e.target.value)}
+      />
       <Table
         skipEditAndDeleteHeaders
-        tableHeaders={currentClubTab === "players" ? playerTableHeaders : matchTableHeaders}
-        renderData={currentClubTab === "players" ? renderPlayers : renderMatches}
+        tableHeaders={
+          currentClubTab === "players" ? playerTableHeaders : matchTableHeaders
+        }
+        renderData={
+          currentClubTab === "players" ? renderPlayers : renderMatches
+        }
       />
       <ReactPaginate
         previousLabel={<FontAwesomeIcon icon={faArrowLeft} />}

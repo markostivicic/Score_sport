@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Comment from "./Comment";
 import Modal from "../Modal";
 import Pagination from "../Pagination";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function CommentSection({ matchId }) {
   const [isFormActive, setIsFormActive] = useState(false);
@@ -20,6 +21,9 @@ export default function CommentSection({ matchId }) {
   const [pageCount, setPageCount] = useState(1);
 
   const navigate = useNavigate();
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   async function getAllCommentsAsync() {
     const { items, totalCount } = await getCommentsAsync(
@@ -66,11 +70,14 @@ export default function CommentSection({ matchId }) {
       <div className="align-self-center mt-5 d-flex flex-column width-400 max-height-full">
         <Button
           handleOnClick={() => setIsFormActive(true)}
-          text="Komentiraj"
+          text={langParsed.strComment}
           color="secondary"
         />
         <div className={`${!isFormActive && "d-none"}`}>
-          <Form handleOnSubmit={handleOnSubmit} buttonText="Dodaj komentar">
+          <Form
+            handleOnSubmit={handleOnSubmit}
+            buttonText={langParsed.strAddComment}
+          >
             <textarea
               id="comment-area"
               required

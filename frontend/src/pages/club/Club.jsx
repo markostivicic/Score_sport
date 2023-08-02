@@ -20,6 +20,7 @@ import Filter from "../../components/filters/Filter";
 import InputFilter from "../../components/filters/InputFilter";
 import SwitchFilter from "../../components/filters/SwitchFilter";
 import PageLengthSelect from "../../components/PageLengthSelect";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function Club() {
   const navigate = useNavigate();
@@ -32,6 +33,9 @@ export default function Club() {
   const [searchFilter, setSearchFilter] = useState("");
   const [sortOrder, setSortOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState(`\"Club\".\"Name\"`);
+
+  const { lang } = useResultContext();
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     fetchClubsAsync();
@@ -130,11 +134,11 @@ export default function Club() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:"
+          labelText={langParsed.strSearch}
         />
         <SwitchFilter
           id="activeFilter"
-          text="Prikaži izbrisane"
+          text={langParsed.strShowDeleted}
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
@@ -158,7 +162,7 @@ export default function Club() {
       </Table>
 
       <Button
-        text="Dodaj"
+        text={langParsed.strAdd}
         handleOnClick={() => navigate("/club/create")}
         margin="my-3"
       />

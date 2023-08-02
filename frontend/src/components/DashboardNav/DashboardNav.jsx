@@ -16,6 +16,9 @@ import DashboardNavItem from "./DashboardNavItem";
 
 export default function DashboardNav() {
   const { isSideNavActive, setIsSideNavActive } = useResultContext();
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   return (
     <div
@@ -36,21 +39,46 @@ export default function DashboardNav() {
             onClick={() => setIsSideNavActive(false)}
           />
         </div>
-        <DashboardNavItem icon={faVolleyball} text="SPORT" path="/sport" />
-        <DashboardNavItem icon={faMedal} text="KLUB" path="/club" />
-        <DashboardNavItem icon={faShirt} text="IGRAČ" path="/player" />
         <DashboardNavItem
+          class="text-uppercase"
+          icon={faVolleyball}
+          text={langParsed.strSport}
+          path="/sport"
+        />
+        <DashboardNavItem
+          class="text-uppercase"
+          icon={faMedal}
+          text={langParsed.strClub}
+          path="/club"
+        />
+        <DashboardNavItem
+          class="text-uppercase"
+          icon={faShirt}
+          text={langParsed.strPlayer}
+          path="/player"
+        />
+        <DashboardNavItem
+          class="text-uppercase"
           icon={faEarthAmericas}
-          text="DRŽAVA"
+          text={langParsed.strCountry}
           path="/country"
         />
         <DashboardNavItem
+          class="text-uppercase"
           icon={faLocationDot}
-          text="LOKACIJA"
+          text={langParsed.strLocation}
           path="/location"
         />
-        <DashboardNavItem icon={faTrophy} text="LIGA" path="/league" />
-        <DashboardNavItem icon={faPeopleArrows} text="UTAKMICA" path="/match" />
+        <DashboardNavItem
+          icon={faTrophy}
+          text={langParsed.strLeague}
+          path="/league"
+        />
+        <DashboardNavItem
+          icon={faPeopleArrows}
+          text={langParsed.strMatch}
+          path="/match"
+        />
       </div>
     </div>
   );

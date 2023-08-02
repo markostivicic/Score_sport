@@ -13,6 +13,7 @@ import {
 } from "../../services/LeagueService";
 import { getCountriesAsync } from "../../services/CountryService";
 import { getSportsAsync } from "../../services/SportService";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function LeagueUpdate() {
   const navigate = useNavigate();
@@ -20,6 +21,9 @@ export default function LeagueUpdate() {
   const [selectedLeague, setSelectedLeague] = useState();
   const [countries, setCountries] = useState([]);
   const [sports, setSports] = useState([]);
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     if (id === "") {
@@ -68,14 +72,18 @@ export default function LeagueUpdate() {
           <Input
             id="leagueUpdateName"
             type="text"
-            labelText="Ime"
+            labelText={langParsed.strName}
             defaultValue={selectedLeague?.name}
           />
-          <Select id="leagueUpdateSport" options={sports} labelText="Sport" />
+          <Select
+            id="leagueUpdateSport"
+            options={sports}
+            labelText={langParsed.strSport}
+          />
           <Select
             id="leagueUpdateCountry"
             options={countries}
-            labelText="Država"
+            labelText={langParsed.strCountry}
           />
         </Form>
       </FormContainer>

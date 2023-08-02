@@ -20,6 +20,7 @@ import Filter from "../../components/filters/Filter";
 import InputFilter from "../../components/filters/InputFilter";
 import SwitchFilter from "../../components/filters/SwitchFilter";
 import PageLengthSelect from "../../components/PageLengthSelect";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function Sport() {
   const navigate = useNavigate();
@@ -33,6 +34,9 @@ export default function Sport() {
   const [selectedOrderByFilter, setSlectedOrderByFilter] =
     useState(`\"Sport\".\"Name\"`);
   const [searchFilter, setSearchFilter] = useState("");
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     fetchSportsAsync();
@@ -122,7 +126,7 @@ export default function Sport() {
 
   const tableHeaders = [
     {
-      name: "Ime",
+      name: langParsed.strName,
       handleOnClick: () => {
         handleSort(`\"Sport\".\"Name\"`);
       },
@@ -139,11 +143,11 @@ export default function Sport() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-          labelText="Pretraži:"
+          labelText={langParsed.strSearch}
         />
         <SwitchFilter
           id="activeFilter"
-          text="Prikaži izbrisane"
+          text={langParsed.strShowDeleted}
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
@@ -168,7 +172,7 @@ export default function Sport() {
       </Table>
 
       <Button
-        text="Dodaj"
+        text={langParsed.strAdd}
         handleOnClick={() => navigate("/sport/create")}
         margin="my-3"
       />

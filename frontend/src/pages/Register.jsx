@@ -11,7 +11,9 @@ export default function Register() {
 
   const navigate = useNavigate();
 
-  const { setAuthenticatedUser } = useResultContext();
+  const { setAuthenticatedUser, lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     setAuthenticatedUser(null);
@@ -23,7 +25,7 @@ export default function Register() {
     const formData = new FormData(formRef.current);
     const data = Object.fromEntries(formData);
     if (data.password !== data.confirmPassword) {
-      confirmPasswordInput.setCustomValidity("Password doesnt match");
+      confirmPasswordInput.setCustomValidity("Password doesn't match");
       return;
     }
     confirmPasswordInput.setCustomValidity("");
@@ -41,12 +43,12 @@ export default function Register() {
     axios
       .post("https://localhost:44345/api/account/register", data)
       .then((res) => {
-        toast.success("Uspješna registracija");
+        toast.success(langParsed.strSuccessfulyRegistration);
         navigate("/login");
       })
       .catch((err) => {
         if (!err.response.data.modelState) {
-          toast.error("Dogodila se pogreška");
+          toast.error(langParsed.strError);
           return;
         }
         const errors = err.response.data.modelState[""];
@@ -86,7 +88,9 @@ export default function Register() {
           />
           <div className="valid-feedback">Validan email</div>
           <div className="invalid-feedback">
-            {isEmailUnique ? "Email nije validan" : "Ovaj email se već koristi"}
+            {isEmailUnique
+              ? langParsed.strWrongEmail
+              : langParsed.strAlreadyInUseEmail}
           </div>
         </div>
 
@@ -106,13 +110,15 @@ export default function Register() {
             }}
           />
           <div className="invalid-feedback">
-            {isUsernameUnique ? "Obvezno" : "Ovo korisničko ime se već koristi"}
+            {isUsernameUnique
+              ? langParsed.strRequired
+              : langParsed.strAlreadyInUseUserName}
           </div>
         </div>
 
         <div>
           <label htmlFor="password" className="form-label">
-            Lozinka
+            {langParsed.strPassword}
           </label>
           <input
             id="password"
@@ -123,13 +129,11 @@ export default function Register() {
             minLength={6}
           />
           <div className="valid-feedback">Validna lozinka</div>
-          <div className="invalid-feedback">
-            Lozinka mora imati barem 6 znakova
-          </div>
+          <div className="invalid-feedback">{langParsed.strPasswordLenght}</div>
         </div>
         <div>
           <label htmlFor="confirmPassword" className="form-label">
-            Potvrdi lozinku
+            {langParsed.strConfirmPassword}
           </label>
           <input
             id="confirmPassword"
@@ -140,11 +144,11 @@ export default function Register() {
             minLength={6}
           />
           <div className="invalid-feedback">
-            Ponovljena lozinka nije validna
+            {langParsed.strRepeatedPasswordNotValid}
           </div>
         </div>
         <button type="submit" className="btn btn-primary">
-          Register
+          {langParsed.strRegister}
         </button>
       </form>
     </div>

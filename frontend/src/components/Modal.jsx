@@ -1,4 +1,5 @@
 import React from "react";
+import { useResultContext } from "../context/ResultContext";
 
 export default function Modal({
   selectedItem,
@@ -7,8 +8,10 @@ export default function Modal({
   isComment,
   activeFilter,
 }) {
+  const { lang } = useResultContext();
   if (!selectedItem) return null;
 
+  const langParsed = JSON.parse(lang);
   return (
     <div className="modal" tabIndex="-1" role="dialog">
       <div className="modal-dialog modal-dialog-centered" role="document">
@@ -16,9 +19,9 @@ export default function Modal({
           <div className="modal-body">
             <p>
               {isComment
-                ? "Jeste li sigurni da želite obrisati komentar?"
-                : `Jeste li sigurni da želite ${
-                    activeFilter ? "obrisati" : "vratiti"
+                ? langParsed.strCommentDeleteConfirmation
+                : langParsed.strDeleteConfirmation`${
+                    activeFilter ? langParsed.strDelete : langParsed.strReturn
                   } ${selectedItem.name}?`}
             </p>
           </div>
@@ -28,14 +31,14 @@ export default function Modal({
               className="btn btn-secondary"
               onClick={handleCancelDelete}
             >
-              Ne
+              {langParsed.strNo}
             </button>
             <button
               type="button"
               className="btn btn-danger"
               onClick={handleConfirmDelete}
             >
-              Da
+              {langParsed.strYes}
             </button>
           </div>
         </div>

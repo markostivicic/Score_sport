@@ -10,6 +10,7 @@ import { getLeaguesAsync } from "../../services/LeagueService";
 import { getLocationsAsync } from "../../services/LocationService";
 import Background from "../../components/Background";
 import FormContainer from "../../components/FormContainer";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function ClubCreate() {
   const navigate = useNavigate();
@@ -18,6 +19,9 @@ export default function ClubCreate() {
   const [leagues, setLeagues] = useState([]);
   const [selectedLeague, setSelectedLeague] = useState({});
   const [locations, setLocations] = useState([]);
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     fetchSportsAsync();
@@ -70,26 +74,34 @@ export default function ClubCreate() {
       <Navbar />
       <FormContainer>
         <Form handleOnSubmit={createClubAsync}>
-          <Input id="clubCreateName" type="text" labelText="Ime" />
-          <Input id="clubCreateLogo" type="url" labelText="Logo" />
+          <Input
+            id="clubCreateName"
+            type="text"
+            labelText={langParsed.strName}
+          />
+          <Input
+            id="clubCreateLogo"
+            type="url"
+            labelText={langParsed.strLogo}
+          />
           <Select
             id="clubCreateSport"
             options={sports}
             value={selectedSport}
             onChange={(e) => setSelectedSport(e.target.value)}
-            labelText="Sport"
+            labelText={langParsed.strSport}
           />
           <Select
             id="clubCreateLeague"
             options={leagues}
             value={selectedLeague}
             onChange={(e) => setSelectedLeague(e.target.value)}
-            labelText="Liga"
+            labelText={langParsed.strLeague}
           />
           <Select
             id="clubCreateLocation"
             options={locations}
-            labelText="Lokacije"
+            labelText={langParsed.strLocation}
           />
         </Form>
       </FormContainer>

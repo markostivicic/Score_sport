@@ -8,6 +8,7 @@ import FormContainer from "../../components/FormContainer";
 import { getCountriesAsync } from "../../services/CountryService";
 import { getClubsAsync } from "../../services/ClubService";
 import { createNewPlayerAsync } from "../../services/PlayerService";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function ClubCreate() {
   const navigate = useNavigate();
@@ -15,6 +16,9 @@ export default function ClubCreate() {
   const [selectedClub, setSelectedClub] = useState("");
   const [countries, setCountry] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState({});
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     fetchClubsAsync();
@@ -56,23 +60,39 @@ export default function ClubCreate() {
     <Background>
       <FormContainer>
         <Form handleOnSubmit={createPlayerAsync}>
-          <Input id="playerCreateFirstName" type="text" labelText="Ime" />
-          <Input id="playerCreateLastName" type="text" labelText="Prezime" />
-          <Input id="playerCreateImage" type="url" labelText="Slika" />
-          <Input id="playerCreateDoB" type="date" labelText="Datum rođenja" />
+          <Input
+            id="playerCreateFirstName"
+            type="text"
+            labelText={langParsed.strFirstName}
+          />
+          <Input
+            id="playerCreateLastName"
+            type="text"
+            labelText={langParsed.strLastName}
+          />
+          <Input
+            id="playerCreateImage"
+            type="url"
+            labelText={langParsed.strImage}
+          />
+          <Input
+            id="playerCreateDoB"
+            type="date"
+            labelText={langParsed.strBirthDate}
+          />
           <Select
             id="playerCreateClub"
             options={clubs}
             value={selectedClub}
             onChange={(e) => setSelectedClub(e.target.value)}
-            labelText="Klub"
+            labelText={langParsed.strClub}
           />
           <Select
             id="playerCreateCountry"
             options={countries}
             value={selectedCountry}
             onChange={(e) => setSelectedCountry(e.target.value)}
-            labelText="Nacionalnost"
+            labelText={langParsed.strNationality}
           />
         </Form>
       </FormContainer>

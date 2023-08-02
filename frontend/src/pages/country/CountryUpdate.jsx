@@ -10,11 +10,15 @@ import {
   getCountryByIdAsync,
   updateCountryByIdAsync,
 } from "../../services/CountryService";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function CountryUpdate() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedCountry, setSelectedCountry] = useState();
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     if (id === "") {
@@ -48,7 +52,7 @@ export default function CountryUpdate() {
           <Input
             id="countryUpdateName"
             type="text"
-            labelText="Name"
+            labelText={langParsed.strName}
             defaultValue={selectedCountry?.name}
           />
         </Form>

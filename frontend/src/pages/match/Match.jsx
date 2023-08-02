@@ -21,6 +21,7 @@ import SwitchFilter from "../../components/filters/SwitchFilter";
 import SelectFilter from "../../components/filters/SelectFilter";
 import Filter from "../../components/filters/Filter";
 import { extractDateAndTime } from "../../services/DateTimeService";
+import { useResultContext } from "../../context/ResultContext";
 
 export default function Match() {
   const navigate = useNavigate();
@@ -33,6 +34,9 @@ export default function Match() {
   const [selectedFinishedFilter, setSelectedFinishedFilter] = useState("null");
   const [activeFilter, setActiveFilter] = useState(true);
   const [sortOrder, setSortOrder] = useState("asc");
+  const { lang } = useResultContext();
+
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     fetchMatchesAsync();
@@ -115,25 +119,34 @@ export default function Match() {
   };
 
   const orderFilterOptions = [
-    { value: '"Match"."Time"', text: "Vrijeme" },
-    { value: '"Location"."Name"', text: "Lokacija" },
-    { value: 'clubHome."Name"', text: "Domaćin" },
-    { value: 'clubAway."Name"', text: "Gost" },
+    { value: '"Match"."Time"', text: langParsed.strTime },
+    { value: '"Location"."Name"', text: langParsed.strLocation },
+    { value: 'clubHome."Name"', text: langParsed.strHome },
+    { value: 'clubAway."Name"', text: langParsed.strAway },
   ];
 
   const finishedFilterOptions = [
-    { value: "null", text: "Sve" },
-    { value: "true", text: "Završene" },
-    { value: "false", text: "Nisu završene" },
+    { value: "null", text: langParsed.strAll },
+    { value: "true", text: langParsed.strFinished },
+    { value: "false", text: langParsed.strNotFinished },
   ];
 
   const tableHeaders = [
-    { name: "Vrijeme", handleOnClick: () => handleSort(`\"Match\".\"Time\"`) },
-    { name: "Domaćin", handleOnClick: () => handleSort(`clubHome.\"Name\"`) },
-    { name: "2Rezultat" },
-    { name: "Gost", handleOnClick: () => handleSort(`clubAway.\"Name\"`) },
     {
-      name: "Lokacija",
+      name: langParsed.strTime,
+      handleOnClick: () => handleSort(`\"Match\".\"Time\"`),
+    },
+    {
+      name: langParsed.strHome,
+      handleOnClick: () => handleSort(`clubHome.\"Name\"`),
+    },
+    { name: langParsed.strScore },
+    {
+      name: langParsed.strAway,
+      handleOnClick: () => handleSort(`clubAway.\"Name\"`),
+    },
+    {
+      name: langParsed.strLocation,
       handleOnClick: () => handleSort(`\"Location\".\"Name\"`),
     },
   ];
@@ -156,11 +169,11 @@ export default function Match() {
           options={finishedFilterOptions}
           value={selectedFinishedFilter}
           onChange={(e) => setSelectedFinishedFilter(e.target.value)}
-          labelText="Utakmice:"
+          labelText={langParsed.strMatch}
         />
         <SwitchFilter
           id="activeFilter"
-          text="Prikaži izbrisane"
+          text={langParsed.strShowDeleted}
           value={!activeFilter}
           onChange={(e) => setActiveFilter(!activeFilter)}
         />
@@ -184,7 +197,7 @@ export default function Match() {
       </Table>
 
       <Button
-        text="Dodaj"
+        text={langParsed.strAdd}
         handleOnClick={() => navigate("/match/create")}
         margin="my-3"
       />
