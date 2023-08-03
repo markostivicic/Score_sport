@@ -1,4 +1,4 @@
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useEffect } from "react";
 import { stringHr } from "../services/TranslateService";
 
 const ResultContext = createContext();
@@ -9,9 +9,10 @@ export function useResultContext() {
 
 export function ResultContextProvider({ children }) {
   const [authenticatedUser, setAuthenticatedUser] = useState(null);
+  const [lang, setLang] = useState(JSON.stringify(stringHr));
   const [currentSport, setCurrentSport] = useState({
     id: "unique",
-    name: "Favoriti",
+    name: JSON.parse(lang).strFavourites,
   });
   const [currentLeagueTab, setCurrentLeagueTab] = useState("clubs");
   const [currentClubTab, setCurrentClubTab] = useState("players");
@@ -20,7 +21,9 @@ export function ResultContextProvider({ children }) {
     return curr.toISOString().substring(0, 10);
   });
   const [isSideNavActive, setIsSideNavActive] = useState(false);
-  const [lang, setLang] = useState(JSON.stringify(stringHr));
+  /*useEffect(() => {
+    currentSport[0].name = JSON.parse(lang).strFavourites;
+  }, [lang]);*/
   return (
     <ResultContext.Provider
       value={{

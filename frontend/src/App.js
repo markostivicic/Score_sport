@@ -1,50 +1,50 @@
-import "./App.css"
-import { ToastContainer, toast } from "react-toastify"
+import "./App.css";
+import { ToastContainer, toast } from "react-toastify";
 import {
   Navigate,
   Route,
   Routes,
   useLocation,
   useNavigate,
-} from "react-router-dom"
-import { useEffect } from "react"
-import axios from "axios"
-import { getHeaders, redirectToLoginIfNeeded } from "./services/AuthService"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
-import Home from "./pages/Home"
-import { useResultContext } from "./context/ResultContext"
-import Spinner from "./components/Spinner"
-import Sport from "./pages/sport/Sport"
-import SportCreate from "./pages/sport/SportCreate"
-import SportUpdate from "./pages/sport/SportUpdate"
-import Match from "./pages/match/Match"
-import MatchCreate from "./pages/match/MatchCreate"
-import MatchUpdate from "./pages/match/MatchUpdate"
-import Country from "./pages/country/Country"
-import CountryCreate from "./pages/country/CountryCreate"
-import CountryUpdate from "./pages/country/CountryUpdate"
-import Location from "./pages/location/Location"
-import LocationCreate from "./pages/location/LocationCreate"
-import LocationUpdate from "./pages/location/LocationUpdate"
-import League from "./pages/league/League"
-import LeagueCreate from "./pages/league/LeagueCreate"
-import LeagueUpdate from "./pages/league/LeagueUpdate"
-import SingleMatch from "./pages/SingleMatch"
-import SingleClub from "./pages/SingleClub"
-import SingleLeague from "./pages/SingleLeague"
+} from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
+import { getHeaders, redirectToLoginIfNeeded } from "./services/AuthService";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
+import { useResultContext } from "./context/ResultContext";
+import Spinner from "./components/Spinner";
+import Sport from "./pages/sport/Sport";
+import SportCreate from "./pages/sport/SportCreate";
+import SportUpdate from "./pages/sport/SportUpdate";
+import Match from "./pages/match/Match";
+import MatchCreate from "./pages/match/MatchCreate";
+import MatchUpdate from "./pages/match/MatchUpdate";
+import Country from "./pages/country/Country";
+import CountryCreate from "./pages/country/CountryCreate";
+import CountryUpdate from "./pages/country/CountryUpdate";
+import Location from "./pages/location/Location";
+import LocationCreate from "./pages/location/LocationCreate";
+import LocationUpdate from "./pages/location/LocationUpdate";
+import League from "./pages/league/League";
+import LeagueCreate from "./pages/league/LeagueCreate";
+import LeagueUpdate from "./pages/league/LeagueUpdate";
+import SingleMatch from "./pages/SingleMatch";
+import SingleClub from "./pages/SingleClub";
+import SingleLeague from "./pages/SingleLeague";
 
-import Club from "./pages/club/Club"
-import ClubCreate from "./pages/club/ClubCreate"
-import ClubUpdate from "./pages/club/ClubUpdate"
-import Player from "./pages/player/Player"
-import PlayerCreate from "./pages/player/PlayerCreate"
-import PlayerUpdate from "./pages/player/PlayerUpdate"
+import Club from "./pages/club/Club";
+import ClubCreate from "./pages/club/ClubCreate";
+import ClubUpdate from "./pages/club/ClubUpdate";
+import Player from "./pages/player/Player";
+import PlayerCreate from "./pages/player/PlayerCreate";
+import PlayerUpdate from "./pages/player/PlayerUpdate";
 function App() {
-  const navigate = useNavigate()
-  const { authenticatedUser, setAuthenticatedUser } = useResultContext()
+  const navigate = useNavigate();
+  const { authenticatedUser, setAuthenticatedUser } = useResultContext();
 
-  const path = useLocation().pathname
+  const path = useLocation().pathname;
 
   useEffect(() => {
     async function verifyAsync() {
@@ -54,18 +54,18 @@ function App() {
           {
             headers: getHeaders(),
           }
-        )
-        setAuthenticatedUser(response.data)
+        );
+        setAuthenticatedUser(response.data);
       } catch (err) {
         if (path !== "/login" && path !== "/register")
-          redirectToLoginIfNeeded(navigate, err, toast)
+          redirectToLoginIfNeeded(navigate, err, toast);
       }
     }
-    verifyAsync()
-  }, [])
+    verifyAsync();
+  }, []);
 
   if (!authenticatedUser && path !== "/login" && path !== "/register") {
-    return <Spinner />
+    return <Spinner />;
   }
 
   return (
@@ -116,7 +116,7 @@ function App() {
       </Routes>
       <ToastContainer />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

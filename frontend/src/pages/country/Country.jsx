@@ -117,7 +117,7 @@ export default function Country() {
 
   const tableHeaders = [
     {
-      name: "Ime",
+      name: langParsed.strName,
       handleOnClick: () => handleSort(`\"Country\".\"Name\"`),
     },
   ];

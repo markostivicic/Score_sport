@@ -9,6 +9,7 @@ import { getCountriesAsync } from "../../services/CountryService";
 import { getClubsAsync } from "../../services/ClubService";
 import { createNewPlayerAsync } from "../../services/PlayerService";
 import { useResultContext } from "../../context/ResultContext";
+import Navbar from "../../components/Navbar";
 
 export default function ClubCreate() {
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ export default function ClubCreate() {
 
   return (
     <Background>
+      <Navbar />
       <FormContainer>
         <Form handleOnSubmit={createPlayerAsync}>
           <Input

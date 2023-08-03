@@ -9,7 +9,8 @@ import { getFavouriteClubsAsync } from "../../services/FavouriteClubService";
 export default function MatchesInLeague({ league }) {
   const [matches, setMatches] = useState([]);
   const navigate = useNavigate();
-  const { selectedDate, currentSport } = useResultContext();
+  const { selectedDate, currentSport, lang } = useResultContext();
+  const langParsed = JSON.parse(lang);
 
   useEffect(() => {
     async function getMatchesAsync() {
@@ -23,7 +24,7 @@ export default function MatchesInLeague({ league }) {
         selectedDate
       );
 
-      if (currentSport.name !== "Favoriti") {
+      if (currentSport.name !== langParsed.strFavourites) {
         setMatches(items);
         return;
       }

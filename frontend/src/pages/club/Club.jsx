@@ -115,11 +115,17 @@ export default function Club() {
   };
 
   const tableHeaders = [
-    { name: "Ime", handleOnClick: () => handleSort(`\"Club\".\"Name\"`) },
-    { name: "Logo" },
-    { name: "Liga", handleOnClick: () => handleSort(`\"League\".\"Name\"`) },
     {
-      name: "Lokacija",
+      name: langParsed.strName,
+      handleOnClick: () => handleSort(`\"Club\".\"Name\"`),
+    },
+    { name: langParsed.strLogo },
+    {
+      name: langParsed.strLeague,
+      handleOnClick: () => handleSort(`\"League\".\"Name\"`),
+    },
+    {
+      name: langParsed.strLocation,
       handleOnClick: () => handleSort(`\"Location\".\"Name\"`),
     },
   ];

@@ -66,7 +66,7 @@ export async function updateLocationByIdAsync(id, location, navigate) {
 export async function deleteLocationByIdAsync(id, navigate) {
   try {
     await API.delete(`/location/toggle/${id}`, { headers: getHeaders() });
-    toast.success("Uspješno obrisano!");
+    toast.success("Uspješno!");
   } catch (error) {
     redirectToLoginIfNeeded(navigate, error, toast);
   }

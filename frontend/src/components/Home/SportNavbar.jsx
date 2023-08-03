@@ -10,18 +10,20 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 export default function SportNavbar({ showSearchModal }) {
   const [sports, setSports] = useState([{ id: "unique", name: "Favoriti" }]);
-  const { currentSport, setCurrentSport, selectedDate, setSelectedDate } =
+  const { currentSport, setCurrentSport, selectedDate, setSelectedDate, lang } =
     useResultContext();
-
+  const langParsed = JSON.parse(lang);
   const navigate = useNavigate();
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
     async function getAllSportsAsync() {
       const { items } = await getSportsAsync(navigate, 100, 0);
-      setSports([...sports, ...items]);
+      setSports([{ id: "unique", name: langParsed.strFavourites }, ...items]);
     }
     getAllSportsAsync();
-  }, []);
+  }, [lang]);
 
   return (
     <nav className="navbar navbar-expand-md">
@@ -30,7 +32,8 @@ export default function SportNavbar({ showSearchModal }) {
           <li className="nav-item">
             <span
               onClick={showSearchModal}
-              className={`nav-link cursor-pointer`}>
+              className={`nav-link cursor-pointer`}
+            >
               <FontAwesomeIcon icon={faSearch} />
             </span>
           </li>
@@ -39,8 +42,9 @@ export default function SportNavbar({ showSearchModal }) {
               <li className="nav-item" key={sport.id}>
                 <span
                   onClick={() => setCurrentSport(sport)}
-                  className={`nav-link cursor-pointer ${currentSport?.id === sport.id && "active"
-                    }`}
+                  className={`nav-link cursor-pointer ${
+                    currentSport?.id === sport.id && "active"
+                  }`}
                 >
                   {sport.name}
                 </span>
