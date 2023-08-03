@@ -15,7 +15,7 @@ export default function SportNavbar({ showSearchModal }) {
   const langParsed = JSON.parse(lang);
   const navigate = useNavigate();
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   useEffect(() => {
     async function getAllSportsAsync() {
@@ -42,9 +42,8 @@ export default function SportNavbar({ showSearchModal }) {
               <li className="nav-item" key={sport.id}>
                 <span
                   onClick={() => setCurrentSport(sport)}
-                  className={`nav-link cursor-pointer ${
-                    currentSport?.id === sport.id && "active"
-                  }`}
+                  className={`nav-link cursor-pointer ${currentSport?.id === sport.id && "active background-shade"
+                    }`}
                 >
                   {sport.name}
                 </span>

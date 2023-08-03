@@ -2,6 +2,7 @@ export const stringEn = {
   strName: "Name",
   strLogo: "Logo",
   strLeague: "League",
+  strLeagues: "Leagues",
   strLocation: "Location",
   strCountry: "Country",
   strSport: "Sport",
@@ -19,6 +20,7 @@ export const stringEn = {
   strScore: "2Score",
   strAdd: "Add",
   strSearch: "Search:",
+  strSearchWithoutSemicolon: "Search",
   strFirstName: "First Name",
   strLastName: "Last Name",
   strImage: "Image",
@@ -70,12 +72,19 @@ export const stringEn = {
   strScores: "Scores",
   strSchedule: "Schedule",
   strFavourites: "Favourites",
-};
+  strBack: "Back",
+  strNoResults: "No results",
+  strNoClubs: "No clubs found",
+  strNoLeagues: "No leagues found",
+  strSearchPlaceholder: "Please type in the requested term.",
+  strSearchClubsAndLeagues: "Search for clubs and leagues",
+}
 
 export const stringHr = {
   strName: "Naziv",
   strLogo: "Logo",
   strLeague: "Liga",
+  strLeagues: "Lige",
   strLocation: "Lokacija",
   strCountry: "Država",
   strSport: "Sport",
@@ -93,6 +102,7 @@ export const stringHr = {
   strScore: "2Rezultat",
   strAdd: "Dodaj",
   strSearch: "Pretraži:",
+  strSearchWithoutSemicolon: "Pretraži",
   strFirstName: "Ime",
   strLastName: "Prezime",
   strImage: "Slika",
@@ -144,4 +154,10 @@ export const stringHr = {
   strScores: "Rezultati",
   strSchedule: "Raspored",
   strFavourites: "Favoriti",
-};
+  strBack: "Natrag",
+  strNoResults: "Nema rezultata",
+  strNoClubs: "Nema klubova",
+  strNoLeagues: "Nema liga",
+  strSearchPlaceholder: "Upišite traženi pojam",
+  strSearchClubsAndLeagues: "Pretraži klubove i lige",
+}

@@ -3,7 +3,7 @@ import { faBars, faGear, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "./Button";
 import { useResultContext } from "../context/ResultContext";
-import { useLocation, useMatch, useNavigate } from "react-router-dom";
+import { Link, useLocation, useMatch, useNavigate } from "react-router-dom";
 import Select from "./Select";
 import { stringEn, stringHr } from "../services/TranslateService";
 
@@ -44,16 +44,16 @@ export default function Navbar() {
             icon={faBars}
           />
         )}
-        <a href="/" className="navbar-brand">
+        <Link to="/" className="navbar-brand">
           <img
             className="logo"
             src={require("../assets/logo.png")}
             alt="logo"
           />
-        </a>
+        </Link>
         <div className="ms-auto text-secondary mt-2 lg:mt-0 nav-text d-flex align-items-center gap-3">
           <div className="d-flex gap-2 align-items-center">
-            <FontAwesomeIcon icon={faUser} />
+            <FontAwesomeIcon icon={faUser} color="#2b2eff" />
             <span>
               <strong>{authenticatedUser?.username || ""}</strong>
             </span>

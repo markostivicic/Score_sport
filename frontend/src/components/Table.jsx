@@ -14,11 +14,11 @@ export default function Table({
 
   const langParsed = JSON.parse(lang);
   return (
-    <>
+    <div className="container">
       <div className="table-responsive">
         <table className="table table-hover">
           <thead>
-            <tr>
+            <tr >
               {tableHeaders.map((header) => {
                 const colSpan = parseInt(header.name.substring(0, 1)) || 1;
                 const headerText =
@@ -33,7 +33,7 @@ export default function Table({
                     {headerText}{" "}
                     {header.handleOnClick ? (
                       <FontAwesomeIcon
-                        className="text-secondary"
+                        className="text-white"
                         icon={faSort}
                       />
                     ) : (
@@ -42,9 +42,9 @@ export default function Table({
                   </th>
                 );
               })}
-                          {skipEditAndDeleteHeaders || (isActive ? <th>{langParsed.strChange}</th> : null)}
+              {skipEditAndDeleteHeaders || (isActive ? <th>{langParsed.strChange}</th> : null)}
               {skipEditAndDeleteHeaders || (
-                              <th> {isActive ? langParsed.strDelete : langParsed.strReturn}</th>
+                <th> {isActive ? langParsed.strDelete : langParsed.strReturn}</th>
               )}
             </tr>
           </thead>
@@ -52,6 +52,6 @@ export default function Table({
         </table>
       </div>
       {children}
-    </>
+    </div>
   );
 }

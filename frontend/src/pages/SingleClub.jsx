@@ -115,8 +115,8 @@ export default function SingleClub() {
         >
           <td>{extractDateAndTime(match.time)}</td>
           <td>{match.clubHome.name}</td>
-          <td>{match.homeScore}</td>
-          <td>{match.awayScore}</td>
+          {currentClubTab === "results" ? (<td>{match.homeScore}</td>) : null}
+          {currentClubTab === "results" ? (<td>{match.awayScore}</td>) : null}
           <td>{match.clubAway.name}</td>
           <td>{match.location.name}</td>
         </tr>
@@ -183,7 +183,6 @@ export default function SingleClub() {
       name: langParsed.strHome,
       handleOnClick: () => handleMatchSort(`clubHome.\"Name\"`),
     },
-    { name: langParsed.strScore },
     {
       name: langParsed.strAway,
       handleOnClick: () => handleMatchSort(`clubAway.\"Name\"`),
@@ -193,6 +192,10 @@ export default function SingleClub() {
       handleOnClick: () => handleMatchSort(`\"Location\".\"Name\"`),
     },
   ];
+
+  if (currentClubTab === "results") {
+    matchTableHeaders.splice(2, 0, { name: langParsed.strScore });
+  }
 
   return (
     <div>

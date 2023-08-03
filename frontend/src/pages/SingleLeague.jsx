@@ -115,8 +115,8 @@ export default function SingleLeague() {
         >
           <td>{extractDateAndTime(match.time)}</td>
           <td>{match.clubHome.name}</td>
-          <td>{match.homeScore}</td>
-          <td>{match.awayScore}</td>
+          {currentLeagueTab === "results" ? (<td>{match.homeScore}</td>) : null}
+          {currentLeagueTab === "results" ? (<td>{match.awayScore}</td>) : null}
           <td>{match.clubAway.name}</td>
           <td>{match.location.name}</td>
         </tr>
@@ -151,14 +151,14 @@ export default function SingleLeague() {
   }
 
   const clubTableHeaders = [
-    { name: "Ime", handleOnClick: () => handleClubSort(`\"Club\".\"Name\"`) },
-    { name: "Logo" },
+    { name: langParsed.strName, handleOnClick: () => handleClubSort(`\"Club\".\"Name\"`) },
+    { name: langParsed.strLogo },
     {
-      name: "Liga",
+      name: langParsed.strLeague,
       handleOnClick: () => handleClubSort(`\"League\".\"Name\"`),
     },
     {
-      name: "Lokacija",
+      name: langParsed.strLocation,
       handleOnClick: () => handleClubSort(`\"Location\".\"Name\"`),
     },
   ];
@@ -172,7 +172,6 @@ export default function SingleLeague() {
       name: langParsed.strHome,
       handleOnClick: () => handleMatchSort(`clubHome.\"Name\"`),
     },
-    { name: langParsed.strScore },
     {
       name: langParsed.strAway,
       handleOnClick: () => handleMatchSort(`clubAway.\"Name\"`),
@@ -182,6 +181,10 @@ export default function SingleLeague() {
       handleOnClick: () => handleMatchSort(`\"Location\".\"Name\"`),
     },
   ];
+
+  if (currentLeagueTab === "results") {
+    matchTableHeaders.splice(2, 0, { name: langParsed.strScore });
+  }
 
   return (
     <div>

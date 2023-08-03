@@ -13,9 +13,8 @@ export default function LeagueNavbar({ pageLength, onChangePageLength }) {
           <li className="nav-item">
             <span
               onClick={() => setCurrentLeagueTab("clubs")}
-              className={`nav-link cursor-pointer ${
-                currentLeagueTab === "clubs" && "active"
-              }`}
+              className={`nav-link cursor-pointer ${currentLeagueTab === "clubs" && "active background-shade"
+                }`}
             >
               {langParsed.strClubs}
             </span>
@@ -24,9 +23,8 @@ export default function LeagueNavbar({ pageLength, onChangePageLength }) {
           <li className="nav-item">
             <span
               onClick={() => setCurrentLeagueTab("results")}
-              className={`nav-link cursor-pointer ${
-                currentLeagueTab === "results" && "active"
-              }`}
+              className={`nav-link cursor-pointer ${currentLeagueTab === "results" && "active background-shade"
+                }`}
             >
               {langParsed.strScores}
             </span>
@@ -35,9 +33,8 @@ export default function LeagueNavbar({ pageLength, onChangePageLength }) {
           <li className="nav-item">
             <span
               onClick={() => setCurrentLeagueTab("schedule")}
-              className={`nav-link cursor-pointer ${
-                currentLeagueTab === "schedule" && "active"
-              }`}
+              className={`nav-link cursor-pointer ${currentLeagueTab === "schedule" && "active background-shade"
+                }`}
             >
               {langParsed.strSchedule}
             </span>

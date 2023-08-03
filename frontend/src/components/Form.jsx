@@ -7,7 +7,7 @@ export default function Form({ handleOnSubmit, buttonText, children }) {
 
   const langParsed = JSON.parse(lang);
   return (
-    <form onSubmit={handleOnSubmit} className="d-flex flex-column width-400">
+    <form onSubmit={handleOnSubmit} className="d-flex flex-column width-400 pb-3">
       {children}
       <Button text={buttonText || langParsed.strConfirm} />
     </form>
