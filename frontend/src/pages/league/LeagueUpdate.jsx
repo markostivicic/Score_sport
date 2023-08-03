@@ -19,6 +19,8 @@ export default function LeagueUpdate() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [selectedLeague, setSelectedLeague] = useState();
+  const [selectedSport, setSelectedSport] = useState();
+  const [selectedCountry, setSelectedCountry] = useState();
   const [countries, setCountries] = useState([]);
   const [sports, setSports] = useState([]);
   const { lang } = useResultContext();
@@ -37,6 +39,8 @@ export default function LeagueUpdate() {
   async function getLeagueAsync() {
     const data = await getLeagueByIdAsync(id, navigate);
     setSelectedLeague(data);
+    setSelectedSport(data.sportId);
+    setSelectedCountry(data.countryId);
   }
 
   async function updateLeagueAsync(e) {
@@ -78,11 +82,15 @@ export default function LeagueUpdate() {
           <Select
             id="leagueUpdateSport"
             options={sports}
+            value={selectedSport}
+            onChange={(e) => setSelectedSport(e.target.value)}
             labelText={langParsed.strSport}
           />
           <Select
             id="leagueUpdateCountry"
             options={countries}
+            value={selectedCountry}
+            onChange={(e) => setSelectedCountry(e.target.value)}
             labelText={langParsed.strCountry}
           />
         </Form>

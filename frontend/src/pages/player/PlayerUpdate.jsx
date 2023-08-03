@@ -42,6 +42,8 @@ export default function ClubUpdate() {
   async function getPlayerAsync() {
     const items = await getPlayerByIdAsync(id, navigate);
     setSelectedPlayer(items);
+    setSelectedClub(items.clubId);
+    setSelectedCountry(items.countryId);
   }
 
   async function fetchClubsAsync() {

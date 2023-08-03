@@ -20,6 +20,7 @@ export default function LocationUpdate() {
   const [selectedLocation, setSelectedLocation] = useState();
   const [countries, setCountries] = useState([]);
   const { lang } = useResultContext();
+  const [selectedCountry, setSelectedCountry] = useState("");
 
   const langParsed = JSON.parse(lang);
 
@@ -34,6 +35,7 @@ export default function LocationUpdate() {
   async function getLocationAsync() {
     const data = await getLocationByIdAsync(id, navigate);
     setSelectedLocation(data);
+    setSelectedCountry(data.countryId);
   }
 
   async function updateLocationAsync(e) {
@@ -77,6 +79,8 @@ export default function LocationUpdate() {
           <Select
             id="locationUpdateCountry"
             options={countries}
+            value={selectedCountry}
+            onChange={(e) => setSelectedCountry(e.target.value)}
             labelText={langParsed.strCountry}
           />
         </Form>

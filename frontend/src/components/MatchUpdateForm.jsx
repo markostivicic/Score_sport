@@ -5,19 +5,19 @@ import Form from "./Form";
 import ControlledInput from "./ControlledInput";
 import { getLeagueByIdAsync } from "../services/LeagueService";
 import { getLocationsAsync } from "../services/LocationService";
-import { getClubsAsync } from "../services/ClubService";
+import { getClubsFilteredByLeagueAsync } from "../services/ClubService";
 import { useNavigate } from "react-router-dom";
 import { useResultContext } from "../context/ResultContext";
 
 export default function MatchUpdateForm({ onSubmit, selectedMatch }) {
   const [locations, setLocations] = useState([]);
   const [clubs, setClubs] = useState([]);
-  const [selectedSportId, setselectedSportId] = useState("");
-  const [selectedLeagueId, setselectedLeagueId] = useState("");
-  const [selectedTimeId, setselectedTimeId] = useState("");
-  const [selectedLocationId, setselectedLocationId] = useState("");
-  const [selectedClubHomeId, setselectedClubHomeId] = useState("");
-  const [selectedClubAwayId, setselectedClubAwayId] = useState("");
+  const [selectedSportName, setSelectedSportName] = useState("");
+  const [selectedLeagueName, setSelectedLeagueName] = useState("");
+  const [selectedTimeId, setSelectedTimeId] = useState("");
+  const [selectedLocationId, setSelectedLocationId] = useState("");
+  const [selectedClubHomeId, setSelectedClubHomeId] = useState("");
+  const [selectedClubAwayId, setSelectedClubAwayId] = useState("");
   const [homeScore, setHomeScore] = useState(0);
   const [awayScore, setAwayScore] = useState(0);
   const [isMatchFinished, setIsMatchFinished] = useState(false);
@@ -32,7 +32,6 @@ export default function MatchUpdateForm({ onSubmit, selectedMatch }) {
       setIsMatchFinished(
         new Date(selectedMatch.time) < new Date(new Date().toISOString())
       );
-      fetchClubsAsync();
       fetchLocationsAsync();
       setDataFromSelectedMatch();
     }
@@ -43,14 +42,16 @@ export default function MatchUpdateForm({ onSubmit, selectedMatch }) {
       selectedMatch.clubHome.leagueId,
       navigate
     );
-    setselectedTimeId(selectedMatch.time);
-    setselectedSportId(league.sport.name);
-    setselectedLeagueId(league.name);
-    setselectedClubHomeId(selectedMatch.clubHomeId);
-    setHomeScore(selectedMatch.homeScore);
-    setAwayScore(selectedMatch.awayScore);
-    setselectedClubAwayId(selectedMatch.clubAwayId);
-    setselectedLocationId(selectedMatch.locationId);
+    setSelectedTimeId(selectedMatch.time);
+    setSelectedSportName(league.sport.name);
+    setSelectedLeagueName(league.name);
+    setSelectedClubHomeId(selectedMatch.clubHomeId);
+    setHomeScore(selectedMatch.homeScore || "");
+    setAwayScore(selectedMatch.awayScore || "");
+    setSelectedClubAwayId(selectedMatch.clubAwayId);
+    setSelectedLocationId(selectedMatch.locationId);
+
+    fetchClubsAsync();
   }
 
   async function fetchLocationsAsync() {
@@ -59,40 +60,41 @@ export default function MatchUpdateForm({ onSubmit, selectedMatch }) {
   }
 
   async function fetchClubsAsync() {
-    if (selectedMatch.leagueId === "") return;
-    const { items } = await getClubsAsync(navigate, 100, 0);
+    if (selectedMatch.clubHome.leagueId === "") return;
+    const { items } = await getClubsFilteredByLeagueAsync(navigate, 100, 0, selectedMatch.clubHome.leagueId);
     setClubs(items);
   }
 
   return (
+
     <Form handleOnSubmit={onSubmit} className="width-400">
       <ControlledInput
         id="matchTime"
         type="datetime-local"
         value={selectedTimeId}
         isDisabled={isMatchFinished}
-        onChange={(e) => setselectedTimeId(e.target.value)}
+        onChange={(e) => setSelectedTimeId(e.target.value)}
         labelText={langParsed.strTime}
       />
       <Input
         type="text"
         isDisabled={true}
         id="matchSport"
-        defaultValue={selectedSportId}
+        defaultValue={selectedSportName}
         labelText={langParsed.strSport}
       />
       <Input
         type="text"
         isDisabled={true}
         id="matchLeague"
-        defaultValue={selectedLeagueId}
+        defaultValue={selectedLeagueName}
         labelText={langParsed.strLeague}
       />
       <Select
         id="matchClubHome"
         value={selectedClubHomeId}
         isDisabled={isMatchFinished}
-        onChange={(e) => setselectedClubHomeId(e.target.value)}
+        onChange={(e) => setSelectedClubHomeId(e.target.value)}
         options={clubs.filter((club) => club.id !== selectedClubAwayId)}
         labelText={langParsed.strHome}
       />
@@ -100,7 +102,7 @@ export default function MatchUpdateForm({ onSubmit, selectedMatch }) {
         id="matchClubAway"
         value={selectedClubAwayId}
         isDisabled={isMatchFinished}
-        onChange={(e) => setselectedClubAwayId(e.target.value)}
+        onChange={(e) => setSelectedClubAwayId(e.target.value)}
         options={clubs.filter((club) => club.id !== selectedClubHomeId)}
         labelText={langParsed.strAway}
       />
@@ -108,13 +110,12 @@ export default function MatchUpdateForm({ onSubmit, selectedMatch }) {
         id="matchLocation"
         value={selectedLocationId}
         isDisabled={isMatchFinished}
-        onChange={(e) => setselectedLocationId(e.target.value)}
+        onChange={(e) => setSelectedLocationId(e.target.value)}
         options={locations}
         labelText={langParsed.strLocation}
       />
       <ControlledInput
-        type="text"
-        pattern="[0-9]*"
+        type="number"
         value={homeScore}
         isDisabled={!isMatchFinished}
         onChange={(e) => setHomeScore(e.target.value)}
@@ -122,8 +123,7 @@ export default function MatchUpdateForm({ onSubmit, selectedMatch }) {
         labelText={langParsed.strScoreHome}
       />
       <ControlledInput
-        type="text"
-        pattern="[0-9]*"
+        type="number"
         value={awayScore}
         isDisabled={!isMatchFinished}
         onChange={(e) => setAwayScore(e.target.value)}

@@ -56,6 +56,7 @@ export default function ClubUpdate() {
   async function getClubAsync() {
     const data = await getClubByIdAsync(id, navigate);
     setSelectedClub(data);
+    setSelectedLeague(data.leagueId);
   }
   async function fetchSportsAsync() {
     const { items } = await getSportsAsync(navigate, 100, 0);
@@ -75,7 +76,6 @@ export default function ClubUpdate() {
       selectedSportId
     );
     setLeagues(items);
-    setSelectedLeague(items.length > 0 ? items[0] : navigate("/club"));
   }
 
   async function fetchLocationsAsync() {
