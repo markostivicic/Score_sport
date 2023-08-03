@@ -6,11 +6,19 @@ import { useEffect } from "react";
 import Form from "../components/Form";
 import Input from "../components/Input";
 import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  stringDe,
+  stringEn,
+  stringEs,
+  stringFr,
+  stringHr,
+  stringSv,
+} from "../services/TranslateService";
 
 export default function Login() {
   const navigate = useNavigate();
   const [isWrongPassword, setIsWrongPassword] = useState(false);
-  const { setAuthenticatedUser, lang } = useResultContext();
+  const { setAuthenticatedUser, lang, setLang } = useResultContext();
 
   const langParsed = JSON.parse(lang);
 
@@ -52,6 +60,18 @@ export default function Login() {
 
   return (
     <div className="d-flex justify-content-center flex-column align-items-center vw-100 vh-100">
+      <select
+        className="form-control position-absolute lang-select"
+        defaultValue={lang}
+        onChange={(e) => setLang(e.target.value)}
+      >
+        <option value={JSON.stringify(stringHr)}>HR</option>
+        <option value={JSON.stringify(stringEn)}>EN</option>
+        <option value={JSON.stringify(stringDe)}>DE</option>
+        <option value={JSON.stringify(stringFr)}>FR</option>
+        <option value={JSON.stringify(stringEs)}>ES</option>
+        <option value={JSON.stringify(stringSv)}>SW</option>
+      </select>
       <Form
         handleOnSubmit={handleOnSubmitAsync}
         buttonText={langParsed.strLogin}
@@ -60,7 +80,7 @@ export default function Login() {
           id="username"
           type="text"
           wrapperClassName="my-2"
-                  labelText={langParsed.strUserName}
+          labelText={langParsed.strUserName}
           isInputGroup
           icon={faUser}
         />

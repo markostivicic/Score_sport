@@ -3,6 +3,14 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useResultContext } from "../context/ResultContext";
+import {
+  stringDe,
+  stringEn,
+  stringEs,
+  stringFr,
+  stringHr,
+  stringSv,
+} from "../services/TranslateService";
 
 export default function Register() {
   const formRef = useRef();
@@ -11,7 +19,7 @@ export default function Register() {
 
   const navigate = useNavigate();
 
-  const { setAuthenticatedUser, lang } = useResultContext();
+  const { setAuthenticatedUser, lang, setLang } = useResultContext();
 
   const langParsed = JSON.parse(lang);
 
@@ -64,6 +72,18 @@ export default function Register() {
   }
   return (
     <div className="d-flex justify-content-center align-items-center vw-100 vh-100">
+      <select
+        className="form-control position-absolute lang-select"
+        defaultValue={lang}
+        onChange={(e) => setLang(e.target.value)}
+      >
+        <option value={JSON.stringify(stringHr)}>HR</option>
+        <option value={JSON.stringify(stringEn)}>EN</option>
+        <option value={JSON.stringify(stringDe)}>DE</option>
+        <option value={JSON.stringify(stringFr)}>FR</option>
+        <option value={JSON.stringify(stringEs)}>ES</option>
+        <option value={JSON.stringify(stringSv)}>SW</option>
+      </select>
       <form
         ref={formRef}
         noValidate

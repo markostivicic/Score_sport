@@ -47,6 +47,7 @@ export const stringEn = {
   strRegister: "Register",
   strComment: "Comment",
   strAddComment: "Add comment",
+  strCancel: "Cancel",
   strConfirm: "Confirm",
   strScoreHome: "Home score",
   strScoreAway: "Away score",
@@ -79,7 +80,7 @@ export const stringEn = {
   strSearchPlaceholder: "Please type in the requested term.",
   strSearchClubsAndLeagues: "Search for clubs and leagues",
   strErrorBirthDate: "Birth date is not valid",
-}
+};
 
 export const stringHr = {
   strName: "Naziv",
@@ -130,6 +131,7 @@ export const stringHr = {
   strRegister: "Registiraj se",
   strComment: "Komentiraj",
   strAddComment: "Dodaj komentar",
+  strCancel: "Odustani",
   strConfirm: "Potvrdi",
   strScoreHome: "Rezultat domaćin",
   strScoreAway: "Rezultat gost",
@@ -162,7 +164,7 @@ export const stringHr = {
   strSearchPlaceholder: "Upišite traženi pojam",
   strSearchClubsAndLeagues: "Pretraži klubove i lige",
   strErrorBirthDate: "Datum rođenja nije ispravan",
-}
+};
 
 export const stringDe = {
   strName: "Name",
@@ -213,6 +215,7 @@ export const stringDe = {
   strRegister: "Registrieren",
   strComment: "Kommentar",
   strAddComment: "Kommentar hinzufügen",
+  strCancel: "Stornieren",
   strConfirm: "Bestätigen",
   strScoreHome: "Heim Ergebnis",
   strScoreAway: "Auswärts Ergebnis",
@@ -246,7 +249,7 @@ export const stringDe = {
   strSearchPlaceholder: "Geben Sie einen Suchbegriff ein",
   strSearchClubsAndLeagues: "Vereine und Ligen durchsuchen",
   strErrorBirthDate: "Geburtsdatum ist ungültig",
-}
+};
 
 export const stringFr = {
   strName: "Nom",
@@ -297,6 +300,7 @@ export const stringFr = {
   strRegister: "S'inscrire",
   strComment: "Commentaire",
   strAddComment: "Ajouter un commentaire",
+  strCancel: "Annuler",
   strConfirm: "Confirmer",
   strScoreHome: "Résultat à domicile",
   strScoreAway: "Résultat à l'extérieur",
@@ -330,7 +334,7 @@ export const stringFr = {
   strSearchPlaceholder: "Entrez un terme de recherche",
   strSearchClubsAndLeagues: "Rechercher des clubs et des ligues",
   strErrorBirthDate: "La date de naissance n'est pas valide",
-}
+};
 
 export const stringEs = {
   strName: "Nombre",
@@ -381,6 +385,7 @@ export const stringEs = {
   strRegister: "Registrarse",
   strComment: "Comentario",
   strAddComment: "Agregar comentario",
+  strCancel: "Cancelar",
   strConfirm: "Confirmar",
   strScoreHome: "Resultado local",
   strScoreAway: "Resultado visitante",
@@ -414,7 +419,7 @@ export const stringEs = {
   strSearchPlaceholder: "Ingrese un término de búsqueda",
   strSearchClubsAndLeagues: "Buscar clubes y ligas",
   strErrorBirthDate: "La fecha de nacimiento no es válida",
-}
+};
 
 export const stringSv = {
   strName: "Namn",
@@ -465,6 +470,7 @@ export const stringSv = {
   strRegister: "Registrera",
   strComment: "Kommentar",
   strAddComment: "Lägg till kommentar",
+  strCancel: "Avbryt",
   strConfirm: "Bekräfta",
   strScoreHome: "Hemmamatchens resultat",
   strScoreAway: "Bortamatchens resultat",
@@ -498,4 +504,4 @@ export const stringSv = {
   strSearchPlaceholder: "Skriv in sökterm",
   strSearchClubsAndLeagues: "Sök klubbar och ligor",
   strErrorBirthDate: "Födelsedatumet är ogiltigt",
-}
+};

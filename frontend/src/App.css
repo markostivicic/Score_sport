@@ -152,3 +152,9 @@ th {
 .width-150 {
   min-width: 150px !important;
 }
+
+.lang-select{
+  width: 100px !important;
+  top:25px;
+  right:25px;
+}

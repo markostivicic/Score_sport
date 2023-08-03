@@ -70,7 +70,7 @@ export default function CommentSection({ matchId }) {
       <div className="align-self-center mt-5 d-flex flex-column width-400 max-height-full">
         <Button
           handleOnClick={() => setIsFormActive(!isFormActive)}
-          text={!isFormActive ? langParsed.strComment : langParsed.strBack}
+          text={!isFormActive ? langParsed.strComment : langParsed.strCancel}
           color="secondary"
         />
         <div className={`${!isFormActive && "d-none"}`}>
