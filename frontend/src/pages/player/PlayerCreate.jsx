@@ -10,6 +10,7 @@ import { getClubsAsync } from "../../services/ClubService";
 import { createNewPlayerAsync } from "../../services/PlayerService";
 import { useResultContext } from "../../context/ResultContext";
 import Navbar from "../../components/Navbar";
+import { toast } from "react-toastify";
 
 export default function ClubCreate() {
   const navigate = useNavigate();
@@ -33,6 +34,10 @@ export default function ClubCreate() {
     const playerLastName = e.target.elements.playerCreateLastName.value;
     const playerImage = e.target.elements.playerCreateImage.value;
     const playerDoB = e.target.elements.playerCreateDoB.value;
+    if (new Date(playerDoB) > new Date(new Date().toISOString())) {
+      toast.error(langParsed.strErrorBirthDate);
+      return;
+    }
     const playerClub = e.target.elements.playerCreateClub.value;
     const playerCountry = e.target.elements.playerCreateCountry.value;
     const playerToCreate = {

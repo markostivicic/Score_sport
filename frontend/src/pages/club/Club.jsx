@@ -135,24 +135,29 @@ export default function Club() {
       <Navbar />
 
       <Filter>
-        <InputFilter
-          id="searchFilter"
-          type="text"
-          value={searchFilter}
-          onChange={(e) => setSearchFilter(e.target.value)}
-          labelText={langParsed.strSearch}
-        />
-        <SwitchFilter
-          id="activeFilter"
-          text={langParsed.strShowDeleted}
-          value={!activeFilter}
-          onChange={(e) => setActiveFilter(!activeFilter)}
-        />
-        <PageLengthSelect
-          id="pageLength"
-          value={pageLength}
-          onChange={(e) => setPageLength(e.target.value)}
-        />
+        <div className="dashboard-title">
+          <h1>{langParsed.strClub}</h1>
+        </div>
+        <div className="d-flex flex-row align-items-center gap-5">
+          <InputFilter
+            id="searchFilter"
+            type="text"
+            value={searchFilter}
+            onChange={(e) => setSearchFilter(e.target.value)}
+            labelText={langParsed.strSearch}
+          />
+          <SwitchFilter
+            id="activeFilter"
+            text={langParsed.strShowDeleted}
+            value={!activeFilter}
+            onChange={(e) => setActiveFilter(!activeFilter)}
+          />
+          <PageLengthSelect
+            id="pageLength"
+            value={pageLength}
+            onChange={(e) => setPageLength(e.target.value)}
+          />
+        </div>
       </Filter>
 
       <Table

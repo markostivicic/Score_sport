@@ -44,7 +44,9 @@ export async function getPlayersFilteredByClubAsync(
 ) {
   try {
     const response = await API.get(
-      `/player?pageSize=${pageLength}&pageNumber=${pageNumber}&clubId=${clubId}&orderBy=${orderBy}&sortOrder=${sortOrder}`,
+      `/player?pageSize=${pageLength}&pageNumber=${pageNumber}&clubId=${clubId}&orderBy=${
+        orderBy || ""
+      }&sortOrder=${sortOrder || ""}`,
       { headers: getHeaders() }
     );
     return response.data;

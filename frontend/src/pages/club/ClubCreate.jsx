@@ -6,7 +6,7 @@ import Input from "../../components/Input";
 import Select from "../../components/Select";
 import { getSportsAsync } from "../../services/SportService";
 import { createNewClubAsync } from "../../services/ClubService";
-import { getLeaguesAsync } from "../../services/LeagueService";
+import { getLeaguesFilteredBySportAsync } from "../../services/LeagueService";
 import { getLocationsAsync } from "../../services/LocationService";
 import Background from "../../components/Background";
 import FormContainer from "../../components/FormContainer";
@@ -58,9 +58,10 @@ export default function ClubCreate() {
   async function fetchSportsAsync() {
     const { items } = await getSportsAsync(navigate, 100, 0);
     setSports(items);
+    setSelectedSport(items.length > 0 ? items[0].id : "");
   }
   async function fetchLeaguesAsync() {
-    const { items } = await getLeaguesAsync(navigate, 100, 0);
+    const { items } = await getLeaguesFilteredBySportAsync(navigate, 100, 0, selectedSport);
     setLeagues(items);
   }
 

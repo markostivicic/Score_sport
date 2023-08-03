@@ -3,9 +3,9 @@ import { faBars, faGear, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "./Button";
 import { useResultContext } from "../context/ResultContext";
-import { useLocation, useMatch, useNavigate } from "react-router-dom";
+import { Link, useLocation, useMatch, useNavigate } from "react-router-dom";
 import Select from "./Select";
-import { stringEn, stringHr } from "../services/TranslateService";
+import { stringDe, stringEn, stringEs, stringFr, stringHr, stringSv } from "../services/TranslateService";
 
 export default function Navbar() {
   const {
@@ -31,8 +31,11 @@ export default function Navbar() {
   const isRouteSingleClub = useMatch({
     path: "/single-club/:id",
   });
+  const isRouteSingleMatch = useMatch({
+    path: "/single-match/:id",
+  });
   const renderHamburger =
-    path !== "/" && !isRouteSingleLeague && !isRouteSingleClub;
+    path !== "/" && !isRouteSingleLeague && !isRouteSingleClub && !isRouteSingleMatch;
 
   return (
     <nav className="navbar navbar-expand-md bg-dark">
@@ -44,16 +47,16 @@ export default function Navbar() {
             icon={faBars}
           />
         )}
-        <a href="/" className="navbar-brand">
+        <Link to="/" className="navbar-brand">
           <img
             className="logo"
             src={require("../assets/logo.png")}
             alt="logo"
           />
-        </a>
+        </Link>
         <div className="ms-auto text-secondary mt-2 lg:mt-0 nav-text d-flex align-items-center gap-3">
           <div className="d-flex gap-2 align-items-center">
-            <FontAwesomeIcon icon={faUser} />
+            <FontAwesomeIcon icon={faUser} color="#2b2eff" />
             <span>
               <strong>{authenticatedUser?.username || ""}</strong>
             </span>
@@ -72,6 +75,10 @@ export default function Navbar() {
           >
             <option value={JSON.stringify(stringHr)}>HR</option>
             <option value={JSON.stringify(stringEn)}>EN</option>
+            <option value={JSON.stringify(stringDe)}>DE</option>
+            <option value={JSON.stringify(stringFr)}>FR</option>
+            <option value={JSON.stringify(stringEs)}>ES</option>
+            <option value={JSON.stringify(stringSv)}>SW</option>
           </select>
           <Button text={langParsed.strLogout} handleOnClick={handleLogout} />
         </div>

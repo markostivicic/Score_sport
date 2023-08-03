@@ -69,8 +69,8 @@ export default function CommentSection({ matchId }) {
     <>
       <div className="align-self-center mt-5 d-flex flex-column width-400 max-height-full">
         <Button
-          handleOnClick={() => setIsFormActive(true)}
-          text={langParsed.strComment}
+          handleOnClick={() => setIsFormActive(!isFormActive)}
+          text={!isFormActive ? langParsed.strComment : langParsed.strBack}
           color="secondary"
         />
         <div className={`${!isFormActive && "d-none"}`}>
@@ -82,6 +82,7 @@ export default function CommentSection({ matchId }) {
               id="comment-area"
               required
               className="my-3 resize-none"
+              ref={(e) => (e ? e.focus() : null)}
             ></textarea>
           </Form>
         </div>

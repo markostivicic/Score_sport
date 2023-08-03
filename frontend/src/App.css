@@ -1,11 +1,11 @@
 .paginationBttns {
-  width: 98%;
   height: 40px;
   list-style: none;
   display: flex;
   justify-content: center;
   margin-top: 25px;
   margin-bottom: 25px;
+  padding: 0;
 }
 
 .paginationBttns a {
@@ -19,12 +19,12 @@
 
 .paginationBttns a:hover {
   color: white;
-  background-color: #8183e2;
+  background-color: #0d6efd;
 }
 
 .paginationActive a {
   color: white;
-  background-color: #8183e2;
+  background-color: #0d6efd;
 }
 
 .paginationDisabled a {
@@ -103,6 +103,10 @@ caption {
   font-size: 1.25rem;
 }
 
+.nav-link {
+  font-size: 20px !important;
+}
+
 .b-image {
   background-image: url("./assets/logo_background.png");
   background-size: cover;
@@ -111,4 +115,40 @@ caption {
 
 .h-600 {
   height: 600px !important;
+}
+
+.li-hover:hover {
+  background-color: #2b2eff;
+  color: white;
+}
+
+.titlelogo {
+  width: 75px;
+  aspect-ratio: 1/1;
+}
+
+.background-shade {
+  background-color: #2b2eff !important;
+  color: white !important;
+  border-radius: 5px;
+}
+
+.nav-link {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+img {
+  object-fit: contain;
+  object-position: center;
+}
+
+th {
+  background-color: #2b2eff !important;
+  color: white !important;
+  font-size: 18px !important;
+}
+
+.width-150 {
+  min-width: 150px !important;
 }

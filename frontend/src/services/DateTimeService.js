@@ -2,7 +2,11 @@ export function extractHoursAndMinutes(fullDate) {
   const date = new Date(fullDate)
   const hours = date.getHours()
   const minutes = date.getMinutes()
-  return hours.toString() + ":" + minutes.toString().padStart(2, "0")
+  return (
+    hours.toString().padStart(2, "0") +
+    ":" +
+    minutes.toString().padStart(2, "0")
+  )
 }
 
 export function extractDate(fullDate) {
