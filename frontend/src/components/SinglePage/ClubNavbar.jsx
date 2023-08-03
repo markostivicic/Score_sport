@@ -13,9 +13,8 @@ export default function ClubNavbar({ pageLength, onChangePageLength }) {
           <li className="nav-item">
             <span
               onClick={() => setCurrentClubTab("players")}
-              className={`nav-link cursor-pointer ${
-                currentClubTab === "players" && "active"
-              }`}
+              className={`nav-link cursor-pointer ${currentClubTab === "players" && "active background-shade"
+                }`}
             >
               {langParsed.strPlayers}
             </span>
@@ -24,9 +23,8 @@ export default function ClubNavbar({ pageLength, onChangePageLength }) {
           <li className="nav-item">
             <span
               onClick={() => setCurrentClubTab("results")}
-              className={`nav-link cursor-pointer ${
-                currentClubTab === "results" && "active"
-              }`}
+              className={`nav-link cursor-pointer ${currentClubTab === "results" && "active background-shade"
+                }`}
             >
               {langParsed.strScores}
             </span>
@@ -35,9 +33,8 @@ export default function ClubNavbar({ pageLength, onChangePageLength }) {
           <li className="nav-item">
             <span
               onClick={() => setCurrentClubTab("schedule")}
-              className={`nav-link cursor-pointer ${
-                currentClubTab === "schedule" && "active"
-              }`}
+              className={`nav-link cursor-pointer ${currentClubTab === "schedule" && "active background-shade"
+                }`}
             >
               {langParsed.strSchedule}
             </span>

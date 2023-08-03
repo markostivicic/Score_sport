@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import Table from "../components/Table";
 import Navbar from "../components/Navbar";
 import { getPlayersFilteredByClubAsync } from "../services/PlayerService";
+import { getClubByIdAsync } from "../services/ClubService";
 import { useNavigate, useParams } from "react-router-dom";
 import ClubNavbar from "../components/SinglePage/ClubNavbar";
 import { useResultContext } from "../context/ResultContext";
 import { getMatchesFilteredByClubAndFinishedAsync } from "../services/MatchService";
 import { extractDateAndTime } from "../services/DateTimeService";
-import ReactPaginate from "react-paginate";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import Pagination from "../components/Pagination";
 
 export default function SingleClub() {
   const { id } = useParams();
@@ -23,11 +22,13 @@ export default function SingleClub() {
   const [matchSortOrder, setMatchSortOrder] = useState("asc");
   const [playerSortOrder, setPlayerSortOrder] = useState("asc");
   const [playerOrderBy, setPlayerOrderBy] = useState(`\"Player\".\"LastName\"`);
+  const [selectedClub, setSelectedClub] = useState({});
   const langParsed = JSON.parse(lang);
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    fetchClubAsync();
     if (currentClubTab === "players") {
       fetchPlayersAsync();
     } else if (currentClubTab === "results") {
@@ -44,6 +45,12 @@ export default function SingleClub() {
     matchOrderBy,
     matchSortOrder,
   ]);
+
+  async function fetchClubAsync() {
+    const club = await getClubByIdAsync(id, navigate);
+    setSelectedClub(club);
+  }
+
 
   async function fetchPlayersAsync() {
     const { items, totalCount } = await getPlayersFilteredByClubAsync(
@@ -190,6 +197,10 @@ export default function SingleClub() {
   return (
     <div>
       <Navbar />
+      <div className="single-title d-flex justify-content-center align-items-center mt-4">
+        <img className="titlelogo mx-3" src={selectedClub.logo} alt="logo" />
+        <h1>{selectedClub.name}</h1>
+      </div>
       <ClubNavbar
         pageLength={pageLength}
         onChangePageLength={(e) => setPageLength(e.target.value)}
@@ -203,18 +214,7 @@ export default function SingleClub() {
           currentClubTab === "players" ? renderPlayers : renderMatches
         }
       />
-      <ReactPaginate
-        previousLabel={<FontAwesomeIcon icon={faArrowLeft} />}
-        nextLabel={<FontAwesomeIcon icon={faArrowRight} />}
-        pageCount={pageCount}
-        onPageChange={changePage}
-        forcePage={pageNumber}
-        containerClassName={"paginationBttns"}
-        previousLinkClassName={"previousBttn"}
-        nextLinkClassName={"nextBttn"}
-        disabledClassName={"paginationDisabled"}
-        activeClassName={"paginationActive"}
-      />
+      <Pagination pageCount={pageCount} changePage={changePage} pageNumber={pageNumber} />
     </div>
   );
 }

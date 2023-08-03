@@ -51,7 +51,7 @@ export default function SearchModal({ isSearchModalOpen, hideSearchModal }) {
           {clubs.map((club) => (
             <li
               key={club.id}
-              className="list-group-item cursor-pointer"
+              className="list-group-item cursor-pointer li-hover"
               onClick={() => navigate(`/single-club/${club.id}`)}>
               {club.name}
             </li>
@@ -64,7 +64,7 @@ export default function SearchModal({ isSearchModalOpen, hideSearchModal }) {
           {leagues.map((league) => (
             <li
               key={league.id}
-              className="list-group-item cursor-pointer"
+              className="list-group-item cursor-pointer li-hover"
               onClick={() => navigate(`/single-league/${league.id}`)}>
               {league.name}
             </li>

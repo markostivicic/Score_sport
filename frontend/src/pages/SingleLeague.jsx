@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import Table from "../components/Table";
 import Navbar from "../components/Navbar";
 import { getClubsFilteredByLeagueAsync } from "../services/ClubService";
+import { getLeagueByIdAsync } from "../services/LeagueService";
 import { useNavigate, useParams } from "react-router-dom";
 import LeagueNavbar from "../components/SinglePage/LeagueNavbar";
 import { useResultContext } from "../context/ResultContext";
 import { getMatchesFilteredByLeagueAndFinishedAsync } from "../services/MatchService";
 import { extractDateAndTime } from "../services/DateTimeService";
-import ReactPaginate from "react-paginate";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import Pagination from "../components/Pagination";
 
 export default function SingleLeague() {
   const { id } = useParams();
@@ -23,10 +22,12 @@ export default function SingleLeague() {
   const [matchSortOrder, setMatchSortOrder] = useState("asc");
   const [clubSortOrder, setClubSortOrder] = useState("asc");
   const [clubOrderBy, setClubOrderBy] = useState(`\"Club\".\"Name\"`);
+  const [selectedLeague, setSelectedLeague] = useState({});
   const langParsed = JSON.parse(lang);
   const navigate = useNavigate();
 
   useEffect(() => {
+    fetchClubAsync();
     if (currentLeagueTab === "clubs") {
       fetchClubsAsync();
     } else if (currentLeagueTab === "results") {
@@ -43,6 +44,11 @@ export default function SingleLeague() {
     matchOrderBy,
     matchSortOrder,
   ]);
+
+  async function fetchClubAsync() {
+    const league = await getLeagueByIdAsync(id, navigate);
+    setSelectedLeague(league);
+  }
 
   async function fetchClubsAsync() {
     const { items, totalCount } = await getClubsFilteredByLeagueAsync(
@@ -180,6 +186,9 @@ export default function SingleLeague() {
   return (
     <div>
       <Navbar />
+      <div className="single-title d-flex justify-content-center align-items-center mt-4">
+        <h1>{selectedLeague.name}</h1>
+      </div>
       <LeagueNavbar
         pageLength={pageLength}
         onChangePageLength={(e) => setPageLength(e.target.value)}
@@ -191,18 +200,7 @@ export default function SingleLeague() {
         }
         renderData={currentLeagueTab === "clubs" ? renderClubs : renderMatches}
       />
-      <ReactPaginate
-        previousLabel={<FontAwesomeIcon icon={faArrowLeft} />}
-        nextLabel={<FontAwesomeIcon icon={faArrowRight} />}
-        pageCount={pageCount}
-        onPageChange={changePage}
-        forcePage={pageNumber}
-        containerClassName={"paginationBttns"}
-        previousLinkClassName={"previousBttn"}
-        nextLinkClassName={"nextBttn"}
-        disabledClassName={"paginationDisabled"}
-        activeClassName={"paginationActive"}
-      />
+      <Pagination pageCount={pageCount} changePage={changePage} pageNumber={pageNumber} />
     </div>
   );
 }
