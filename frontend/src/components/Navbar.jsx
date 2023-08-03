@@ -5,7 +5,7 @@ import Button from "./Button";
 import { useResultContext } from "../context/ResultContext";
 import { Link, useLocation, useMatch, useNavigate } from "react-router-dom";
 import Select from "./Select";
-import { stringEn, stringHr } from "../services/TranslateService";
+import { stringDe, stringEn, stringEs, stringFr, stringHr, stringSv } from "../services/TranslateService";
 
 export default function Navbar() {
   const {
@@ -31,8 +31,11 @@ export default function Navbar() {
   const isRouteSingleClub = useMatch({
     path: "/single-club/:id",
   });
+  const isRouteSingleMatch = useMatch({
+    path: "/single-match/:id",
+  });
   const renderHamburger =
-    path !== "/" && !isRouteSingleLeague && !isRouteSingleClub;
+    path !== "/" && !isRouteSingleLeague && !isRouteSingleClub && !isRouteSingleMatch;
 
   return (
     <nav className="navbar navbar-expand-md bg-dark">
@@ -72,6 +75,10 @@ export default function Navbar() {
           >
             <option value={JSON.stringify(stringHr)}>HR</option>
             <option value={JSON.stringify(stringEn)}>EN</option>
+            <option value={JSON.stringify(stringDe)}>DE</option>
+            <option value={JSON.stringify(stringFr)}>FR</option>
+            <option value={JSON.stringify(stringEs)}>ES</option>
+            <option value={JSON.stringify(stringSv)}>SW</option>
           </select>
           <Button text={langParsed.strLogout} handleOnClick={handleLogout} />
         </div>

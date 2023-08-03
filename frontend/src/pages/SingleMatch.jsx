@@ -7,6 +7,7 @@ import {
 } from "../services/DateTimeService";
 import Club from "../components/SingleMatch/Club";
 import CommentSection from "../components/SingleMatch/CommentSection";
+import Navbar from "../components/Navbar";
 
 export default function SingleMatch() {
   const { id } = useParams();
@@ -27,24 +28,27 @@ export default function SingleMatch() {
   if (!match) return null;
 
   return (
-    <div className="container mt-5 d-flex flex-column">
-      <div className="row row-cols-3">
-        <Club club={match.clubHome} />
-        <div className="col text-center d-flex justify-content-center align-items-center flex-column gap-3">
-          <div>
-            <span>{extractDate(match.time)}</span>
-            <span className="mx-2">{extractHoursAndMinutes(match.time)}</span>
+    <>
+      <Navbar />
+      <div className="container mt-5 d-flex flex-column">
+        <div className="row row-cols-3">
+          <Club club={match.clubHome} />
+          <div className="col text-center d-flex justify-content-center align-items-center flex-column gap-3">
+            <div>
+              <span>{extractDate(match.time)}</span>
+              <span className="mx-2">{extractHoursAndMinutes(match.time)}</span>
+            </div>
+            <div className="display-4">
+              {match.homeScore !== null && <span>{match.homeScore}</span>}
+              <span>-</span>
+              {match.awayScore !== null && <span>{match.awayScore}</span>}
+            </div>
+            <span>{match.location.name}</span>
           </div>
-          <div className="display-4">
-            {match.homeScore !== null && <span>{match.homeScore}</span>}
-            <span>-</span>
-            {match.awayScore !== null && <span>{match.awayScore}</span>}
-          </div>
-          <span>{match.location.name}</span>
+          <Club club={match.clubAway} />
         </div>
-        <Club club={match.clubAway} />
+        <CommentSection matchId={id} />
       </div>
-      <CommentSection matchId={id} />
-    </div>
+    </>
   );
 }
