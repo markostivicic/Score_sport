@@ -28,7 +28,11 @@ export default function Navbar() {
   const isRouteSingleLeague = useMatch({
     path: "/single-league/:id",
   });
-  const renderHamburger = path !== "/" && !isRouteSingleLeague;
+  const isRouteSingleClub = useMatch({
+    path: "/single-club/:id",
+  });
+  const renderHamburger =
+    path !== "/" && !isRouteSingleLeague && !isRouteSingleClub;
 
   return (
     <nav className="navbar navbar-expand-md bg-dark">

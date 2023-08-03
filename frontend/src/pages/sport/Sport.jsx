@@ -176,7 +176,11 @@ export default function Sport() {
         handleOnClick={() => navigate("/sport/create")}
         margin="my-3"
       />
-      <Pagination pageCount={pageCount} changePage={changePage} />
+      <Pagination
+        pageCount={pageCount}
+        changePage={changePage}
+        pageNumber={pageNumber}
+      />
     </Background>
   );
 }

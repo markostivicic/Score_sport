@@ -169,7 +169,11 @@ export default function League() {
         handleOnClick={() => navigate("/league/create")}
         margin="my-3"
       />
-      <Pagination pageCount={pageCount} changePage={changePage} />
+      <Pagination
+        pageCount={pageCount}
+        changePage={changePage}
+        pageNumber={pageNumber}
+      />
     </Background>
   );
 }

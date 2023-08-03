@@ -167,7 +167,11 @@ export default function Location() {
         handleOnClick={() => navigate("/location/create")}
         margin="my-3"
       />
-      <Pagination pageCount={pageCount} changePage={changePage} />
+      <Pagination
+        pageCount={pageCount}
+        changePage={changePage}
+        pageNumber={pageNumber}
+      />
     </Background>
   );
 }

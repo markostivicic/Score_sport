@@ -33,8 +33,8 @@ export default function Country() {
   const [activeFilter, setActiveFilter] = useState(true);
   const [sortOrder, setSortOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState(`\"Country\".\"Name\"`);
-    const [searchFilter, setSearchFilter] = useState("");
-    const { lang } = useResultContext();
+  const [searchFilter, setSearchFilter] = useState("");
+  const { lang } = useResultContext();
 
   const langParsed = JSON.parse(lang);
 
@@ -132,7 +132,7 @@ export default function Country() {
           type="text"
           value={searchFilter}
           onChange={(e) => setSearchFilter(e.target.value)}
-                  labelText={langParsed.strSearch}
+          labelText={langParsed.strSearch}
         />
         <SwitchFilter
           id="activeFilter"
@@ -164,7 +164,11 @@ export default function Country() {
         handleOnClick={() => navigate("/country/create")}
         margin="my-3"
       />
-      <Pagination pageCount={pageCount} changePage={changePage} />
+      <Pagination
+        pageCount={pageCount}
+        changePage={changePage}
+        pageNumber={pageNumber}
+      />
     </Background>
   );
 }

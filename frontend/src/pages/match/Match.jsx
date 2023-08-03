@@ -201,7 +201,11 @@ export default function Match() {
         handleOnClick={() => navigate("/match/create")}
         margin="my-3"
       />
-      <Pagination pageCount={pageCount} changePage={changePage} />
+      <Pagination
+        pageCount={pageCount}
+        changePage={changePage}
+        pageNumber={pageNumber}
+      />
     </Background>
   );
 }

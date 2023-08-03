@@ -20,7 +20,8 @@ export default function Modal({
             <p>
               {isComment
                 ? langParsed.strCommentDeleteConfirmation
-                : langParsed.strDeleteConfirmation`${
+                : langParsed.strDeleteConfirmation +
+                  `${
                     activeFilter ? langParsed.strDelete : langParsed.strReturn
                   } ${selectedItem.name}?`}
             </p>

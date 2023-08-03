@@ -96,7 +96,12 @@ export default function CommentSection({ matchId }) {
             );
           })}
         </div>
-        <Pagination pageCount={pageCount} changePage={changePage} />
+
+        <Pagination
+          pageCount={pageCount}
+          changePage={changePage}
+          pageNumber={pageNumber}
+        />
       </div>
       <Modal
         selectedItem={selectedCommentId}
