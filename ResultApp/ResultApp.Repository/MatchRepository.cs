@@ -28,17 +28,17 @@ namespace ResultApp.Repository
             queryBuilder.Append("WHERE \"Match\".\"IsActive\" = @IsActive ");
             command.Parameters.AddWithValue("@IsActive", matchFilter.IsActive);
 
-            if(matchFilter.IsFinished == false)
+            if(matchFilter.IsFinished != null && matchFilter.IsFinished == false)
             {
                 queryBuilder.Append($"AND \"HomeScore\" IS NULL AND \"AwayScore\" IS NULL ");
             }
-            else if(matchFilter.IsFinished == true)
+            else if(matchFilter.IsFinished != null && matchFilter.IsFinished == true)
             {
                 queryBuilder.Append($"AND \"HomeScore\" IS NOT NULL AND \"AwayScore\" IS NOT NULL ");
             }
             if (matchFilter.ClubId != null)
             {
-                queryBuilder.Append("AND \"ClubHomeId\" = @ClubId OR \"ClubAwayId\" = @ClubId ");
+                queryBuilder.Append("AND (\"ClubHomeId\" = @ClubId OR \"ClubAwayId\" = @ClubId ) ");
                 command.Parameters.AddWithValue("@ClubId", matchFilter.ClubId);
             }
             if (matchFilter.Time != null)
@@ -48,7 +48,7 @@ namespace ResultApp.Repository
             }
             if (matchFilter.LeagueId != null)
             {
-                queryBuilder.Append("AND \"LeagueId\" = @LeagueId ");
+                queryBuilder.Append("AND clubHome.\"LeagueId\" = @LeagueId ");
                 command.Parameters.AddWithValue("@LeagueId", matchFilter.LeagueId);
             }
             if (matchFilter.SportId != null)
@@ -57,10 +57,11 @@ namespace ResultApp.Repository
                 command.Parameters.AddWithValue("@SportId", matchFilter.SportId);
             }
 
-            queryBuilder.Append($"ORDER BY \"Match\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
+            string orderBy = sorting.OrderBy ?? "\"Match\".\"Id\"";
+            queryBuilder.Append($"ORDER BY {orderBy} {sorting.SortOrder}");
             queryBuilder.Append(" LIMIT @PageSize OFFSET @Offset");
             command.Parameters.AddWithValue("@PageSize", paging.PageSize);
-            command.Parameters.AddWithValue("@Offset", paging.PageNumber * paging.PageSize - paging.PageSize);
+            command.Parameters.AddWithValue("@Offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);
 
             command.CommandText = queryBuilder.ToString();
 
@@ -157,12 +158,14 @@ namespace ResultApp.Repository
         public async Task<Match> CreateAsync(Match match)
         {
             var connection = new NpgsqlConnection(connStr);
-            var command = new NpgsqlCommand("INSERT INTO \"Match\" (\"Id\", \"Time\", \"LocationId\", \"ClubHomeId\", \"ClubAwayId\", \"CreatedByUserId\")" +
-                " VALUES (@id, @time, @locationId, @clubHomeId, @clubAwayId, @createdByUserId)", connection);
+            var command = new NpgsqlCommand("INSERT INTO \"Match\" (\"Id\", \"HomeScore\", \"AwayScore\", \"Time\", \"LocationId\", \"ClubHomeId\", \"ClubAwayId\", \"CreatedByUserId\")" +
+                " VALUES (@id, @homeScore, @awayScore, @time, @locationId, @clubHomeId, @clubAwayId, @createdByUserId)", connection);
             using (connection)
             {
                 connection.Open();
                 command.Parameters.AddWithValue("@id", match.Id);
+                command.Parameters.AddWithValue("@homeScore", match.HomeScore != null ? (object)match.HomeScore : DBNull.Value);
+                command.Parameters.AddWithValue("@awayScore", match.AwayScore != null ? (object)match.AwayScore : DBNull.Value);
                 command.Parameters.AddWithValue("@time", match.Time);
                 command.Parameters.AddWithValue("@locationId", match.LocationId);
                 command.Parameters.AddWithValue("@clubHomeId", match.ClubHomeId);

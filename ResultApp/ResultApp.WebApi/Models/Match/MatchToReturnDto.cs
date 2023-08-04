@@ -32,5 +32,16 @@ namespace ResultApp.WebApi.Models.Match
             ClubAway = clubAway;
         }
 
+        public MatchToReturnDto(Guid id, int? homeScore, int? awayScore, DateTime time, Guid locationId, Guid clubHomeId, Guid clubAwayId)
+        {
+            Id = id;
+            HomeScore = homeScore;
+            AwayScore = awayScore;
+            Time = time;
+            LocationId = locationId;
+            ClubHomeId = clubHomeId;
+            ClubAwayId = clubAwayId;
+        }
+
     }
 }

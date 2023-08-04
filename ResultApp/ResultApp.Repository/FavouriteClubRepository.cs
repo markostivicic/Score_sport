@@ -15,7 +15,7 @@ namespace ResultApp.Repository
     {
         private readonly string connStr = Environment.GetEnvironmentVariable("connStr", EnvironmentVariableTarget.User);
 
-        public async Task<PageList<FavouriteClub>> GetAllFavouriteClubsAsync(Sorting sorting, Paging paging, FavouriteClubFilter favouriteClubFilter)
+        public async Task<PageList<FavouriteClub>> GetAllFavouriteClubsAsync(Sorting sorting, Paging paging, FavouriteClubFilter favouriteClubFilter, string userId)
         {
             List<FavouriteClub> favouriteClubs = new List<FavouriteClub>();
 
@@ -24,18 +24,27 @@ namespace ResultApp.Repository
             NpgsqlCommand command = new NpgsqlCommand();
             command.Connection = connection;
             int totalCount = 0;
-            StringBuilder queryBuilder = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"FavouriteClub\" INNER JOIN \"Club\" ON \"FavouriteClub\".\"ClubId\" = \"Club\".\"Id\" WHERE \"FavouriteClub\".\"IsActive\" = @IsActive ");
-            command.Parameters.AddWithValue("@IsActive", favouriteClubFilter.IsActive);
-
-            if (favouriteClubFilter.UserId != null)
+            StringBuilder queryBuilder = new StringBuilder("SELECT *, COUNT(*) OVER() as TotalCount FROM \"FavouriteClub\" INNER JOIN \"Club\" ON \"FavouriteClub\".\"ClubId\" = \"Club\".\"Id\" WHERE 1=1 ");
+            if(favouriteClubFilter.IsActive != null)
             {
-                queryBuilder.Append("AND \"CreatedByUserId\" = @UserId ");
-                command.Parameters.AddWithValue("@UserId", favouriteClubFilter.UserId);
+                queryBuilder.Append(" AND \"FavouriteClub\".\"IsActive\" = @IsActive ");
+                command.Parameters.AddWithValue("@IsActive", favouriteClubFilter.IsActive);
             }
-            queryBuilder.Append($"ORDER BY \"FavouriteClub\".\"{sorting.OrderBy}\" {sorting.SortOrder} ");
-            queryBuilder.Append("LIMIT @pageSize OFFSET @offset");
+
+            if (favouriteClubFilter.ClubId != null)
+            {
+                queryBuilder.Append("AND \"ClubId\" = @ClubId ");
+                command.Parameters.AddWithValue("@ClubId", favouriteClubFilter.ClubId);
+            }
+
+            queryBuilder.Append("AND \"FavouriteClub\".\"CreatedByUserId\" = @UserId ");
+            command.Parameters.AddWithValue("@UserId", userId);
+
+            string orderBy = sorting.OrderBy ?? "\"FavouriteClub\".\"Id\"";
+            queryBuilder.Append($"ORDER BY {orderBy} {sorting.SortOrder}");
+            queryBuilder.Append(" LIMIT @pageSize OFFSET @offset");
             command.Parameters.AddWithValue("@pageSize", paging.PageSize);
-            command.Parameters.AddWithValue("@offset", (paging.PageNumber - 1) * paging.PageSize);
+            command.Parameters.AddWithValue("@offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);
 
             command.CommandText = queryBuilder.ToString();
 

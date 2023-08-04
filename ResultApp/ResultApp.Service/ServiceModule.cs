@@ -31,6 +31,7 @@ namespace ResultApp.Service
             builder.RegisterType<CommentService>().As<ICommentService>();
             builder.RegisterType<PlayerService>().As<IPlayerService>();
             builder.RegisterType<FavouriteClubService>().As<IFavouriteClubService>();
+            builder.RegisterType<FavouriteMatchService>().As<IFavouriteMatchService>();
             builder.RegisterType<ApplicationDbContext>().InstancePerLifetimeScope();
 
             builder.RegisterType<UserStore<ApplicationUser>>().AsImplementedInterfaces().InstancePerLifetimeScope();

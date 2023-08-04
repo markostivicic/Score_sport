@@ -94,6 +94,7 @@
   <ItemGroup>
     <Compile Include="CommentRepository.cs" />
     <Compile Include="FavouriteClubRepository.cs" />
+    <Compile Include="FavouriteMatchRepository.cs" />
     <Compile Include="LocationRepository.cs" />
     <Compile Include="CountryRepository.cs" />
     <Compile Include="MatchRepository.cs" />

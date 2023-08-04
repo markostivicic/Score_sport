@@ -1,0 +1,78 @@
+.widthzero{
+    width: 0;
+}
+
+.navwidth{
+    width: 15rem;
+}
+
+.sidenav{
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    overflow: auto;
+    background-color: rgb(52,60,73);
+    transition: width 300ms;
+}
+          
+.hr{
+    height: 1px;
+    width: 15rem;
+    border: none;
+    background-color: rgb(155,155,155);
+}
+
+.xmark{
+    margin-top: .25rem;
+    cursor: pointer;
+    font-size: 1.5rem;
+}
+
+.titletext{
+    font-size: 1.25rem;
+}
+
+.titlecontainer{
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    align-self: start;
+    color:#e2e8f0;
+}
+
+.maincontainer{
+    margin-top: 1.25rem;
+    display: flex;
+    width: 80%;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+
+
+.linkk{
+    display: flex;
+    width: 100%;
+    cursor: pointer;
+    align-items: center;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.textgray{
+    color: rgb(155,155,155)
+}
+
+.textgreen{
+    color:rgb(94,165,89)
+}
+
+.iconcontainer{
+    margin-right: 1.25rem ;
+    width: 1.25rem ;
+}

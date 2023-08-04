@@ -19,6 +19,8 @@ using ResultApp.Model.Auth.AccountBindingModels;
 using ResultApp.WebApi.Providers;
 using ResultApp.WebApi.Results;
 using ResultApp.Service;
+using System.Net;
+using ResultApp.WebApi.Models;
 
 namespace ResultApp.WebApi.Controllers
 {
@@ -214,64 +216,7 @@ namespace ResultApp.WebApi.Controllers
             }
 
             return Ok();
-        }
-
-        // GET api/Account/ExternalLogin
-        [OverrideAuthentication]
-        [HostAuthentication(DefaultAuthenticationTypes.ExternalCookie)]
-        [AllowAnonymous]
-        [Route("ExternalLogin", Name = "ExternalLogin")]
-        public async Task<IHttpActionResult> GetExternalLogin(string provider, string error = null)
-        {
-            if (error != null)
-            {
-                return Redirect(Url.Content("~/") + "#error=" + Uri.EscapeDataString(error));
-            }
-
-            if (!User.Identity.IsAuthenticated)
-            {
-                return new ChallengeResult(provider, this);
-            }
-
-            ExternalLoginData externalLogin = ExternalLoginData.FromIdentity(User.Identity as ClaimsIdentity);
-
-            if (externalLogin == null)
-            {
-                return InternalServerError();
-            }
-
-            if (externalLogin.LoginProvider != provider)
-            {
-                Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                return new ChallengeResult(provider, this);
-            }
-
-            ApplicationUser user = await UserManager.FindAsync(new UserLoginInfo(externalLogin.LoginProvider,
-                externalLogin.ProviderKey));
-
-            bool hasRegistered = user != null;
-
-            if (hasRegistered)
-            {
-                Authentication.SignOut(DefaultAuthenticationTypes.ExternalCookie);
-                
-                 ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    OAuthDefaults.AuthenticationType);
-                ClaimsIdentity cookieIdentity = await user.GenerateUserIdentityAsync(UserManager,
-                    CookieAuthenticationDefaults.AuthenticationType);
-
-                AuthenticationProperties properties = ApplicationOAuthProvider.CreateProperties(user.UserName);
-                Authentication.SignIn(properties, oAuthIdentity, cookieIdentity);
-            }
-            else
-            {
-                IEnumerable<Claim> claims = externalLogin.GetClaims();
-                ClaimsIdentity identity = new ClaimsIdentity(claims, OAuthDefaults.AuthenticationType);
-                Authentication.SignIn(identity);
-            }
-
-            return Ok();
-        }
+        }        
 
         // GET api/Account/ExternalLogins?returnUrl=%2F&generateState=true
         [AllowAnonymous]
@@ -314,6 +259,13 @@ namespace ResultApp.WebApi.Controllers
             return logins;
         }
 
+        [Route("Verify"), HttpGet]
+        public async Task<HttpResponseMessage> Verify()
+        {
+            string userId = User.Identity.GetUserId();
+            return Request.CreateResponse(HttpStatusCode.OK, new VerifyDto (User.Identity.GetUserName(), (await UserManager.GetRolesAsync(userId))[0]));
+        }
+
         // POST api/Account/Register
         [AllowAnonymous]
         [Route("Register")]
@@ -324,7 +276,7 @@ namespace ResultApp.WebApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = new ApplicationUser() { UserName = model.Email, Email = model.Email };
+            var user = new ApplicationUser() { UserName = model.UserName, Email = model.Email };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
@@ -333,10 +285,6 @@ namespace ResultApp.WebApi.Controllers
                 return GetErrorResult(result);
             }
 
-            if (!RoleManager.RoleExists("Admin"))
-            {
-               await RoleManager.CreateAsync(new ApplicationRole("Admin"));   
-            }
 
             if (!RoleManager.RoleExists("User"))
             {

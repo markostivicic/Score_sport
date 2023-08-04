@@ -89,7 +89,7 @@ namespace ResultApp.WebApi.Controllers
             try
             {
                 Match mappedMatch = new Match(Guid.NewGuid(), match.Time,
-                match.LocationId, match.ClubHomeId, match.ClubAwayId, User.Identity.GetUserId());
+                match.LocationId, match.ClubHomeId, match.ClubAwayId, User.Identity.GetUserId(), match.HomeScore, match.AwayScore);
                 Match newMatch = await _matchService.CreateAsync(mappedMatch);
                 if (newMatch != null)
                 {
@@ -163,7 +163,7 @@ namespace ResultApp.WebApi.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpPut]
+        [HttpDelete]
         [Route("api/match/toggle/{id}")]
         public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {

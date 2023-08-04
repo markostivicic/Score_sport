@@ -8,8 +8,7 @@ namespace ResultApp.Common
 {
     public class FavouriteClubFilter
     {
-        public string UserId { get; set; }
-        public bool IsActive { get; set; } = true;
-
+        public Guid? ClubId { get; set; }
+        public bool? IsActive { get; set; } = null;
     }
 }

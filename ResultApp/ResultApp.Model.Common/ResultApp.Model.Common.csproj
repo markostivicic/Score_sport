@@ -44,6 +44,7 @@
     <Compile Include="IClub.cs" />
     <Compile Include="IComment.cs" />
     <Compile Include="ICountry.cs" />
+    <Compile Include="IFavouriteMatch.cs" />
     <Compile Include="ILeague.cs" />
     <Compile Include="ILocation.cs" />
     <Compile Include="IMatch.cs" />

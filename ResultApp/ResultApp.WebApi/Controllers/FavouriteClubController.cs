@@ -36,7 +36,7 @@ namespace ResultApp.WebApi.Controllers
         [HttpGet]
         public async Task<HttpResponseMessage> GetAllFavouriteClubsAsync([FromUri] Sorting sorting, [FromUri] Paging paging, [FromUri] FavouriteClubFilter favouriteClubFilter)
         {
-            PageList<FavouriteClub> favouriteClubs = await FavouriteClubService.GetAllFavouriteClubsAsync(sorting, paging, favouriteClubFilter);
+            PageList<FavouriteClub> favouriteClubs = await FavouriteClubService.GetAllFavouriteClubsAsync(sorting, paging, favouriteClubFilter, User.Identity.GetUserId());
             List<FavouriteClubToReturnDto> favouriteClubViews = new List<FavouriteClubToReturnDto>();
             foreach (var favouriteClub in favouriteClubs.Items)
             {
@@ -79,7 +79,7 @@ namespace ResultApp.WebApi.Controllers
         }
 
         [Authorize(Roles = "User,Admin")]
-        [HttpPut]
+        [HttpDelete]
         [Route("api/favouriteclub/toggle/{id}")]
         public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {

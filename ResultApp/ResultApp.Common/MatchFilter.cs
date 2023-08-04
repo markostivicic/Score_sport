@@ -12,7 +12,7 @@ namespace ResultApp.Common
         public DateTime? Time { get; set; }
         public Guid? LeagueId { get; set; }
         public Guid? SportId { get; set; }
-        public bool IsFinished { get; set; } = false;
+        public bool? IsFinished { get; set; } = null;
         public bool IsActive { get; set; } = true;
         
     }

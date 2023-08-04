@@ -18,9 +18,9 @@ namespace ResultApp.Service
             FavouriteClubRepository = favouriteClubRepository;
         }
 
-        public async Task<PageList<FavouriteClub>> GetAllFavouriteClubsAsync(Sorting sorting, Paging paging, FavouriteClubFilter favouriteClubFilter)
+        public async Task<PageList<FavouriteClub>> GetAllFavouriteClubsAsync(Sorting sorting, Paging paging, FavouriteClubFilter favouriteClubFilter, string userId)
         {
-            return await FavouriteClubRepository.GetAllFavouriteClubsAsync(sorting, paging, favouriteClubFilter);
+            return await FavouriteClubRepository.GetAllFavouriteClubsAsync(sorting, paging, favouriteClubFilter, userId);
         }
         public async Task<FavouriteClub> GetFavouriteClubByIdAsync(Guid id)
         {

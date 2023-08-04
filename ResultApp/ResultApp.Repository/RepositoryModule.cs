@@ -21,6 +21,7 @@ namespace ResultApp.Repository
             builder.RegisterType<CommentRepository>().As<ICommentRepository>();
             builder.RegisterType<PlayerRepository>().As<IPlayerRepository>();
             builder.RegisterType<FavouriteClubRepository>().As<IFavouriteClubRepository>();
+            builder.RegisterType<FavouriteMatchRepository>().As<IFavouriteMatchRepository>();
         }
 
     }

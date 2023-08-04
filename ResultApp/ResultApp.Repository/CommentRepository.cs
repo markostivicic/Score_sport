@@ -38,10 +38,11 @@ namespace ResultApp.Repository
                 command.Parameters.AddWithValue("@UserId", commentFilter.UserId.ToString());
             }
 
-            queryBuilder.Append($"ORDER BY \"Comment\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
+            string orderBy = sorting.OrderBy ?? "\"Comment\".\"Id\"";
+            queryBuilder.Append($"ORDER BY {orderBy} {sorting.SortOrder}");
             queryBuilder.Append(" LIMIT @PageSize OFFSET @Offset");
             command.Parameters.AddWithValue("@PageSize", paging.PageSize);
-            command.Parameters.AddWithValue("@Offset", paging.PageNumber * paging.PageSize - paging.PageSize);
+            command.Parameters.AddWithValue("@Offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);
 
             command.CommandText = queryBuilder.ToString();
 
@@ -63,7 +64,9 @@ namespace ResultApp.Repository
                             User user = new User();
                             user.Id = userId;
                             user.UserName = (string)reader["UserName"];
-                            comments.Add(new Comment(id, text, matchId, userId, user));
+                            Comment comment = new Comment(id, text, matchId, userId, user);
+                            comment.DateCreated = (DateTime)reader["DateCreated"];
+                            comments.Add(comment);
                             totalCount = reader.GetInt32(reader.GetOrdinal("TotalCount"));
                         }
                     }

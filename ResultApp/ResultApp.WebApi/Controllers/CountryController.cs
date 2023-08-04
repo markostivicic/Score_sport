@@ -28,11 +28,11 @@ namespace ResultApp.WebApi.Controllers
         }
 
         [Authorize(Roles = "User,Admin")]
-        public async Task<HttpResponseMessage> GetAllAsync([FromUri] Sorting sorting, [FromUri] Paging paging)
+        public async Task<HttpResponseMessage> GetAllAsync([FromUri] Sorting sorting, [FromUri] Paging paging, [FromUri] CountryFilter countryFilter)
         {
             try
             {
-                PageList<Country> countries = await _countryService.GetAllAsync(sorting, paging);
+                PageList<Country> countries = await _countryService.GetAllAsync(sorting, paging, countryFilter);
                 return Request.CreateResponse(HttpStatusCode.OK, new PageList<CountryToReturnDto>(MapCountryToCountryToReturn(countries.Items), countries.TotalCount));
             }
             catch (Exception ex)
@@ -104,7 +104,7 @@ namespace ResultApp.WebApi.Controllers
             }
         }
         [Authorize(Roles = "Admin")]
-        [HttpPut]
+        [HttpDelete]
         [Route("api/country/toggle/{id}")]
         public async Task<HttpResponseMessage> ToggleActivateAsync(Guid id)
         {

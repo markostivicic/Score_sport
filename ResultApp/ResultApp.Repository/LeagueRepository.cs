@@ -37,10 +37,12 @@ namespace ResultApp.Repository
                 queryBuilder.Append("AND LOWER(\"League\".\"Name\") LIKE @Name ");
                 command.Parameters.AddWithValue("@Name", "%" + leagueFilter.Name.ToLower() + "%");
             }
-            queryBuilder.Append($"ORDER BY \"League\".\"{sorting.OrderBy}\" {sorting.SortOrder}");
+
+            string orderBy = sorting.OrderBy ?? "\"League\".\"Id\"";
+            queryBuilder.Append($"ORDER BY {orderBy} {sorting.SortOrder}");
             queryBuilder.Append(" LIMIT @PageSize OFFSET @Offset");
             command.Parameters.AddWithValue("@PageSize", paging.PageSize);
-            command.Parameters.AddWithValue("@Offset", paging.PageNumber * paging.PageSize - paging.PageSize);
+            command.Parameters.AddWithValue("@Offset", paging.PageNumber == 0 ? 0 : (paging.PageNumber - 1) * paging.PageSize);
 
             command.CommandText = queryBuilder.ToString();
 
